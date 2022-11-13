@@ -25,7 +25,7 @@ pip install reapermc
 
 ## Getting started
 
-This package is designed to be used within `.bolt` scripts, inside a bolt enabled project. I will never officially `.mcfunction` files.
+This package is designed to be used within `.bolt` scripts, inside a bolt enabled project. I will never officially support `.mcfunction` files.
 
 To enable Reaper inside your project, you will need to add `reapermc` to your `require` list inside the beet config file.
 ```yaml

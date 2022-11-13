@@ -36,14 +36,17 @@ Every time `var()` is called it uses a new unique score/storage key. If you want
 
 1. Example of a function that executes entities under 5 Health.
 ```py
-hp = var(int)
+current_hp = var(int)
 
 function ./finish_him:
     # gets the current entity Health
-    hp = Data.entity('@s').Health
+    entity_hp = Data.entity('@s').Health
+
+    # saves current hp into the var()
+    current_hp = entity_hp
 
     # checks if target can be executed
-    if score hp.holder hp.obj matches ..5:
+    if score current_hp.holder current_hp.obj matches ..5:
         tellraw @p [{"selector":"@s"}, {"text": " made the grimm reaper happy!"}]
         kill @s
 ```
