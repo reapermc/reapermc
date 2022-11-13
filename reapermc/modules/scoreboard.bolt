@@ -1,0 +1,45 @@
+from ./spark import preload
+from ./util import gen_path, logger, bolt_expressions
+
+
+_objectives = set()
+
+
+
+def scoreboard(id, criteria='dummy', display_name=None, defaults=None, _internal=False):
+    if ' ' in id:
+        logger.error(f"Invalid 'scoreboard()' id '{id}'")
+
+    elif id not in _objectives:
+        _objectives.add(id)
+
+        # default values support, dict input
+        if defaults:
+            for key, value in defaults.items():
+                append function gen_path('scoreboard/init_defaults', internal=True):
+                    unless score key id = key id:
+                        scoreboard players set key id value
+
+
+        append function gen_path('scoreboard/init', internal=True):
+            if not display_name:
+                display_name = id
+
+            # _internal custom color support
+            if _internal:
+                display_name = {"text": display_name, "color": "#F06400"}
+
+            # string support
+            elif isinstance(display_name, str):
+                display_name = {"text": display_name, "color": "gold"}
+
+            scoreboard objectives add id criteria display_name
+
+    return bolt_expressions.Scoreboard(id)
+
+
+
+@preload
+def _init():
+    function gen_path('scoreboard/init', internal=True)
+    function gen_path('scoreboard/init_defaults', internal=True)

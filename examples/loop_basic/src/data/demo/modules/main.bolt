@@ -1,0 +1,12 @@
+from reapermc:api import loop, loop_break, loop_cycle
+from reapermc:util import print_score
+
+
+function f"loop:test":
+    with loop(0, 20, threading=True):
+        if data entity @p SelectedItem:
+            loop_break()
+
+        print_score(loop_cycle.get())
+        
+

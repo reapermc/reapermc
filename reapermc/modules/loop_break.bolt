@@ -1,0 +1,80 @@
+from beet import Function
+
+from ./util import gen_path, SelectorServer
+from ./defer import defer
+from ./var import var
+from ./object import Object
+
+
+_BREAK_BOOL_VAR = var(int)
+
+
+def loop_break():  
+    # pointer for loop splitter below
+    help '$LOOPBREAK^!'
+
+
+
+@defer
+def _nest_loops():
+    func_list = []
+
+    for name, func in ctx.data.functions.items():
+        if name.startswith(gen_path('loop')):
+            nest_id = -1
+            dest_id = -1
+            loop_id = name.split('/')[-1]
+            incr_dest_id = False
+
+            nest_contents = []
+            func_data = {'path': name, 'contents': []}
+
+            max_line_index = len(list(func.lines)) - 1
+            is_threaded = func.lines[0][:-10][-1] == '+'
+
+            for index, line in enumerate(func.lines):
+                if line.endswith("help '$LOOPBREAK^!'"):
+                    incr_dest_id = True
+
+                    nest_id += 1
+                    dest_path = gen_path(f"loop/break_nest/{loop_id}_{nest_id}")
+
+                    # replaces pointer suffix with break=condition score and internal loop breaker
+                    line = line[:-19]
+                    line = f"scoreboard players set {_BREAK_BOOL_VAR.holder} {_BREAK_BOOL_VAR.obj} 0\n" + line
+                    line += f"scoreboard players set {_BREAK_BOOL_VAR.holder} {_BREAK_BOOL_VAR.obj} 1\n"
+
+                    if is_threaded:
+                        line += f"execute if score {_BREAK_BOOL_VAR.holder} {_BREAK_BOOL_VAR.obj} matches 1 unless entity @s run function {gen_path(f"loop/cache/{loop_id}_srv_break_thread", internal=True)}\n"
+                        line += f"execute if score {_BREAK_BOOL_VAR.holder} {_BREAK_BOOL_VAR.obj} matches 1 if entity @s run function {gen_path(f"loop/cache/{loop_id}_ent_break_thread", internal=True)}\n"
+                    else:
+                        line += f"execute if score {_BREAK_BOOL_VAR.holder} {_BREAK_BOOL_VAR.obj} matches 1 unless entity @s run function {gen_path(f"loop/cache/{loop_id}_srv_break", internal=True)}\n"
+                        line += f"execute if score {_BREAK_BOOL_VAR.holder} {_BREAK_BOOL_VAR.obj} matches 1 if entity @s run function {gen_path(f"loop/cache/{loop_id}_ent_break", internal=True)}\n"
+                    
+
+                    # adds nested function call line below score operation
+                    line += f"execute unless score {_BREAK_BOOL_VAR.holder} {_BREAK_BOOL_VAR.obj} matches 1 run function {dest_path}"
+
+
+                # if break found in loop
+                if dest_id == -1:
+                    func_data.contents.append(line)
+
+                else:
+                    nest_contents.append(line)
+
+                    if incr_dest_id or index == max_line_index:
+                        func_list.append({'path': gen_path(f"loop/break_nest/{loop_id}_{dest_id}"), 'contents': nest_contents})
+                        nest_contents = []
+
+                if incr_dest_id:
+                    dest_id += 1
+                    incr_dest_id = False
+
+            # if the loop contains breaks
+            if dest_id != -1:
+                func_list.append(func_data)
+
+    # override mcfunctions
+    for f in func_list:
+        ctx.data[f.path] = Function(f.contents)

@@ -1,0 +1,48 @@
+from ./var import var
+from ./util import gen_path, logger, is_expression, binary_progression
+
+
+_tmp = var(int)
+
+def get_time(mode='daytime'):
+    tmp = _tmp
+    
+    if mode not in ['daytime', 'gametime', 'day']:
+        return logger.error(f"Invalid 'get_time()' mode '{mode}'")
+
+    store result score tmp.holder tmp.obj:
+        if mode == 'daytime':
+            time query daytime
+        elif mode == 'gametime':
+            time query gametime
+        elif mode == 'day':
+            time query day
+
+    return tmp 
+
+
+def set_time(value):
+    tmp = _tmp
+
+    if not is_expression(value):
+        time set value
+
+    else:
+        tmp = value
+
+        gp_prog = binary_progression(16)
+        gp_prog.reverse()
+
+        execute function gen_path('set_time/start', internal=True):
+            time set 0
+            
+            for v in gp_prog:
+                if score tmp.holder tmp.obj matches (v, None):
+                    # p_0 = ./set_time
+                    p_0 = gen_path('set_time', internal=True)
+                    p_full = f"{p_0}/{v}"
+                    
+                    execute function p_full:
+                        tmp -= v
+                        time add v
+

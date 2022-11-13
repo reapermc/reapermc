@@ -1,0 +1,63 @@
+from reapermc:api import loop, loop_break
+
+
+
+
+function f"loop:no_context":
+    with loop(3, 20, threading=False, world_ctx=False):
+        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
+
+        say --
+
+        if data entity @p SelectedItem:
+            loop_break()
+
+        particle flash
+        say hello
+
+
+function f"loop:context":
+    with loop(3, 15, threading=False, world_ctx=True):
+        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
+
+        say this runs no matter fkin what
+        summon item ~ ~5 ~ {Item:{id: "minecraft:diamond", Count:1b}}
+
+        if data entity @p SelectedItem:
+            loop_break()
+
+        say this runs after the possible break
+        particle flash
+
+        
+function f"loop:no_context_threaded":
+    with loop(3, 15, threading=True, world_ctx=False):
+        say -->
+
+        if data entity @p SelectedItem:
+            loop_break()
+
+        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
+
+        particle flash
+        summon item ~ ~5 ~ {Item:{id: "minecraft:diamond", Count:1b}}
+
+
+
+
+function f"loop:context_threaded":
+    with loop(3, 15, threading=True, world_ctx=True):
+
+        say -->
+
+        if data entity @p SelectedItem:
+            loop_break()
+
+        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
+
+        particle flash
+        # summon item ~ ~5 ~ {Item:{id: "minecraft:diamond", Count:1b}}
+
+
+
+

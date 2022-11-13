@@ -1,0 +1,8 @@
+from reapermc:api import scoreboard
+
+
+foo = scoreboard('fooscb')
+
+
+function ./test:
+    foo['$bar'] = 123

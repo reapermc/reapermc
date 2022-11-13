@@ -1,0 +1,101 @@
+from bolt_expressions import Scoreboard
+from ./util import gen_path
+
+
+
+def preload(f):
+    append function gen_path('spark/preload'):
+        f()
+    return f
+
+def load(f):
+    append function gen_path('spark/load'):
+        f()
+    return f
+
+def postload(f):
+    append function gen_path('spark/postload'):
+        f()
+    return f
+
+
+def pretick(f):
+    append function gen_path('spark/pretick'):
+        f()
+    return f
+
+def tick(f):
+    append function gen_path('spark/tick'):
+        f()
+    return f
+
+def posttick(f):
+    append function gen_path('spark/posttick'):
+        f()
+    return f
+
+
+def prejoin(f):
+    append function gen_path('spark/prejoin'):
+        f()
+    return f
+
+def join(f):
+    append function gen_path('spark/join'):
+        f()
+    return f
+
+def postjoin(f):
+    append function gen_path('spark/postjoin'):
+        f()
+    return f
+
+
+
+
+def _handler():
+    merge function_tag minecraft:load {"values": [gen_path('spark/init', internal=True)]}
+    join_tracker = Scoreboard('reaper.spark')
+
+    # init
+    function gen_path('spark/init', internal=True):
+        scoreboard objectives add reaper.spark custom:leave_game {"text": "reaper.spark", "color": "#F06400"}
+
+        # ensures join event runs on /reload
+        join_tracker['@a'] = 1
+
+        
+        function gen_path('spark/preload')
+        function gen_path('spark/load')
+        function gen_path('spark/postload')
+
+        # initiates main clock
+        function gen_path('spark/clock', internal=True)
+
+
+    # clock
+    function gen_path('spark/clock', internal=True):
+        schedule function gen_path('spark/clock', internal=True) 1
+
+        as @a:
+            if score @s join_tracker matches 1..:
+                at @s:
+                    execute function gen_path('spark/on_join', internal=True):
+                        join_tracker['@s'] = 0
+                        function gen_path('spark/prejoin')
+                        function gen_path('spark/join')
+                        function gen_path('spark/postjoin')
+
+        function gen_path('spark/pretick')
+        function gen_path('spark/tick')
+        function gen_path('spark/posttick')
+
+
+
+    # sleep() AND loop() FIX ELSE IT DOESNT WORK
+    append function gen_path('spark/prejoin'):
+        function gen_path('sleep/onjoin_flush', internal=True)
+        function gen_path('loop/onjoin_flush', internal=True)
+
+
+_handler()

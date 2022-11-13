@@ -1,0 +1,153 @@
+import logging
+from bolt_expressions.node import ExpressionNode
+import bolt_expressions as bolt_expressions
+from contextlib import contextmanager
+
+
+logger = logging.getLogger("reaper")
+data_self = bolt_expressions.Data.entity('@s')
+
+
+def print_data(expr, color='yellow'):
+    tellraw @a {"nbt": f"{expr._path}", "storage": f"{expr._target}", "color": color}
+
+def print_score(expr, color='yellow'):
+    tellraw @a {"score": {"name":f"{expr.holder}","objective":f"{expr.obj}"}, "color": color}
+
+
+def gen_path(path, internal=False):
+    if internal:
+        return generate_path(f"reaper_framework/__internal__/{path}")
+    else:
+        return generate_path(f"reaper_framework/{path}")
+
+def is_expression(value):
+    return isinstance(value, ExpressionNode)
+
+
+def binary_progression(size):
+    out = []
+
+    for i in range(1,size+1):
+        v = 1 * 2**(i-1)
+        out.append(v)
+
+    return out
+
+
+
+class ScoreExist:
+    def __init__(self, score_expr, invert=False):
+        self.invert = invert
+        self.score_expr = score_expr
+
+    @contextmanager
+    def __branch__(self):
+        x = self.score_expr
+
+        if self.invert:
+            unless score x.holder x.obj = x.holder x.obj:
+                yield True
+        else:
+            if score x.holder x.obj = x.holder x.obj:
+                yield True
+
+    def __not__(self):
+        return ScoreExist(self.score_expr, invert=not self.invert)
+
+
+
+
+class Rebindable:
+    # allows scoreboard expressions __rebind__ to function correctly inside of classes
+    def __setattr__(self, name, value):
+        attr = getattr(self, name, None)
+
+        if attr is None or not getattr(attr, "__rebind__", None):
+            return super().__setattr__(name, value)
+
+        new_attr = attr.__rebind__(value)
+        super().__setattr__(name, new_attr)
+
+
+
+class SelectorPlayer:
+    def __init__(self, invert=False):
+        self.invert = invert
+
+    @contextmanager
+    def __branch__(self):
+        if self.invert:
+            if entity @s[type=!player]:
+                yield True
+        else:
+            if entity @s[type=player]:
+                yield True
+
+    def __not__(self):
+        return SelectorPlayer(invert=not self.invert)
+
+
+class SelectorServer:
+    def __init__(self, invert=False):
+        self.invert = invert
+
+    @contextmanager
+    def __branch__(self):
+        if self.invert:
+            if entity @s:
+                yield True
+        else:
+            unless entity @s:
+                yield True
+
+    def __not__(self):
+        return SelectorServer(invert=not self.invert)
+
+
+
+
+class SelectorUndead:
+    def __init__(self, invert=False):
+        self.invert = invert
+
+        merge entity_type_tag gen_path('misc/undead_entities', internal=True) {
+            "values": [
+                "minecraft:skeleton",
+                "minecraft:stray",
+                "minecraft:wither_skeleton",
+                "minecraft:zombie",
+                "minecraft:drowned",
+                "minecraft:husk",
+                "minecraft:zombified_piglin",
+                "minecraft:zoglin",
+                "minecraft:zombie_villager",
+                "minecraft:phantom",
+                "minecraft:wither",
+                "minecraft:skeleton_horse",
+                "minecraft:zombie_horse"
+            ]
+        }
+
+    @contextmanager
+    def __branch__(self):
+        if self.invert:
+            unless entity @s[type=f"#{gen_path('misc/undead_entities', internal=True)}"]:
+                yield True
+        else:
+            if entity @s[type=f"#{gen_path('misc/undead_entities', internal=True)}"]:
+                yield True
+
+    def __not__(self):
+        return SelectorUndead(invert=not self.invert)
+
+
+
+def arr_len():
+    return
+
+
+def get_dict_key(dict, val):
+    for key, value in dict.items():
+        if val == value:
+            return key

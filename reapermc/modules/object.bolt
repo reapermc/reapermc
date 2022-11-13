@@ -1,0 +1,178 @@
+from bolt_expressions import Data
+from contextlib import contextmanager
+from beet import Context
+from importlib.resources import read_text
+from nbtlib import Path
+from copy import deepcopy
+from beet.contrib.vanilla import Vanilla
+import json
+
+from ./spark import preload, pretick
+from ./better_summon import summon
+from ./var import var
+from ./util import gen_path
+from ./defer import defer
+from ./tag import tag, untag
+from ./scoreboard import scoreboard
+
+
+_ROOT_PATH = 'reaper:object'
+
+_HOLDER_ID = scoreboard('reaper.object', _internal=True, defaults={'#next': 0})
+_MARKER_ID = scoreboard('reaper.object.m', _internal=True)
+
+_MARKER = 'reaper.object.m'
+_HAS_ENTRY = 'reaper.object.holder'
+_MARKER_DATA = Data.entity('@s').data
+_CACHE_ID = 0
+
+
+_ITEMDROP_PAYLOAD = json.loads(read_text("reapermc.resources", "object_payload.json"))
+
+
+
+class Object:
+    _tmp = var()
+
+    def __init__(self, path, ensure_entry=True):
+        if ensure_entry:
+            if entity @s:
+                _ensure_entry()
+
+        self.path = Path(path)
+    
+    def __rebind__(self, value, arr_index=None):
+        with self._context_marker():
+            if arr_index is None:
+                _MARKER_DATA[self.path] = value
+            else:
+                _MARKER_DATA[self.path][arr_index] = value 
+
+        return self
+            
+    def get(self, arr_index=None):
+        tmp = self._tmp
+
+        with self._context_marker():
+            if arr_index is None:
+                tmp = _MARKER_DATA[self.path]
+            else:
+                tmp = _MARKER_DATA[self.path][arr_index]
+
+        return tmp
+
+    def merge(self, value):
+        with self._context_marker():
+            _MARKER_DATA[self.path].merge(value)
+
+    def append(self, value):
+        with self._context_marker():
+            _MARKER_DATA[self.path].append(value)
+
+    def prepend(self, value):
+        with self._context_marker():
+            _MARKER_DATA[self.path].prepend(value)
+
+    def insert(self, index, value):
+        with self._context_marker():
+            _MARKER_DATA[self.path].insert(index, value)
+    
+    def delete(self, arr_index=None):
+        with self._context_marker():
+            if arr_index is None:
+                _MARKER_DATA[self.path].remove()
+            else:
+                _MARKER_DATA[self.path][arr_index].remove()
+
+    def remove(self, arr_index=None):
+        self.delete(arr_index)
+
+
+
+    @contextmanager
+    def _context_marker(self):
+        global _CACHE_ID
+        
+        cid = _CACHE_ID
+        _CACHE_ID += 1
+
+        execute function gen_path(f"object/cache/{cid}_0", internal=True):
+            if entity @s at @s:
+                as @e[type=marker, tag=_MARKER]:
+                    if score @s _MARKER_ID = @e[tag=_HAS_ENTRY,sort=nearest,limit=1] _HOLDER_ID:
+                        execute function gen_path(f"object/cache/{cid}_1", internal=True):
+                            yield
+
+
+def _ensure_entry():
+    unless entity @s[tag=_HAS_ENTRY]:
+        function gen_path(f"object/ensure_entry", internal=True)
+
+
+
+function gen_path('object/remove_entity'):
+    _tmp_int = var(int)
+
+    _tmp_int = _HOLDER_ID['@s']
+    as @e[type=marker, tag=_MARKER]:
+        if score @s _MARKER_ID = _tmp_int.holder _tmp_int.obj:
+            kill @s
+    
+    _HOLDER_ID['@s'].reset()
+    untag(_HAS_ENTRY)
+
+
+
+function gen_path('object/ensure_entry', internal=True):
+    _HOLDER_ID['@s'] = _HOLDER_ID['#next']
+
+    forceload add 69000 69000
+    summon marker 69000 0 69000 {Tags: [_MARKER], CustomName:'{"text":"reaper.object.m","color":"#F06400"}'}:
+        _MARKER_ID['@s'] = _HOLDER_ID['#next']
+        _HOLDER_ID['#next'] += 1
+    
+    tag @s add _HAS_ENTRY
+
+
+
+@pretick
+def _garbage_collector():
+    dropped_id = Data.entity('@s').Item.tag.AttributeModifiers[0].Amount
+    tmp = var(int)
+
+    as @e[type=item, nbt={Item:{tag:{reaper.object.death_cleanup:1b}}}]:
+        execute function gen_path(f"object/garbage_collector", internal=True):
+            tmp = dropped_id
+            kill @s
+            as @e[type=marker, tag=_MARKER]:
+                if score @s _MARKER_ID = tmp.holder tmp.obj:
+                    kill @s
+
+
+@defer
+def _inject_loot_tables():
+    _inject_vanilla_tables()
+    _inject_custom_tables()
+
+
+def _inject_vanilla_tables():
+    vanilla_data = ctx.inject(Vanilla).mount("data/minecraft/loot_tables/entities").data
+    for table_id in vanilla_data.loot_tables.match("minecraft:entities/*"):
+        if not table_id.startswith('minecraft:entities/sheep/'):
+            if table_id != 'minecraft:entities/player':
+                table = deepcopy(vanilla_data.loot_tables[table_id])
+
+                if 'pools' not in table.data:
+                    table.data['pools'] = []
+                
+                table.data['pools'].append(_ITEMDROP_PAYLOAD)
+                ctx.data[table_id] = table
+
+
+def _inject_custom_tables():
+    for name, contents in ctx.data.loot_tables.items():
+        if not name.startswith('minecraft:entities/'):
+            if 'pools' not in contents.data:
+                contents.data['pools'] = []
+
+            contents.data['pools'].append(_ITEMDROP_PAYLOAD)
