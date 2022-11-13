@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.2 (2022-11-13)
+### Fix
+* Readme actions badge link ([`00791dc`](https://github.com/reapermc/reapermc/commit/00791dc8c980b2ea43c6e8bcc2379ee6c0c48174))
+
 ## v0.1.1 (2022-11-13)
 ### Fix
 * Initial release ([`384d4f8`](https://github.com/reapermc/reapermc/commit/384d4f83bc9ddce62f195a8bd852b470441f748e))
