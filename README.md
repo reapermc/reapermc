@@ -1,5 +1,5 @@
 # ReaperMC
-[![GitHub Actions](https://github.com/reapermc/reapermc/workflows/CI/badge.svg)](https://github.com/reapermcmc/reapermc/actions)
+[![GitHub Actions](https://github.com/reapermc/reapermc/workflows/CI/badge.svg)](https://github.com/reapermc/reapermc/actions)
 
 > A high level framework for the Bolt scripting language.
 
