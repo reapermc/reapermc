@@ -1,0 +1,14 @@
+from reapermc:api import register_death_event, summon
+
+
+
+def on_death():
+    summon creeper ~ ~ ~
+    say hello
+
+
+
+function ./example:
+    summon sheep ~ ~ ~:
+        register_death_event(on_death)
+        ''

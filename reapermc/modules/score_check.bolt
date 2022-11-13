@@ -1,0 +1,115 @@
+from contextlib import contextmanager
+from ./util import Rebindable, is_expression
+
+
+class ScoreCheck(Rebindable):
+    def __init__(self, score_expr, operator=None, value=None, inverted=False):
+        self.score_expr = score_expr
+        self.operator = operator
+        self.value = value
+        self.inverted = inverted
+
+        if inverted:
+            self._invert_operator()
+
+
+    def __eq__(self, other):
+        return ScoreCheck(self.score_expr, 'eq', other)
+
+
+    def __ne__(self, other):
+        return ScoreCheck(self.score_expr, 'ne', other)
+
+
+    def __lt__(self, other):
+        return ScoreCheck(self.score_expr, 'lt', other)
+
+
+    def __gt__(self, other):
+        return ScoreCheck(self.score_expr, 'gt', other)
+
+
+    def __le__(self, other):
+        return ScoreCheck(self.score_expr, 'le', other)
+
+
+    def __ge__(self, other):
+        return ScoreCheck(self.score_expr, 'ge', other)
+
+
+    def __not__(self):
+        return ScoreCheck(self.score_expr, operator=self.operator, value=self.value, inverted=not self.inverted)
+
+
+    @contextmanager
+    def __branch__(self):
+        oper = self.operator
+        c = self.score_expr
+        v = self.value
+        is_expr = is_expression(v)
+
+        if oper == 'eq':
+            if is_expr:
+                if score c.holder c.obj = v.holder v.obj:
+                    yield True
+            else:
+                if score c.holder c.obj matches v:
+                    yield True
+
+        elif oper == 'ne':
+            if is_expr:
+                unless score c.holder c.obj = v.holder v.obj:
+                    yield True
+            else:
+                unless score c.holder c.obj matches v:
+                    yield True
+
+        elif oper == 'lt':
+            if is_expr:
+                if score c.holder c.obj < v.holder v.obj:
+                    yield True
+            else:
+                unless score c.holder c.obj matches (v, None):
+                    yield True
+
+        elif oper == 'gt':
+            if is_expr:
+                if score c.holder c.obj > v.holder v.obj:
+                    yield True
+            else:
+                unless score c.holder c.obj matches (None, v):
+                    yield True
+
+        elif oper == 'le':
+            if is_expr:
+                if score c.holder c.obj <= v.holder v.obj:
+                    yield True
+            else:
+                if score c.holder c.obj matches (None, v):
+                    yield True
+
+        elif oper == 'ge':
+            if is_expr:
+                if score c.holder c.obj >= v.holder v.obj:
+                    yield True
+            else:
+                if score c.holder c.obj matches (v, None):
+                    yield True
+
+
+    def _invert_operator(self):
+        oper = self.operator
+        
+        if oper == 'eq':
+            self.operator = 'ne'
+        elif oper == 'ne':
+            self.operator = 'eq'
+        elif oper == 'lt':
+            self.operator = 'ge'
+        elif oper == 'gt':
+            self.operator = 'le'
+        elif oper == 'le':
+            self.operator = 'gt'
+        elif oper == 'ge':
+            self.operator = 'lt'
+

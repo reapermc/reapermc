@@ -1,0 +1,58 @@
+from nbtlib import Byte, Float
+
+from ./util import get_dict_key
+
+
+ALL_EFFECTS = {
+    1: 'speed',
+    2: 'slowness',
+    3: 'haste',
+    4: 'mining_fatigue',
+    5: 'strength',
+    6: 'instant_health',
+    7: 'instant_damage',
+    8: 'jump_boost',
+    9: 'nausea',
+    10: 'regeneration',
+    11: 'resistance',
+    12: 'fire_resistance',
+    13: 'water_breathing',
+    14: 'invisibility',
+    15: 'blindness',
+    16: 'night_vision',
+    17: 'hunger',
+    18: 'weakness',
+    19: 'poison',
+    20: 'wither',
+    21: 'health_boost',
+    22: 'absorption',
+    23: 'saturation',
+    24: 'glowing',
+    25: 'levitation',
+    26: 'luck',
+    27: 'bad_luck',
+    28: 'slow_falling',
+    29: 'conduit_power',
+    30: 'dolphins_grace',
+    31: 'bad_omen',
+    32: 'hero_of_the_village',
+    33: 'darkness'
+}
+
+
+
+def effect(id, duration, amplifier, show_particles=False):
+    hide_particles = not show_particles
+    effect give @s id duration amplifier hide_particles
+
+
+
+
+
+def effect_raw(id, duration, amplifier, show_particles=False):
+    num_id = get_dict_key(ALL_EFFECTS, id)
+
+    if entity @s[type=player]:
+        summon area_effect_cloud ~ ~ ~ {Radius: Float(0.0), Age: 4, WaitTime: 0, Duration: 6, Effects:[{Id: Byte(num_id), Amplifier: Byte(amplifier), Duration: duration, ShowParticles: Byte(show_particles)}]}
+    if entity @s[type=!player]:
+        data modify entity @s ActiveEffects append value {Id: num_id, Duration: duration, Amplifier: Byte(amplifier), ShowIcon: 0b, ShowParticles: Byte(show_particles), Ambient: 0b}

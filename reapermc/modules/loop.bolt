@@ -1,0 +1,305 @@
+from contextlib import contextmanager
+
+from ./util import gen_path, logger, SelectorServer, print_score
+from ./var import var
+from ./sleep import sleep
+from ./object import Object
+from ./loop_cycle import set_public_cycle, loop_cycle
+from ./loop_break import _BREAK_BOOL_VAR
+from ./score_check import ScoreCheck
+from ./defer import defer
+from ./spark import prejoin
+from ./tag import untag
+
+
+_LOOP_ID = -1
+_PAYLOAD_PATH = ''
+
+_TMP_INT_0 = var(int)
+_TMP_INT_1 = var(int)
+
+
+def _increment_loop_id():
+    global _LOOP_ID, _PAYLOAD_PATH
+
+    _LOOP_ID += 1
+    _PAYLOAD_PATH = gen_path(f"loop/{_LOOP_ID}")
+
+
+
+@defer
+def _flush_joining_player():
+    # counteracts all bugs that may happen when the player leaves before a loop finished
+    loop_root = Object('__internal__.reaper.loop', ensure_entry=False)
+
+    if _LOOP_ID == -1:
+        return
+
+    append function gen_path('loop/onjoin_flush', internal=True):
+        if entity @s[tag=reaper.object.holder]:
+            execute function gen_path('loop/onjoin_flush1', internal=True):
+                loop_root.remove()
+
+                for n in range(_LOOP_ID+1):
+                    untag(f"reaper.loop.{n}")
+
+
+
+@contextmanager
+def loop(count, interval, selector='auto', threading=True, world_ctx=True):
+    _increment_loop_id()
+
+    error_caught = False
+
+    if interval < 0:
+        error_caught = True
+        logger.error(f"Invalid 'loop()' interval of {interval}. Has to be an integer bigger than or equal to 0.")
+
+    if selector not in ('auto', 's', 'e', 'server', 'entity'):
+        error_caught = True
+        logger.error(f"Invalid 'loop()' selector of '{selector}'. Valid selectors: ['s', 'e', 'server', 'entity']")
+
+    if error_caught:
+        yield
+        return
+
+
+    execute function gen_path(f"loop/{_LOOP_ID}_exec", internal=True):
+        if selector in ['server', 's']:
+            if not threading:
+                _server(count, interval, world_ctx)
+            else:
+                _server_threaded(count, interval, world_ctx)
+
+        elif selector in ['entity', 'e']:
+            if not threading:
+                _entity(count, interval, world_ctx)
+            else:
+                _entity_threaded(count, interval, world_ctx)
+
+        elif selector == 'auto':
+            if SelectorServer():
+                if not threading:
+                    _server(count, interval, world_ctx)
+                else:
+                    _server_threaded(count, interval, world_ctx)
+            else:
+                if not threading:
+                    _entity(count, interval, world_ctx)
+                else:
+                    _entity_threaded(count, interval, world_ctx)
+
+
+
+    function _PAYLOAD_PATH:
+        if threading:
+            symb = '+'
+        else:
+            symb = '-'
+
+        help f"'$LOOP_DATA {symb}threading'"
+        yield
+
+
+
+
+
+
+
+def _server(count, interval, world_ctx):
+    cycles_left = var(int)
+    cycle_index = var(int)
+
+    # public internal break function
+    function gen_path(f"loop/cache/{_LOOP_ID}_srv_break", internal=True):
+        cycles_left = 0
+
+
+    # initial run
+    cycles_left = count - 1
+    cycle_index = 0
+    set_public_cycle(cycle_index)
+    function _PAYLOAD_PATH
+
+    if ScoreCheck(cycles_left) != 0:
+        # loop start
+        execute function gen_path(f"loop/cache/{_LOOP_ID}_srv_cycle", internal=True):
+            with sleep(interval, selector='server', threading=False, world_ctx=world_ctx):
+                cycles_left -= 1
+                cycle_index += 1
+                set_public_cycle(cycle_index)
+
+                function _PAYLOAD_PATH
+
+                # runs if theres cycles left
+                if ScoreCheck(cycles_left) != 0:
+                    execute function gen_path(f"loop/cache/{_LOOP_ID}_srv_cycle", internal=True) 
+
+
+
+def _server_threaded(count, interval, world_ctx):
+    cycle = var(int)
+    loop_break = var(int)
+    cycles_left = var()     # array
+    cycle_index = var()     # array
+    tmp = _TMP_INT_0
+
+
+    # public internal break function
+    function gen_path(f"loop/cache/{_LOOP_ID}_srv_break_thread", internal=True):
+        cycles_left[-1] = 0
+
+
+    # initial run
+    cycle = count - 1
+    cycle_index.append(0)
+    set_public_cycle(0)
+    function _PAYLOAD_PATH
+
+
+    if ScoreCheck(cycle) != 0:
+        cycles_left.append(count - 1)
+        
+        # loop start
+        execute function gen_path(f"loop/cache/{_LOOP_ID}_srv_cycle", internal=True):
+            with sleep(interval, selector='server', threading=True, world_ctx=world_ctx):            
+                cycle = cycles_left[0]
+
+                if ScoreCheck(cycle) == 0:
+                    cycles_left[0].remove()
+                    cycle_index[0].remove()
+                else:
+                    cycles_left[0].remove()
+                    cycle -= 1
+
+                    tmp = cycle_index[0]
+                    cycle_index[0].remove()
+                    tmp += 1
+
+                    set_public_cycle(tmp)
+
+                    # unless score cycle.holder cycle.obj matches 0:
+                    cycles_left.append(cycle)
+                    cycle_index.append(tmp)
+
+                    function _PAYLOAD_PATH
+
+
+                    # calls 'loop start'
+                    function gen_path(f"loop/cache/{_LOOP_ID}_srv_cycle", internal=True)
+
+                
+
+
+def _entity(count, interval, world_ctx):
+    root_object = Object(f"__internal__.reaper.loop.{_LOOP_ID}")
+    cycles_left = Object(f"__internal__.reaper.loop.{_LOOP_ID}.cycles_left", ensure_entry=False)
+    cycle_index = Object(f"__internal__.reaper.loop.{_LOOP_ID}.cycle_index", ensure_entry=False)
+    tmp = _TMP_INT_0
+    cycle = _TMP_INT_1
+
+
+    # public internal break function
+    function gen_path(f"loop/cache/{_LOOP_ID}_ent_break", internal=True):
+        cycles_left = 0
+
+
+    # initial run
+    cycle = count - 1
+    cycle_index = 0
+    set_public_cycle(0)
+    function _PAYLOAD_PATH
+
+
+    if ScoreCheck(cycle) != 0:
+        cycles_left = count - 1
+    
+        # loop start
+        execute function gen_path(f"loop/cache/{_LOOP_ID}_ent_cycle", internal=True):
+            with sleep(interval, selector='entity', threading=False, world_ctx=world_ctx):
+                cycle = cycles_left.get()
+                cycle -= 1
+                cycles_left = cycle
+
+                tmp = cycle_index.get()
+                tmp += 1
+                cycle_index = tmp
+
+                set_public_cycle(tmp)
+
+                # runs on exit (this is mostly here not to screw over '_entity_threaded()')
+                if score cycle.holder cycle.obj matches 0:
+                    root_object.delete()
+
+                function _PAYLOAD_PATH
+
+
+                # sets to cycle 0 if break occured
+                if ScoreCheck(_BREAK_BOOL_VAR) == 1:
+                    cycle = 0
+
+                # runs if theres cycles left & endlessly if below 0
+                if ScoreCheck(cycle) != 0:
+                    function gen_path(f"loop/cache/{_LOOP_ID}_ent_cycle", internal=True)
+
+
+
+def _entity_threaded(count, interval, world_ctx):
+    root_object = Object(f"__internal__.reaper.loop.{_LOOP_ID}")
+    cycles_left = Object(f"__internal__.reaper.loop.{_LOOP_ID}.cycles_left", ensure_entry=False)
+    cycle_index = Object(f"__internal__.reaper.loop.{_LOOP_ID}.cycle_index", ensure_entry=False)
+    tmp = _TMP_INT_0
+    cycle = _TMP_INT_1
+
+    # public internal break function
+    function gen_path(f"loop/cache/{_LOOP_ID}_ent_break_thread", internal=True):
+        cycles_left.__rebind__(0, -1)
+
+
+    # initial run
+    cycle = count - 1
+    cycle_index.append(0)
+    set_public_cycle(0)
+    function _PAYLOAD_PATH
+
+    # skipped if 'count=1' (why would you want that?)
+    unless score cycle.holder cycle.obj matches 0:
+        cycles_left.append(count - 1)
+        
+        # loop start
+        execute function gen_path(f"loop/cache/{_LOOP_ID}_ent_cycle", internal=True):
+            with sleep(interval, selector='entity', threading=True, world_ctx=world_ctx):
+                cycle = cycles_left.get(0)
+
+                if ScoreCheck(cycle) == 0:
+                    cycles_left.delete(0)
+                    cycle_index.delete(0)
+                else:
+                    cycles_left.delete(0)
+                    cycle -= 1
+
+                    tmp = cycle_index.get(0)
+                    cycle_index.delete(0)
+                    tmp += 1
+
+                    set_public_cycle(tmp)
+
+                    # unless score cycle.holder cycle.obj matches 0:
+                    cycles_left.append(cycle)
+                    cycle_index.append(tmp)
+
+
+                    function _PAYLOAD_PATH
+
+                    # calls 'loop start'
+                    function gen_path(f"loop/cache/{_LOOP_ID}_ent_cycle", internal=True)
+
+
+
+
+
+
+
+
+
+

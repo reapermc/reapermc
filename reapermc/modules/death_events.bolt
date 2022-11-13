@@ -1,0 +1,95 @@
+from copy import deepcopy
+from beet.contrib.vanilla import Vanilla
+from importlib.resources import read_text
+import json
+
+from ./spark import pretick
+from ./defer import defer
+from ./scoreboard import scoreboard
+from ./tag import tag
+from ./util import gen_path
+
+_PAYLOAD = json.loads(read_text("reapermc.resources", "death_events_payload.json"))
+_BIND_INDEX = -1
+
+_registered_events = set()
+_event_id_scb = scoreboard('reaper.death_events', _internal=True)
+
+
+
+def register_death_event(death_event):
+    global _BIND_INDEX
+
+    func_id = id(death_event)
+
+    if func_id not in _registered_events:
+        _registered_events.add(func_id)
+        _BIND_INDEX += 1
+
+        # function f"{_ROOT_PATH}/events/{_BIND_INDEX}":
+        function gen_path(f"death_events/{_BIND_INDEX}"):
+            death_event()
+
+
+    tag('reaper.death_event')
+    _event_id_scb['@s'] = _BIND_INDEX
+
+
+
+@pretick
+def _find_item_drop():
+    as @e[type=item] if data entity @s {Item:{tag:{reaper.death_event:1b}}} at @s:
+        execute function gen_path('death_events/get_item_info', internal=True):
+            store result score $find _event_id_scb:
+                data get entity @s Item.tag.AttributeModifiers[0].Amount
+
+            kill @s
+
+            function gen_path('death_events/find_event', internal=True)
+
+
+
+@defer
+def _generate_event_tree():
+    if _BIND_INDEX == -1:
+        return
+    
+    for node in generate_tree(range(_BIND_INDEX+1), root=gen_path('death_events/find_event', internal=True), key=int):
+        append function node.parent:
+            if node.partition(4):
+                execute if score $find _event_id_scb matches node.range run function node.children
+            else:
+                execute if score $find _event_id_scb matches node.value:
+                    function gen_path(f"death_events/{node.value}")
+                    # function f"{_ROOT_PATH}/events/{node.value}"
+
+
+@defer
+def _inject():
+    _inject_vanilla_tables()
+    _inject_custom_tables()
+
+
+
+def _inject_vanilla_tables():
+    vanilla_data = ctx.inject(Vanilla).mount("data/minecraft/loot_tables/entities").data
+    for table_id in vanilla_data.loot_tables.match("minecraft:entities/*"):
+        if not table_id.startswith('minecraft:entities/sheep/'):
+            table = deepcopy(vanilla_data.loot_tables[table_id])
+
+            if 'pools' not in table.data:
+                table.data['pools'] = []
+            
+            table.data['pools'].append(_PAYLOAD)
+            ctx.data[table_id] = table
+
+
+
+def _inject_custom_tables():
+    for name, contents in ctx.data.loot_tables.items():
+        if not name.startswith('minecraft:entities/'):
+            if 'pools' not in contents.data:
+                contents.data['pools'] = []
+
+            contents.data['pools'].append(_PAYLOAD)
+

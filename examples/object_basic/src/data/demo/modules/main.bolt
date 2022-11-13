@@ -1,0 +1,12 @@
+from reapermc:api import Object, summon
+
+
+
+
+
+
+function ./example:
+    summon sheep ~ ~ ~:
+        # say hello
+        stats = Object('stats')
+        stats = {'iq': 30}

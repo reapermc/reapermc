@@ -1,0 +1,13 @@
+from reapermc:api import get_time, set_time, scoreboard
+
+
+
+
+
+function ./example:
+    say hello
+
+    demo = scoreboard('demo')['$demo']
+
+    set_time(demo + 10)
+    demo = get_time()

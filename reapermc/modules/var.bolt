@@ -1,0 +1,53 @@
+from bolt_expressions import Data
+from ./scoreboard import scoreboard
+from ./spark import preload
+from ./defer import defer
+from ./util import gen_path
+
+
+_scb = scoreboard('reaper.var', _internal=True)
+_stge = Data.storage('reaper:var').data
+
+_scb_id = -1
+_stge_id = -1
+
+
+def var(var_type=None, default=None):
+    global _scb, _stge, _scb_id, _stge_id
+
+    if var_type == int:
+        _scb_id += 1
+        expr = _scb[f"${_scb_id}"]
+    else:
+        _stge_id += 1
+        expr = _stge[_stge_id].v
+
+    # default value support
+    if default is not None:
+        append function gen_path('var/init_defaults', internal=True):
+            if var_type == int:
+                unless score f"${_scb_id}" _scb = f"${_scb_id}" _scb:
+                    # scoreboard players set f"${_scb_id}" _scb default
+                    _scb[f"${_scb_id}"] = default
+            else:
+                _stge[_stge_id] = default
+
+    return expr
+
+
+@defer
+def _flush_memory():
+    global _stge
+
+    fresh_list = []
+    for _ in range(_stge_id + 1):
+        fresh_list.append({})
+
+    function gen_path('var/flush_memory', internal=True):
+        _stge = fresh_list
+
+
+@preload
+def _init():
+    function gen_path('var/flush_memory', internal=True)
+    function gen_path('var/init_defaults', internal=True)

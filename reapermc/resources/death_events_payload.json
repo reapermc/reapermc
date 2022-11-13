@@ -1,0 +1,40 @@
+{
+    "rolls": 1,
+    "entries": [
+        {
+            "type": "minecraft:item",
+            "name": "minecraft:nether_star",
+            "functions": [
+                {
+                    "function": "minecraft:set_attributes",
+                    "modifiers": [
+                        {
+                            "attribute": "minecraft:generic.luck",
+                            "name": "",
+                            "amount": {
+                                "type": "minecraft:score",
+                                "target": "this",
+                                "score": "reaper.death_events"
+                            },
+                            "operation": "addition",
+                            "slot": "feet"
+                        }
+                    ]
+                },
+                {
+                    "function": "minecraft:set_nbt",
+                    "tag": "{reaper.death_event: 1b}"
+                }
+            ],
+            "conditions": [
+                {
+                    "condition": "minecraft:entity_properties",
+                    "entity": "this",
+                    "predicate": {
+                        "nbt": "{Tags:[reaper.death_event]}"
+                    }
+                }
+            ]
+        }
+    ]
+}

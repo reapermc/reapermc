@@ -1,0 +1,10 @@
+from reapermc:api import var
+
+
+
+xd = var()
+intvar = var(int)
+
+function ./example:
+    xd = 10
+    intvar = 69
