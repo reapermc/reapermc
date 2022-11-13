@@ -1,0 +1,7 @@
+require:
+  - bolt
+  - reapermc
+data_pack:
+  load: "src"
+pipeline:
+  - mecha
