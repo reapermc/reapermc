@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "reapermc"
-version = "0.0.0"
+version = "0.1.0"
 description = "A high level framework for the Bolt scripting language."
 authors = ["Yeti <arcticyeti1@gmail.com>"]
 license = "MIT"
