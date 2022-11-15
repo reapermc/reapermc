@@ -1,0 +1,69 @@
+#   flags:
+#       - is_sneaking
+#       - is_sprinting
+#       - is_swimming
+#       - is_on_fire
+#       - is_baby
+#       - is_holding_{item}
+#       - is_holding_{item}_mainhand
+#       - is_holding_{item}_offhand
+#       - is_holding_{item}_offhand
+
+
+# from contextlib import contextmanager
+# from ./util import Rebindable, gen_path
+
+
+
+# class Flag(Rebindable):
+#     def __init__(self, name, invert=False):
+#         self.invert = invert
+#         self.name = name
+
+
+#     @contextmanager
+#     def __branch__(self):
+#         if self.invert:
+#             if entity @s:
+#                 yield True
+#         else:
+#             unless entity @s:
+#                 yield True
+
+#     def __not__(self):
+#         return Flag(self.name, invert=not self.invert)
+
+
+
+
+
+
+
+# def _create_predicate_flag(name):
+    
+#     predicate f"{gen_path('flag/', internal=True)}" {
+#         "condition": "minecraft:entity_properties",
+#         "entity": "this",
+#         "predicate": {
+#             "flags": {
+#                 "is_on_fire": True,
+#             }
+#         }
+#     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

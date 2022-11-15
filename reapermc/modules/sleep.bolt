@@ -76,7 +76,7 @@ def _flush_joining_player():
 
 
 @contextmanager
-def sleep(interval, selector='auto', threading=True, world_ctx=False):
+def sleep(interval, selector='auto', threading=True, world_ctx=True):
     _increment_sleep_id()
     error_caught = False
 
