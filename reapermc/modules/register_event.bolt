@@ -1,0 +1,61 @@
+#   events:
+#       - player_jump
+#       - player_land
+#       - player_sneak_start
+#       - player_sneak
+#       - player_sneak_end
+#       - player_sprint_start
+#       - player_sprint
+#       - player_sprint_end
+#       - player_swim_start
+#       - player_swim
+#       - player_swim_end
+
+#       - player_bow_idle
+#       - player_bow_shoot
+#       - player_bow_charging_start
+#       - player_bow_charging
+#       - player_bow_charging_end
+
+#       - player_ender_eye_idle
+#       - player_ender_eye_use_start
+#       - player_ender_eye_use
+#       - player_ender_eye_use_end
+
+#       - player_fungus_rod_idle
+#       - player_fungus_rod_use
+
+#       - player_carrot_rod_idle
+#       - player_carrot_rod_use
+
+#       - player_trident_idle
+#       - player_trident_shoot
+#       - player_trident_charging_start
+#       - player_trident_charging
+#       - player_trident_charging_end
+
+#       - player_shield_idle
+#       - player_shield_use_start
+#       - player_shield_use
+#       - player_shield_use_end
+
+#       - player_crossbow_idle
+#       - player_crossbow_shoot
+#       - player_crossbow_charging_start
+#       - player_crossbow_charging
+#       - player_crossbow_charging_end
+
+#       - player_use_shield
+#       - player_use_shield_end
+#       - player_use_crossbow
+#       - player_use_crossbow_charge
+#       - player_use_crossbow_charge_end
+
+
+
+
+
+
+# def register_event(event, func):
+#     pass
+
