@@ -1,42 +1,33 @@
-# from reapermc:api import tick, tag, untag, sleep
-
-
-# function ./egg_spawn: 
-#     give @s vindicator_spawn_egg{display:{Name:'{"text":"Bob Trap","color":"gold","italic":false}'},EntityTag:{id:"minecraft:marker",Tags:["kek.bobtrap"]}} 1
-
-# function ./egg_clear:
-#     give @s vindicator_spawn_egg{display:{Name:'{"text":"Bob Trap clear","color":"gold","italic":false}'},EntityTag:{id:"minecraft:marker",Tags:["kek.bobtrap.clear"]}} 1
+from reapermc:api import Flag
 
 
 
+function ./example:
+    if Flag('is_in_air'):
+        say in air
+    else:
+        say not in air
 
 
-# @tick
-# def on_tick():
-    
-#     as @e[type=marker, tag=kek.bobtrap] at @s:
-#         # indicator debug
-#         # particle flame
+    # if Flag('is_in_air'):
+    #     say <hello debug message>
 
-#         if entity @s[tag=!kek.bobtrap.cd]:
-#             positioned ~ ~1 ~ if entity @p[distance=..1.5] positioned ~ ~-1 ~:
-#                 setblock ~ ~ ~ air
-#                 tag('kek.bobtrap.cd')
-
-#                 summon minecraft:falling_block ~ ~ ~ {BlockState:{Name:"minecraft:crafting_table"}}
-
-#                 with sleep(60):
-#                     untag('kek.bobtrap.cd')
-#                     setblock ~ ~ ~ crafting_table
+    # if Flag('is_holding_netherite_block'):
+    #     say <hello debug message>
 
 
+    # if Flag('is_holding_netherite_block_offhand'):
+    #     say <hello debug message>
 
 
+    if Flag('is_holding_netherite_axe'):
+        tellraw @s {"text": "True", "color": "gold"}
+    else:
+        tellraw @s {"text": "False", "color": "gold"}
 
 
+    # if not Flag('is_in_air'):
+    #     say not in air
 
 
-#     as @e[type=marker, tag=kek.bobtrap.clear] at @s:
-#         kill @e[type=marker, tag=kek.bobtrap, distance=..0.20] 
-#         kill @s
 
