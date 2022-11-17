@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.0 (2022-11-17)
+### Feature
+* Added new feature Flag() ([`c110ba8`](https://github.com/reapermc/reapermc/commit/c110ba824fa55f3130ef0c3d61e94865e492cde3))
+* Added new feature Flag() ([`cb6871c`](https://github.com/reapermc/reapermc/commit/cb6871c8399493546b55ea9876f91f6eb6c29bd3))
+* Added new feature Flag() ([`130bcb9`](https://github.com/reapermc/reapermc/commit/130bcb94e80a443c9b567a2c386f02ccc95844b3))
+
 ## v0.1.3 (2022-11-15)
 ### Fix
 * Sleep() world_ctx default parameter is now correctly set to True ([`b135078`](https://github.com/reapermc/reapermc/commit/b13507805ea8cd7bfd687f0fb28c8b3fc5489fa0))
