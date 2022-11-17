@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.3 (2022-11-15)
+### Fix
+* Sleep() world_ctx default parameter is now correctly set to True ([`b135078`](https://github.com/reapermc/reapermc/commit/b13507805ea8cd7bfd687f0fb28c8b3fc5489fa0))
+
 ## v0.1.2 (2022-11-13)
 ### Fix
 * Readme actions badge link ([`00791dc`](https://github.com/reapermc/reapermc/commit/00791dc8c980b2ea43c6e8bcc2379ee6c0c48174))
