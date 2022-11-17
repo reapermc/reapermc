@@ -12,6 +12,9 @@ def defer(f):
         with runtime.scope() as commands:
             f()
         result = mc.compile(AstRoot(commands=AstChildren(commands)), report=mc.diagnostics)
-        ctx.data.functions.setdefault(current_path, Function()).append(result)
+
+        if result.lines:
+            ctx.data.functions.append(result)
+
     ctx.require(wrapper)
     return f
