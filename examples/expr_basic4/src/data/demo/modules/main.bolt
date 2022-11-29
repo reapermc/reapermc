@@ -1,0 +1,33 @@
+from reapermc:api import scoreboard, Data, Expr
+
+
+scb = scoreboard('scb')['@s']
+stge = Data.storage('stge:stge').stge
+
+function ./scb_lt_const:
+    if Expr(scb) < 69:
+        say 'scb < 69'
+    else:
+        say 'scb >= 69'
+
+function ./stge_eq_scb:
+    if Expr(stge) == scb:
+        say 'stge == scb'
+    else:
+        say 'stge != scb'
+
+function ./stge_eq_stge:
+    if Expr(stge) == stge:
+        say 'stge == stge'
+    else:
+        say 'stge != stge'
+
+
+function ./stge_eq_str:
+    if Expr(stge) == 'teststr':
+        say 'stge == teststr'
+    else:
+        say 'stge != teststr'
+
+
+

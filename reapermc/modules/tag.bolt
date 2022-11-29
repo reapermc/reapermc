@@ -3,12 +3,12 @@ from ./util import logger
 
 def tag(name):
     if ' ' in name:
-        return logger.error(f"Invalid 'tag()' name '{name}'")
+        return logger.error(f"Invalid 'tag()' name '{name}'.")
 
     tag @s add name
 
 def untag(name):
     if ' ' in name:
-        return logger.error(f"Invalid 'untag()' name '{name}'")
+        return logger.error(f"Invalid 'untag()' name '{name}'.")
 
     tag @s remove name

@@ -13,8 +13,8 @@ def defer(f):
             f()
         result = mc.compile(AstRoot(commands=AstChildren(commands)), report=mc.diagnostics)
 
-        # if result.lines:
-        #     ctx.data.functions.append(result)
+        if result.lines:
+            ctx.data.functions.append(result)
 
     ctx.require(wrapper)
     return f

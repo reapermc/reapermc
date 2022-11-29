@@ -1,0 +1,21 @@
+from reapermc:api import listener, on_server_load, on_server_tick, on_player_jump
+
+
+
+@listener(on_server_load)
+def _on_load():
+    say event_basic2 load
+
+
+
+# @listener(on_server_tick)
+# def _on_tick():
+#     say event_basic2 tick!
+
+
+
+@listener(on_player_jump)
+def _on_player_jump():
+    say <event_basic2> jumped!
+
+

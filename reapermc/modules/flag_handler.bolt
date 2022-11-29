@@ -1,0 +1,79 @@
+from contextlib import contextmanager
+from ./util import logger
+from ./var import var
+from ./expr import Expr
+
+
+class NewFlag:
+    gate = var(int)
+    created_flags = set()
+
+    def __init__(self, name):
+        if name in NewFlag.created_flags:
+            return logger.error(f"Conflicting flag name '{name}'. A flag with that name already exists.")
+
+        NewFlag.created_flags.add(name)
+
+        self.name = name
+        self.active = False
+        self.handler_ref = None
+        self.handler_path = generate_path(f"reaper_framework/event_handler/{self.name}")
+
+    def handler(self, f):
+        self.handler_ref = f
+
+        return f
+
+    @contextmanager
+    def set_condition(self):
+        gate = self.gate
+
+        function f"{self.handler_path}/__condition__":
+            store result score gate.holder gate.obj:
+                yield
+
+    def activate(self):
+        if not self.active:
+            self.active = True
+
+            f = self.handler_ref
+            f()
+
+    def generate_path(self, path):
+        return f"{self.handler_path}/{path}"
+    
+    def set_handler_path(self, path):
+        self.handler_path = path
+
+
+class Flag:
+    def __init__(self, flag, inverted=False, initialized=False, active=False):
+        self.flag = flag
+        self.active = False
+        self.inverted = inverted
+        self.initialized = initialized
+
+    @contextmanager
+    def __branch__(self):
+        if not self.active:
+            self.active = True
+            self.flag.activate()
+
+        if not self.initialized:
+            function f"{self.flag.handler_path}/__condition__"
+
+        if self.inverted:
+            if Expr(self.flag.gate) == 0:
+                yield True
+        else:       
+            if Expr(self.flag.gate) == 1:
+                yield True
+
+        self.initialized = True
+
+    def __not__(self):
+        return Flag(self.flag, not self.inverted, self.initialized, self.active)
+
+
+
+

@@ -11,6 +11,7 @@ def beet_default(ctx: Context):
         load(
             data_pack={"data/reapermc/modules": "@reapermc/modules"},
         ),
-        bolt(entrypoint=["*:main", "reapermc:reaper_cleanup"]),
+        bolt(entrypoint=["*:main", "reapermc:core"]),
         "bolt_expressions.plugin",
+        "reapermc.plugins.nbt_literals",
     )

@@ -1,0 +1,15 @@
+from ../event_handler import Event
+
+
+on_server_load = Event('on_server_load')
+on_server_load.set_handler_path(f"reaper_framework:__internal__/event_handler/on_server_load")
+
+
+@on_server_load.handler
+def handler():
+    load_path = on_server_load.generate_path('load') 
+
+    merge function_tag minecraft:load {"values": [load_path]}
+
+    function load_path:
+        on_server_load.trigger()

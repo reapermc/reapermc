@@ -1,108 +1,177 @@
 from contextlib import contextmanager
-from bolt_expressions import Data
-
-from ./util import SelectorServer, logger, gen_path, data_self
+from ./util import logger, SelectorServer, sys_col_hex, data_self
 from ./var import var
-from ./object import Object
-from ./spark import preload, prejoin
-from ./time import get_time
-from ./tag import tag, untag
-from ./score_check import ScoreCheck
-from ./better_summon import summon
 from ./scoreboard import scoreboard
+from ./summon import summon
+from ./tag import tag, untag
+from ./time import get_time
+from ./expr import Expr
+from ./entity_nbt import EntityNBT
 from ./defer import defer
+from ./event_handler import listener
+from ./event/on_player_join import on_player_join
+from ./event/on_server_load import on_server_load
 
 
-_SLEEP_ID = -1
+_CACHE_ID = -1
+_CACHE_PATH = ''
 _PAYLOAD_PATH = ''
 _FILTER_TAG = ''
-_CTX_MARKER_TAG = 'reaper.sleep.ctx'
-_DIM_ID_SCB = scoreboard('reaper.sleep.dim_id', _internal=True)
-_TMP_VAR = var()
+_CTX_MARKER_TAG = 'reaper_framework.sleep.ctx'
+
+_DIM_ID_SCB = scoreboard('reaper_framework.sleep.dim_id', _internal=True)
+_TMP = var()
+_TMP1 = var()
+_TMP_INT = var(int)
+_INITIALIZED = False
 
 
+def _increment_cache_id():
+    global _CACHE_ID, _CACHE_PATH, _PAYLOAD_PATH, _FILTER_TAG
+
+    _CACHE_ID += 1
+    _CACHE_PATH = generate_path(f"reaper_framework/__internal__/sleep/{_CACHE_ID}")
+    _PAYLOAD_PATH = generate_path(f"reaper_framework/sleep/{_CACHE_ID}")
+    _FILTER_TAG = f"{ctx.project_name}.reaper_framework.sleep.{_CACHE_ID}"
 
 
-def _increment_sleep_id():
-    global _SLEEP_ID, _PAYLOAD_PATH, _FILTER_TAG
+def _setup():
+    # caller: _create_ctx_marker()
+    function reaper_framework:__internal__/sleep/create_ctx_marker:
+        forceload add 69000 69000
+        
+        summon marker 69000 0 69000 {Tags:[_CTX_MARKER_TAG], CustomName: f"{{\"text\": \"reaper_framework.sleep.ctx\", \"color\": \"{sys_col_hex}\"}}"}:
+            _DIM_ID_SCB['@s'] = _DIM_ID_SCB['#i']
+        
+        _DIM_ID_SCB['#i'] += 1
 
-    _SLEEP_ID += 1
-    _PAYLOAD_PATH = gen_path(f"sleep/{_SLEEP_ID}")
-    _FILTER_TAG = f"reaper.sleep.{_SLEEP_ID}"
+    # caller: _get_world_ctx()
+    function reaper_framework:__internal__/sleep/get_world_ctx:
+        _TMP.remove()
+        
+        tp @s ~ ~ ~ ~ ~
+        _TMP.dim = _DIM_ID_SCB['@s']
+        _TMP.pos = data_self.Pos
+        _TMP.rot = data_self.Rotation
+        tp @s 69000 0 69000
+
+    # caller: _run_at_ctx():
+    function reaper_framework:__internal__/sleep/run_at_ctx:
+        target_tag = 'reaper_framework.sleep.ctx.target'
+
+        as @e[type=marker,tag=_CTX_MARKER_TAG] if score _TMP_INT.holder _TMP_INT.obj = @s _DIM_ID_SCB at @s:
+            execute function reaper_framework:__internal__/sleep/nested_run_at_ctx/0:
+                forceload add ~ ~
+                data_self.Pos = _TMP1.pos
+                data_self.Rotation = _TMP1.rot
+
+                tag(target_tag)
+
+    # caller: _run_at_ctx()
+    function reaper_framework:__internal__/sleep/run_at_ctx_1:
+        target_tag = 'reaper_framework.sleep.ctx.target'
+
+        as @e[type=marker,tag=target_tag] at @s:
+            execute function reaper_framework:__internal__/sleep/nested_run_at_ctx/1:
+                forceload remove ~ ~
+                untag(target_tag)
+                tp @s 69000 0 69000
+
+@listener(on_server_load)
+def _on_player_join():
+    as @a:
+        function reaper_framework:__internal__/sleep/reset_joining_player
 
 
-def _ensure_ctx_marker(prefix):
-    forceload add 69000 69000
-    unless entity @e[tag=_CTX_MARKER_TAG,x=0]:
-        execute function gen_path(f"sleep/{_SLEEP_ID}_{prefix}_ensure_ctx", internal=True):
-            summon marker 69000 0 69000 {Tags:[_CTX_MARKER_TAG] , CustomName:'{"text":"reaper.sleep.ctx","color":"#F06400"}'}:
-                _DIM_ID_SCB['@s'] = _DIM_ID_SCB['#i']
-
-            _DIM_ID_SCB['#i'] += 1
-
-
-def _get_full_context(prefix):
-    ctx = _TMP_VAR
-    ctx.remove()
-
-    _ensure_ctx_marker(prefix)
-    as @e[tag=_CTX_MARKER_TAG,x=0]:
-        execute function gen_path(f"sleep/{_SLEEP_ID}_{prefix}_get_ctx", internal=True):
-            tp @s ~ ~ ~ ~ ~
-            ctx.dim = _DIM_ID_SCB['@s']
-            ctx.pos = data_self.Pos
-            ctx.rot = data_self.Rotation
-            tp @s 69000 0 69000
-
-    return ctx
-
-
+@listener(on_player_join)
+def _on_player_join():
+    function reaper_framework:__internal__/sleep/reset_joining_player
 
 @defer
-def _flush_joining_player():
-    # counteracts all bugs that may happen when the player leaves before a sleep finished
-    sleep_root = Object('__internal__.reaper.sleep', ensure_entry=False)
+def _reset_joining_player():
+    # counteracts all bugs that may occur when the player leaves before a sleep finished
+    sleep_root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.sleep", ensure_entry=False)
+    tmp = var()
 
-    if _SLEEP_ID == -1:
+    if _CACHE_ID == -1:
         return
 
-    append function gen_path('sleep/onjoin_flush', internal=True):
-        if entity @s[tag=reaper.object.holder]:
-            execute function gen_path('sleep/onjoin_flush1', internal=True):
-                sleep_root.remove()
+    function reaper_framework:__internal__/sleep/reset_joining_player:
 
-                for n in range(_SLEEP_ID+1):
-                    untag(f"reaper.sleep.{n}")
+        if entity @s[tag=reaper_framework.entity_nbt.user]:
+            execute function reaper_framework:__internal__/sleep/reset_joining_player1:
+                sleep_root_nbt.remove()
+
+                for n in range(_CACHE_ID + 1):
+                    untag(f"{ctx.project_name}.reaper_framework.sleep.{n}")
+
+
+def _ensure_ctx_marker():
+    unless entity @e[tag=_CTX_MARKER_TAG,x=0]:
+        function reaper_framework:__internal__/sleep/create_ctx_marker
+
+
+def _get_world_ctx():
+    _ensure_ctx_marker()
+
+    as @e[tag=_CTX_MARKER_TAG,x=0]:
+        function reaper_framework:__internal__/sleep/get_world_ctx
+
+    return _TMP
+
+
+
+@contextmanager
+def _run_at_ctx(context):
+    global _TMP_INT, _TMP1
+
+    _TMP_INT = context.dim
+    _TMP1 = context
+
+    function reaper_framework:__internal__/sleep/run_at_ctx
+
+    at @e[type=marker,tag=reaper_framework.sleep.ctx.target,limit=1]:
+        execute function f"{_CACHE_PATH}/run_at_ctx":
+            function reaper_framework:__internal__/sleep/run_at_ctx_1
+
+            yield
+
 
 
 @contextmanager
 def sleep(interval, selector='auto', threading=True, world_ctx=True):
-    _increment_sleep_id()
+    global _INITIALIZED
+
+    if not _INITIALIZED:
+        _INITIALIZED = True
+        _setup()
+
+    _increment_cache_id()
     error_caught = False
 
+    
     if interval <= 0:
         error_caught = True
-        logger.error(f"Invalid 'sleep()' interval of {interval}. Has to be a positive integer starting at 1.")
+        logger.error(f"Invalid 'sleep()' interval of {interval}. Has to be a positive integer starting 1.")
 
     if selector not in ('auto', 's', 'e', 'server', 'entity'):
         error_caught = True
-        logger.error(f"Invalid 'sleep()' selector of '{selector}'. Valid selectors: ['s', 'e', 'server', 'entity']")
-
+        logger.error(f"Invalid 'sleep()' selector of '{selector}'. Valid options: ['s', 'e', 'server', 'entity']")
+    
     if error_caught:
         yield
         return
 
-
-    execute function gen_path(f"sleep/{_SLEEP_ID}_exec", internal=True):
-        if selector in ['server', 's']:
-            unless entity @s:
+    execute function f"{_CACHE_PATH}/sel":
+        if selector in ('server', 's'):
+            if SelectorServer():
                 if not threading:
                     _server(interval, world_ctx)
                 else:
                     _server_threading(interval, world_ctx)
 
-        elif selector in ['entity', 'e']:
-            if entity @s:
+        elif selector in ('entity', 'e'):
+            if not SelectorServer():
                 if not threading:
                     _entity(interval, world_ctx)
                 else:
@@ -120,12 +189,8 @@ def sleep(interval, selector='auto', threading=True, world_ctx=True):
                 else:
                     _entity_threading(interval, world_ctx)
 
-
     function _PAYLOAD_PATH:
         yield
-
-
-
 
 
 def _server(interval, world_ctx):
@@ -133,235 +198,159 @@ def _server(interval, world_ctx):
         schedule function _PAYLOAD_PATH interval replace
         return
 
-    execute function gen_path(f"sleep/{_SLEEP_ID}_srv_0", internal=True):
-        ctx = var()
-        tmp_int = var(int)
+    execute function f"{_CACHE_PATH}/s_0":
+        context = var()
 
-        ctx = _get_full_context('srv')           # dim, pos, rot
+        context = _get_world_ctx()           # dim, pos, rot
 
         # scheduled
-        schedule function gen_path(f"sleep/{_SLEEP_ID}_srv_sch", internal=True) interval replace:
-
-            # tp current dimension's id marker to ctx restoration point 
-            tmp_int = ctx.dim
-            as @e[tag=_CTX_MARKER_TAG] if score tmp_int.holder tmp_int.obj = @s _DIM_ID_SCB:
-                execute function gen_path(f"sleep/{_SLEEP_ID}_srv_1", internal=True):
-                    data_self.Pos = ctx.pos
-                    data_self.Rotation = ctx.rot
-
-                    tag('reaper.sleep.ctx.target')
-
-            # run at restored ctx
-            at @e[tag=reaper.sleep.ctx.target]:
-                execute function gen_path(f"sleep/{_SLEEP_ID}_srv_2", internal=True):
-                    as @e[tag=reaper.sleep.ctx.target]:
-                        execute function gen_path(f"sleep/{_SLEEP_ID}_srv_3", internal=True):
-                            untag('reaper.sleep.ctx.target')
-                            tp @s 69000 0 69000
-
-                    function _PAYLOAD_PATH
-
+        schedule function f"{_CACHE_PATH}/s_sch" interval replace:
+            with _run_at_ctx(context):
+                function _PAYLOAD_PATH
 
 
 def _server_threading(interval, world_ctx):
-    execute function gen_path(f"sleep/{_SLEEP_ID}_srv_0", internal=True):
+    execute function f"{_CACHE_PATH}/s_0":
+        ts_arr = var()
         ts = var(int)
         ts_next = var(int)
-        ts_arr = var()
-        tmp_int = var(int)
 
+        if world_ctx:
+            context = var()
+            ctx1 = var()
+            ctx_arr = var()
+            
+            ctx_arr.append(_get_world_ctx())
 
         ts_arr.append(get_time('gametime'))
 
-        if world_ctx:
-            ctx = var()
-            ctx_arr = var()
-
-            ctx_arr.append(_get_full_context('srv'))
-
-
         # scheduled
-        schedule function gen_path(f"sleep/{_SLEEP_ID}_srv_sch", internal=True) interval append:
+        schedule function f"{_CACHE_PATH}/s_sch" interval append:
             ts = ts_arr[0]
             ts_next = ts_arr[1]
             ts_arr[0].remove()
+
+            # recursion on tick overlap
+            if Expr(ts_next) == ts:
+                function f"{_CACHE_PATH}/s_sch"
 
             if not world_ctx:
                 function _PAYLOAD_PATH
 
             else:
-                ctx = ctx_arr[0]
+                ctx1 = ctx_arr[0]
                 ctx_arr[0].remove()
 
-                # tp current dimension's id marker to ctx restoration point 
-                tmp_int = ctx.dim
-                as @e[tag=_CTX_MARKER_TAG] if score tmp_int.holder tmp_int.obj = @s _DIM_ID_SCB:
-                    execute function gen_path(f"sleep/{_SLEEP_ID}_srv_1", internal=True):
-                        data_self.Pos = ctx.pos
-                        data_self.Rotation = ctx.rot
-
-                        tag('reaper.sleep.ctx.target')
-                    
-                # run at restored ctx
-                at @e[tag=reaper.sleep.ctx.target]:
-                    execute function gen_path(f"sleep/{_SLEEP_ID}_srv_2", internal=True):
-                        as @e[tag=reaper.sleep.ctx.target]:
-                            execute function gen_path(f"sleep/{_SLEEP_ID}_srv_3", internal=True):
-                                untag('reaper.sleep.ctx.target')
-                                tp @s 69000 0 69000
-
-                        function _PAYLOAD_PATH
-
-            
-            # recursion fix for tick overlap (schedule only runs 1x per tick)
-            if ScoreCheck(ts_next) == ts:
-                function gen_path(f"sleep/{_SLEEP_ID}_srv_sch", internal=True)
-
+                with _run_at_ctx(ctx1):
+                    function _PAYLOAD_PATH
 
 
 def _entity(interval, world_ctx):
-    execute function gen_path(f"sleep/{_SLEEP_ID}_ent_0", internal=True):
+    execute function f"{_CACHE_PATH}/e_0":
         ts = var(int)
         ts_target = var(int)
         tmp = var()
+        tmp1 = var()
         tmp_int = var(int)
-        root_object = Object(f"__internal__.reaper.sleep.{_SLEEP_ID}")
+        root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.sleep.{_CACHE_ID}")
 
         tmp.remove()
         tmp.ts = get_time('gametime')
 
         if world_ctx:
-            ctx = var()
-            
-            tmp.ctx = _get_full_context('ent')
+            context = var()
+            ctx1 = var()
 
-        root_object = tmp
+            tmp.ctx = _get_world_ctx()
+
+        root_nbt.set(tmp)
         tag(_FILTER_TAG)
 
         # scheduled
-        schedule function gen_path(f"sleep/{_SLEEP_ID}_ent_sch", internal=True) interval append:
+        schedule function f"{_CACHE_PATH}/e_sch" interval replace:
             ts_target = get_time('gametime')
             ts_target -= interval
 
-            # reduce entity range
+            # reduce entity search range
             as @e[tag=_FILTER_TAG]:
-                execute function gen_path(f"sleep/{_SLEEP_ID}_ent_1", internal=True):
-                    tmp = root_object.get()
-                    ts = tmp.ts
+                execute function f"{_CACHE_PATH}/e_sch_1":
+                    tmp1 = root_nbt.get()
+                    ts = tmp1.ts
 
                     # isolate entity
-                    if ScoreCheck(ts) == ts_target:
-                        execute function gen_path(f"sleep/{_SLEEP_ID}_ent_2", internal=True):
+                    if Expr(ts) == ts_target:
+                        execute function f"{_CACHE_PATH}/e_sch_2":
                             untag(_FILTER_TAG)
-                            root_object.remove()
+                            root_nbt.remove()
 
                             if not world_ctx:
                                 function _PAYLOAD_PATH
 
                             else:
-                                ctx = tmp.ctx
+                                ctx1 = tmp1.ctx
 
-                                # tp current dimension's id marker to ctx restoration point 
-                                tmp_int = ctx.dim
-                                as @e[tag=_CTX_MARKER_TAG] if score tmp_int.holder tmp_int.obj = @s _DIM_ID_SCB:
-                                    execute function gen_path(f"sleep/{_SLEEP_ID}_ent_3", internal=True):
-                                        data_self.Pos = ctx.pos
-                                        data_self.Rotation = ctx.rot
-
-                                        tag('reaper.sleep.ctx.target')
-
-
-                                # run at restored ctx
-                                at @e[tag=reaper.sleep.ctx.target]:
-                                    execute function gen_path(f"sleep/{_SLEEP_ID}_ent_4", internal=True):
-                                        as @e[tag=reaper.sleep.ctx.target]:
-                                            execute function gen_path(f"sleep/{_SLEEP_ID}_ent_5", internal=True):
-                                                untag('reaper.sleep.ctx.target')
-                                                tp @s 69000 0 69000
-
-                                        function _PAYLOAD_PATH
-
+                                with _run_at_ctx(ctx1):
+                                    function _PAYLOAD_PATH
 
 
 def _entity_threading(interval, world_ctx):
-    execute function gen_path(f"sleep/{_SLEEP_ID}_ent_0", internal=True):
+    execute function f"{_CACHE_PATH}/e_0":
         ts = var(int)
         ts_next = var(int)
         ts_target = var(int)
-        ctx = var()
         tmp = var()
-        sdata = var()
-        sdata_current = var()
-        sdata_count = var(int)
-        tmp_int = var(int)
-        root_object = Object(f"__internal__.reaper.sleep.{_SLEEP_ID}")
-
+        thread_current = var()
+        threads = var()
+        thread_current = var()
+        thread_count = var(int)
+        root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.sleep.{_CACHE_ID}")
 
         tmp.remove()
         tmp.ts = get_time('gametime')
 
         if world_ctx:
-            tmp.ctx = _get_full_context('ent')
+            context = var()
+            ctx1 = var()
+            tmp.ctx = _get_world_ctx()
 
-        root_object.append(tmp)
+        root_nbt.append(tmp)
         tag(_FILTER_TAG)
 
         # scheduled
-        schedule function gen_path(f"sleep/{_SLEEP_ID}_ent_sch", internal=True) interval append:
+        schedule function f"{_CACHE_PATH}/e_sch" interval append:
             ts_target = get_time('gametime')
             ts_target -= interval
 
-            # reduce entity range
+            # reduce entity search range
             as @e[tag=_FILTER_TAG]:
-                execute function gen_path(f"sleep/{_SLEEP_ID}_ent_1", internal=True):
-                    sdata = root_object.get()
-                    sdata_current = sdata[0]
-
-                    ts = sdata_current.ts
+                execute function f"{_CACHE_PATH}/e_sch_1":
+                    threads = root_nbt.get()
+                    thread_current = threads[0]
+                    ts = thread_current.ts
 
                     # isolate entity
-                    if ScoreCheck(ts) == ts_target:
-                        execute function gen_path(f"sleep/{_SLEEP_ID}_ent_2", internal=True):
-                            root_object.remove(0)
-                            sdata[0].remove()
-                            ts_next = sdata[0].ts
+                    if Expr(ts) == ts_target:
+                        execute function f"{_CACHE_PATH}/e_sch_2":
+                            root_nbt.remove(0)
+                            threads[0].remove()
+                            ts_next = threads[0].ts
 
+                            store result score thread_count.holder thread_count.obj run data get storage threads._target threads._path
 
-                            # sdata_count = sdata       ; wont work due to scale 1 bug at the end
-                            store result score sdata_count.holder sdata_count.obj run data get storage sdata._target sdata._path
-                            if ScoreCheck(sdata_count) == 0:
-                                execute function gen_path(f"sleep/{_SLEEP_ID}_ent_3", internal=True):
+                            if Expr(thread_count) == 0:
+                                execute function f"{_CACHE_PATH}/e_sch_3":
                                     untag(_FILTER_TAG)
-                                    root_object.remove()
-
+                                    root_nbt.remove()
 
                             if not world_ctx:
                                 function _PAYLOAD_PATH
 
                             else:
-                                ctx = sdata_current.ctx
+                                ctx1 = thread_current.ctx
 
-                                # tp current dimension's id marker to ctx restoration point 
-                                tmp_int = ctx.dim
-                                as @e[tag=_CTX_MARKER_TAG] if score tmp_int.holder tmp_int.obj = @s _DIM_ID_SCB:
-                                    execute function gen_path(f"sleep/{_SLEEP_ID}_ent_4", internal=True):
-                                        data_self.Pos = ctx.pos
-                                        data_self.Rotation = ctx.rot
+                                with _run_at_ctx(ctx1):
+                                    function _PAYLOAD_PATH
 
-                                        tag('reaper.sleep.ctx.target')
-
-
-                                # run at restored ctx
-                                at @e[tag=reaper.sleep.ctx.target]:
-                                    execute function gen_path(f"sleep/{_SLEEP_ID}_ent_5", internal=True):
-                                        as @e[tag=reaper.sleep.ctx.target]:
-                                            execute function gen_path(f"sleep/{_SLEEP_ID}_ent_6", internal=True):
-                                                untag('reaper.sleep.ctx.target')
-                                                tp @s 69000 0 69000
-
-                                        function _PAYLOAD_PATH
-
-
-                            # recursion fix for tick overlap (schedule only runs 1x per tick)
-                            if ScoreCheck(ts_next) == ts:
-                                function gen_path(f"sleep/{_SLEEP_ID}_ent_sch", internal=True)
+                            # recursion tick overlap fix
+                            if Expr(ts_next) == ts:
+                                function f"{_CACHE_PATH}/e_sch"

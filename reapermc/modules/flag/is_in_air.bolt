@@ -1,0 +1,19 @@
+from ../flag_handler import NewFlag
+
+
+is_in_air = NewFlag('is_in_air')
+is_in_air.set_handler_path(f"reaper_framework:__internal__/flag_handler/is_in_air")
+
+
+@is_in_air.handler
+def handler():
+    predicate is_in_air.generate_path('is_in_air') {
+        "condition": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+            "nbt": "{OnGround: 0b}"
+        }
+    }
+
+    with is_in_air.set_condition():
+        if predicate is_in_air.generate_path('is_in_air')

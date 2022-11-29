@@ -1,18 +1,18 @@
 from bolt_expressions import Data
 from ./scoreboard import scoreboard
-from ./spark import preload
+from ./event_handler import listener
+from ./event/on_server_load import on_server_load
 from ./defer import defer
-from ./util import gen_path
 
 
-_scb = scoreboard('reaper.var', _internal=True)
-_stge = Data.storage('reaper:var').data
+_scb = scoreboard(f"{ctx.project_name}.reaper_framework.var", _internal=True)
+_stge = Data.storage(f"{ctx.project_name}:reaper_framework.var").data
 
 _scb_id = -1
 _stge_id = -1
 
 
-def var(var_type=None, default=None):
+def var(var_type=None, default_value=None):
     global _scb, _stge, _scb_id, _stge_id
 
     if var_type == int:
@@ -22,15 +22,13 @@ def var(var_type=None, default=None):
         _stge_id += 1
         expr = _stge[_stge_id].v
 
-    # default value support
-    if default is not None:
-        append function gen_path('var/init_defaults', internal=True):
+    # default_value value support
+    if default_value is not None:
+        append function generate_path('reaper_framework/__internal__/var/init_defaults'):
             if var_type == int:
-                unless score f"${_scb_id}" _scb = f"${_scb_id}" _scb:
-                    # scoreboard players set f"${_scb_id}" _scb default
-                    _scb[f"${_scb_id}"] = default
+                _scb[f"${_scb_id}"] = default_value
             else:
-                _stge[_stge_id] = default
+                _stge[_stge_id] = default_value
 
     return expr
 
@@ -43,11 +41,24 @@ def _flush_memory():
     for _ in range(_stge_id + 1):
         fresh_list.append({})
 
-    function gen_path('var/flush_memory', internal=True):
+    function generate_path('reaper_framework/__internal__/var/flush_memory'):
         _stge = fresh_list
 
 
-@preload
+@defer
+def _create_vars():
+    global _stge
+
+    function generate_path('reaper_framework/var/u_n_i_n_s_t_a_l_l'):
+        _stge.remove()
+
+
+def uninstall_vars():
+    function generate_path('reaper_framework/var/u_n_i_n_s_t_a_l_l')
+
+
+
+@listener(on_server_load)
 def _init():
-    function gen_path('var/flush_memory', internal=True)
-    function gen_path('var/init_defaults', internal=True)
+    function generate_path('reaper_framework/__internal__/var/flush_memory')
+    function generate_path('reaper_framework/__internal__/var/init_defaults')

@@ -1,0 +1,28 @@
+from ../event_handler import Event, listener
+from ../scoreboard import scoreboard
+from ../expr import Expr
+from ./on_player_tick import on_player_tick
+
+on_player_join = Event('on_player_join')
+on_player_join.set_handler_path(f"reaper_framework:__internal__/event_handler/on_player_join")
+
+
+@on_player_join.handler
+def handler():
+    join_tracker = scoreboard('reaper_framework.event_handler.on_player_join', 'custom:leave_game', _internal=True)['@s']
+
+    @listener(on_player_tick)
+    def _on_player_tick():
+        nonlocal join_tracker
+
+        if Expr(join_tracker) == -1:
+            execute function on_player_join.generate_path('join'):
+                join_tracker = 0
+                on_player_join.trigger()
+
+        if Expr(join_tracker) >= 1:
+            join_tracker = -1
+
+
+
+

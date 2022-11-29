@@ -1,0 +1,15 @@
+from reapermc:api import summon, register_death_event
+
+
+
+
+def on_death():
+   summon pig:
+        register_death_event(on_death2)
+
+def on_death2():
+    summon chicken
+
+function ./test:
+    summon cow:
+        register_death_event(on_death)

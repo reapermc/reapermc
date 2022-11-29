@@ -1,0 +1,27 @@
+from ../event_handler import Event, listener
+from ../flag_handler import Flag
+from ../tag import tag, untag
+from ../flag/is_on_fire import is_on_fire
+from ./on_player_tick import on_player_tick
+
+
+on_player_burn_end = Event('on_player_burn_end')
+on_player_burn_end.set_handler_path(f"reaper_framework:__internal__/event_handler/on_player_burn_end")
+
+
+@on_player_burn_end.handler
+def handler():
+
+    @listener(on_player_tick)
+    def _on_player_tick():
+        available = 'reaper_framework.event_handler.on_player_burn_end.available'
+        
+        if Flag(is_on_fire):
+            tag(available)
+
+        else:
+            if entity @s[tag=available]:
+                execute function on_player_burn_end.generate_path('trigger'):
+                    untag(available)
+
+                    on_player_burn_end.trigger()

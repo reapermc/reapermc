@@ -1,0 +1,330 @@
+from contextlib import contextmanager
+from mecha import Mecha
+from ./util import Rebindable, is_expression, type_string
+from ./var import var
+
+mc = ctx.inject(Mecha)
+
+
+class Expr(Rebindable):
+    _tmp = var()
+    _tmp2 = var()
+    _tmp_int = var(int)
+    _tmp_int2 = var(int)
+
+    def __init__(self, expr, oper=None, val=None, inverted=False, initialized=False):
+        self.expr = expr
+        self.val = val
+        self.expr_type = type_string(expr)
+        self.val_type = type_string(val)
+        self.oper = oper
+        self.inverted = inverted
+        self.initialized = initialized
+
+        if inverted:
+            self._invert_oper()
+
+    @contextmanager
+    def __branch__(self):
+        e = self.expr
+        e_type = self.expr_type
+        v = self.val
+        v_type = self.val_type
+        oper = self.oper
+        initialized = self.initialized
+        tmp = self._tmp
+        tmp2 = self._tmp2
+        tmp_int = self._tmp_int
+        tmp_int2 = self._tmp_int2
+
+
+        if e_type == 'ScoreSource':
+            e_holder = mc.parse(self.expr.holder, using="score_holder", provide={"properties":{"amount":"single"}})
+            e_obj = self.expr.obj
+
+        elif e_type == 'DataSource':
+            e_path = self.expr._path
+            e_target = self.expr._target
+
+        if v_type == 'ScoreSource':
+            v_holder = mc.parse(self.val.holder, using="score_holder", provide={"properties":{"amount":"single"}})
+            v_obj = self.val.obj
+
+        elif v_type == 'DataSource':
+            v_path = self.val._path 
+            v_target = self.val._target
+
+
+        if oper == 'eq':
+            if e_type == 'ScoreSource':
+                if v_type == 'ScoreSource':
+                    if score e_holder e_obj = v_holder v_obj:
+                        yield True
+
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = v
+
+                    if score e_holder e_obj = tmp_int.holder tmp_int.obj:
+                        yield True
+
+                else:
+                    if score e_holder e_obj matches v:
+                        yield True
+
+            elif e_type == 'DataSource':
+                if v_type == 'ScoreSource':
+                    if not initialized:
+                        tmp_int = e
+
+                    if score tmp_int.holder tmp_int.obj = v_holder v_obj:
+                        yield True 
+
+                else:
+                    if not initialized:
+                        tmp = e
+
+                        store success score tmp_int.holder tmp_int.obj:
+                            tmp = v
+
+                    if score tmp_int.holder tmp_int.obj matches 0:
+                        yield True
+
+
+        elif oper == 'ne':
+            if e_type == 'ScoreSource':
+                if v_type == 'ScoreSource':
+                    unless score e_holder e_obj = v_holder v_obj:
+                        yield True
+                
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = v
+
+                    unless score e_holder e_obj = tmp_int.holder tmp_int.obj:
+                        yield True
+
+                else:
+                    unless score e_holder e_obj matches v:
+                        yield True
+
+            elif e_type == 'DataSource':
+                if v_type == 'ScoreSource':
+                    if not initialized:
+                        tmp_int = e
+
+                    unless score tmp_int.holder tmp_int.obj = v_holder v_obj:
+                        yield True 
+
+                else:
+                    if not initialized:
+                        tmp = e
+
+                        store success score tmp_int.holder tmp_int.obj:
+                            tmp = v
+
+                    unless score tmp_int.holder tmp_int.obj matches 0:
+                        yield True
+
+
+        elif oper == 'lt':
+            if e_type == 'ScoreSource':
+                if v_type == 'ScoreSource':
+                    if score e_holder e_obj < v_holder v_obj:
+                        yield True
+
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = v
+
+                    if score e_holder e_obj < tmp_int.holder tmp_int.obj:
+                        yield True
+
+                else:
+                    unless score e_holder e_obj matches (v, None):
+                        yield True
+
+            elif e_type == 'DataSource':
+                if v_type == 'ScoreSource':
+                    if not initialized:
+                        tmp_int = e
+
+                    if score tmp_int.holder tmp_int.obj < v_holder v_obj:
+                        yield True
+
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = e
+                        tmp_int2 = v
+
+                    if score tmp_int.holder tmp_int.obj < tmp_int2.holder tmp_int2.obj:
+                        yield True
+
+                else:
+                    if not initialized:
+                        tmp_int = e
+
+                    unless score tmp_int.holder tmp_int.obj matches (v, None):
+                        yield True
+
+        elif oper == 'gt':
+            if e_type == 'ScoreSource':
+                if v_type == 'ScoreSource':
+                    if score e_holder e_obj > v_holder v_obj:
+                        yield True
+
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = v
+
+                    if score e_holder e_obj > tmp_int.holder tmp_int.obj:
+                        yield True
+
+                else:
+                    unless score e_holder e_obj matches (None, v):
+                        yield True
+
+            elif e_type == 'DataSource':
+                if v_type == 'ScoreSource':
+                    if not initialized:
+                        tmp_int = e
+
+                    if score tmp_int.holder tmp_int.obj > v_holder v_obj:
+                        yield True
+
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = e
+                        tmp_int2 = v
+
+                    if score tmp_int.holder tmp_int.obj > tmp_int2.holder tmp_int2.obj:
+                        yield True
+
+                else:
+                    if not initialized:
+                        tmp_int = e
+
+                    unless score tmp_int.holder tmp_int.obj matches (None, v):
+                        yield True
+            
+
+        elif oper == 'le':
+            if e_type == 'ScoreSource':
+                if v_type == 'ScoreSource':
+                    if score e_holder e_obj <= v_holder v_obj: 
+                        yield True
+                
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = v
+
+                    if score e_holder e_obj <= tmp_int.holder tmp_int.obj:
+                        yield True
+
+                else:
+                    if score e_holder e_obj matches (None, v):
+                        yield True
+
+            elif e_type == 'DataSource':
+                if v_type == 'ScoreSource':
+                    if not initialized:
+                        tmp_int = e
+
+                    if score tmp_int.holder tmp_int.obj <= v_holder v_obj:
+                        yield True
+            
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = e
+                        tmp_int2 = v
+
+                    if score tmp_int.holder tmp_int.obj <= tmp_int2.holder tmp_int2.obj:
+                        yield True
+
+                else:
+                    if not initialized:
+                        tmp_int = e
+
+                    if score tmp_int.holder tmp_int.obj matches (None, v):
+                        yield True
+
+
+        elif oper == 'ge':
+            if e_type == 'ScoreSource':
+                if v_type == 'ScoreSource':
+                    if score e_holder e_obj >= v_holder v_obj: 
+                        yield True
+                
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = v
+
+                    if score e_holder e_obj >= tmp_int.holder tmp_int.obj:
+                        yield True
+
+                else:
+                    if score e_holder e_obj matches (v, None):
+                        yield True
+
+            elif e_type == 'DataSource':
+                if v_type == 'ScoreSource':
+                    if not initialized:
+                        tmp_int = e
+
+                    if score tmp_int.holder tmp_int.obj >= v_holder v_obj:
+                        yield True
+            
+                elif v_type == 'DataSource':
+                    if not initialized:
+                        tmp_int = e
+                        tmp_int2 = v
+
+                    if score tmp_int.holder tmp_int.obj >= tmp_int2.holder tmp_int2.obj:
+                        yield True
+
+                else:
+                    if not initialized:
+                        tmp_int = e
+
+                    if score tmp_int.holder tmp_int.obj matches (v, None):
+                        yield True
+
+        self.initialized = True
+
+
+    def __eq__(self, other):
+        return Expr(self.expr, 'eq', other)
+
+    def __ne__(self, other):
+        return Expr(self.expr, 'ne', other)
+
+    def __lt__(self, other):
+        return Expr(self.expr, 'lt', other)
+
+    def __gt__(self, other):
+        return Expr(self.expr, 'gt', other)
+
+    def __le__(self, other):
+        return Expr(self.expr, 'le', other)
+
+    def __ge__(self, other):
+        return Expr(self.expr, 'ge', other)
+
+    def __not__(self):
+        return Expr(self.expr, self.oper, self.val, not self.inverted, self.initialized)
+
+    def _invert_oper(self):
+        oper = self.oper
+
+        if oper == 'eq':
+            self.oper = 'ne'
+        elif oper == 'ne':
+            self.oper = 'eq'
+        elif oper == 'lt':
+            self.oper = 'ge'
+        elif oper == 'gt':
+            self.oper = 'le'
+        elif oper == 'le':
+            self.oper = 'gt'
+        elif oper == 'ge':
+            self.oper = 'lt'

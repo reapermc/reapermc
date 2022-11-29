@@ -1,0 +1,21 @@
+from ../flag_handler import NewFlag
+
+
+is_sneaking = NewFlag('is_sneaking')
+is_sneaking.set_handler_path(f"reaper_framework:__internal__/flag_handler/is_sneaking")
+
+
+@is_sneaking.handler
+def handler():
+    predicate is_sneaking.generate_path('is_sneaking') {
+        "condition": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+            "flags": {
+                "is_sneaking": true
+            }
+        }
+    }
+
+    with is_sneaking.set_condition():
+        if predicate is_sneaking.generate_path('is_sneaking')

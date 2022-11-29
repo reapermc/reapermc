@@ -1,0 +1,21 @@
+from ../event_handler import Event, listener
+from ./on_server_load import on_server_load
+
+
+on_server_tick = Event('on_server_tick')
+on_server_tick.set_handler_path(f"reaper_framework:__internal__/event_handler/on_server_tick")
+
+
+@on_server_tick.handler
+def handler():
+    tick_path = on_server_tick.generate_path('tick')
+
+    @listener(on_server_load)
+    def _on_server_load():
+        function tick_path
+
+
+    function tick_path:
+        schedule function tick_path 1
+
+        on_server_tick.trigger()

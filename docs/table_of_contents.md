@@ -1,48 +1,38 @@
 # Table of Contents
 
-## Command Overrides
-- [summon](funcs/summon.md)
+## Overrides
+- [summon](contents/summon.md)
 
 
-## Pythonized Commands
-- [get_time()](funcs/get_time.md)
-- [set_time()](funcs/set_time.md)
-- [tag()](funcs/tag.md)
-- [untag()](funcs/untag.md)
+## Commandlike
+
+- [get_time](contents/get_time.md)
+- [set_time](contents/set_time.md)
+- [tag](contents/tag.md)
+- [untag](contents/untag.md)
+- [effect](contents/effect.md)
+- [effect_raw](contents/effect_raw.md)
 
 
 ## Data Management
-- [scoreboard()](funcs/scoreboard.md)
-- [var()](funcs/var.md)
-- [Object()](funcs/Object.md)
+- [scoreboard](contents/scoreboard.md)
+- [var](contents/var.md)
+- [Data](contents/Data.md)
+- [EntityNBT](contents/EntityNBT.md)
 
 
 ## Flow Control
-- [sleep()](funcs/sleep.md)
-- [loop()](funcs/loop.md)
-- [loop_cycle](funcs/loop_cycle.md)
-- [loop_break()](funcs/loop_break.md)
-- [register_death_event()](funcs/register_death_event.md)
-- [ScoreCheck()](funcs/ScoreCheck.md)
-
-
-## Misc
-- [@defer](funcs/defer.md)
-- [@load](funcs/load.md)
-- [@tick](funcs/tick.md)
-- [@join](funcs/join.md)
-- [@preload](funcs/preload.md)
-- [@postload](funcs/postload.md)
-- [@pretick](funcs/pretick.md)
-- [@posttick](funcs/posttick.md)
-- [@prejoin](funcs/prejoin.md)
-- [@postjoin](funcs/postjoin.md)
-- [Flag()](funcs/flag.md)
+- [sleep](contents/sleep.md)
+- [loop](contents/loop.md)
+- [loop_cycle](contents/loop_cycle.md)
+- [loop_break](contents/loop_break.md)
+- [register_death_event](contents/register_death_event.md)
+- [Expr](contents/Expr.md)
+- [listener](contents/listener.md)
+- [Flag](contents/flag.md)
 
 
 
-
-
-
-
+## Other
+- [@defer](contents/defer.md)
 

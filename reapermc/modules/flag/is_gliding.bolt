@@ -1,0 +1,19 @@
+from ../flag_handler import NewFlag
+
+
+is_gliding = NewFlag('is_gliding')
+is_gliding.set_handler_path(f"reaper_framework:__internal__/flag_handler/is_gliding")
+
+
+@is_gliding.handler
+def handler():
+    predicate is_gliding.generate_path('is_gliding') {
+        "condition": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+            "nbt": "{FallFlying: 1b}"
+        }
+    }
+
+    with is_gliding.set_condition():
+        if predicate is_gliding.generate_path('is_gliding')

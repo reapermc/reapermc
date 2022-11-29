@@ -1,11 +1,12 @@
 import logging
 from bolt_expressions.node import ExpressionNode
-import bolt_expressions as bolt_expressions
+import bolt_expressions
 from contextlib import contextmanager
 
 
-logger = logging.getLogger("reaper")
+logger = logging.getLogger("reapermc")
 data_self = bolt_expressions.Data.entity('@s')
+sys_col_hex = '#bf0000'
 
 
 def print_data(expr, color='yellow'):
@@ -15,14 +16,40 @@ def print_score(expr, color='yellow'):
     tellraw @a {"score": {"name":f"{expr.holder}","objective":f"{expr.obj}"}, "color": color}
 
 
-def gen_path(path, internal=False):
-    if internal:
-        return generate_path(f"reaper_framework/__internal__/{path}")
-    else:
-        return generate_path(f"reaper_framework/{path}")
+def generate_local_path(path, tag=False):
+    full_path = generate_path(f"reaper_framework/{path}")
+
+    if tag:
+        full_path = f"#{full_path}"
+
+    return full_path
+
+
+def generate_global_path(path, tag=False):
+    full_path = f"reaper_framework:{path}"
+
+    if tag:
+        full_path = f"#{full_path}"
+
+    return full_path
+
+
 
 def is_expression(value):
     return isinstance(value, ExpressionNode)
+
+def expression_type(expression):
+    out = expression.__class__.__name__
+    
+    if out not in ('ScoreSource', 'DataSource'):
+        out = None
+
+    return out
+
+
+
+def type_string(value):
+    return value.__class__.__name__
 
 
 def binary_progression(size):
@@ -111,7 +138,7 @@ class SelectorUndead:
     def __init__(self, invert=False):
         self.invert = invert
 
-        merge entity_type_tag gen_path('misc/undead_entities', internal=True) {
+        merge entity_type_tag generate_local_path('__internal__/misc/undead_entities') {
             "values": [
                 "minecraft:skeleton",
                 "minecraft:stray",
@@ -132,19 +159,14 @@ class SelectorUndead:
     @contextmanager
     def __branch__(self):
         if self.invert:
-            unless entity @s[type=f"#{gen_path('misc/undead_entities', internal=True)}"]:
+            unless entity @s[type=f"#{generate_local_path('__internal__/misc/undead_entities')}"]:
                 yield True
         else:
-            if entity @s[type=f"#{gen_path('misc/undead_entities', internal=True)}"]:
+            if entity @s[type=f"#{generate_local_path('__internal__/misc/undead_entities')}"]:
                 yield True
 
     def __not__(self):
         return SelectorUndead(invert=not self.invert)
-
-
-
-def arr_len():
-    return
 
 
 def get_dict_key(dict, val):

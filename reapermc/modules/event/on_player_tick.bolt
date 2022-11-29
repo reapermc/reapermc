@@ -1,0 +1,15 @@
+from ../event_handler import Event, listener
+from ../flag_handler import Flag
+from ./on_server_tick import on_server_tick
+
+on_player_tick = Event('on_player_tick')
+on_player_tick.set_handler_path(f"reaper_framework:__internal__/event_handler/on_player_tick")
+
+
+@on_player_tick.handler
+def handler():
+
+    @listener(on_server_tick)
+    def _on_server_tick():
+        as @a at @s:
+            on_player_tick.trigger()
