@@ -17,7 +17,6 @@
 ## Data Management
 - [scoreboard](contents/scoreboard.md)
 - [var](contents/var.md)
-- [Data](contents/Data.md)
 - [EntityNBT](contents/EntityNBT.md)
 
 
