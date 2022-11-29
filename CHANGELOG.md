@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2022-11-29)
+### Feature
+* Major  release ([`5b90c57`](https://github.com/reapermc/reapermc/commit/5b90c57c0a2e04dd0424bf7e3b29cebc0abb52fb))
+
+### Breaking
+* major release  ([`5b90c57`](https://github.com/reapermc/reapermc/commit/5b90c57c0a2e04dd0424bf7e3b29cebc0abb52fb))
+
 ## v0.3.0 (2022-11-29)
 ### Feature
 * V2 release ([`6e4805d`](https://github.com/reapermc/reapermc/commit/6e4805da3c5d1cc371f40aa70abbec6cbfcde223))
