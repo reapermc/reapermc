@@ -1,6 +1,0 @@
-from reapermc:api import load
-
-
-@load
-def on_load():
-    say Loaded!

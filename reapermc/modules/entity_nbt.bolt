@@ -1,0 +1,169 @@
+from bolt_expressions import Data
+from importlib.resources import read_text
+from nbtlib import Path
+from copy import deepcopy
+from contextlib import contextmanager
+from beet.contrib.vanilla import Vanilla
+import fnmatch
+import json
+
+from ./util import SelectorServer, Rebindable, sys_col_hex
+from ./scoreboard import scoreboard
+from ./var import var
+from ./expr import Expr
+from ./summon import summon
+from ./event_handler import listener
+from ./event/on_server_tick import on_server_tick
+from ./defer import defer
+from ./tag import tag
+
+_user_id = scoreboard('reaper_framework.entity_nbt.user', _internal=True)
+_cloud_id = scoreboard('reaper_framework.entity_nbt.cloud', _internal=True)
+
+_user_tag = 'reaper_framework.entity_nbt.user'
+_cloud_tag = 'reaper_framework.entity_nbt.cloud'
+_cloud_data = Data.entity('@s').data
+
+
+class EntityNBT(Rebindable):
+    _initialized = False
+    _tmp = var()
+    _tmp_int = var(int)
+    _cache_index = -1
+    
+    def __init__(self, path, ensure_entry=True):
+        self.path = Path(path)
+
+        if ensure_entry:
+            if entity @s[type=!marker,tag=!_user_tag]:
+                if EntityNBT._initialized:
+                    function f"reaper_framework:__internal__/entity_nbt/ensure_entry"
+                else:
+                    EntityNBT._initialized = True
+                    _setup()
+                    
+                    execute function f"reaper_framework:__internal__/entity_nbt/ensure_entry":
+                        tag(_user_tag)
+                        forceload add 69000 69000
+                        
+                        custom_name = json.dumps({"text": "reaper_framework.entity_nbt.cloud", "color": sys_col_hex})
+
+                        _user_id['@s'] = _cloud_id['#i']
+                        summon marker 69000 0 69000 {Tags: [_cloud_tag], CustomName: custom_name}:
+                            _cloud_id['@s'] = _cloud_id['#i']
+                            _cloud_id['#i'] += 1
+
+    def get(self, index=None):
+        with self._cloud_selector('get'):
+            if index is None:
+                self._tmp = _cloud_data[self.path]
+            else:
+                self._tmp = _cloud_data[self.path][index]
+
+        return self._tmp
+
+    def set(self, value, index=None):
+        with self._cloud_selector('set'):
+            if index is None:
+                _cloud_data[self.path] = value
+            else:
+                _cloud_data[self.path][index] = value
+
+    def merge(self, value):
+        with self._cloud_selector('merge'):
+            _cloud_data[self.path].merge(value)
+
+    def append(self, value):
+        with self._cloud_selector('append'):
+            _cloud_data[self.path].append(value)
+
+    def prepend(self, value):
+        with self._cloud_selector('prepend'):
+            _cloud_data[self.path].prepend(value)
+
+    def insert(self, index, value):
+        with self._cloud_selector('insert'):
+            _cloud_data[self.path].insert(index, value)
+    
+    def remove(self, index=None):
+        with self._cloud_selector('remove'):
+            if index is None:
+                _cloud_data[self.path].remove()
+            else:
+                _cloud_data[self.path][index].remove()
+
+    @contextmanager
+    def _cloud_selector(self, method_name):
+        if not SelectorServer():
+            EntityNBT._cache_index += 1
+
+            execute function generate_path(f"reaper_framework/__internal__/entity_nbt/{self._cache_index}_{method_name}"):
+                if entity @s[type=!marker]:
+                    execute function generate_path(f"reaper_framework/__internal__/entity_nbt/{self._cache_index}_{method_name}_nm"):
+                        self._tmp_int = _user_id['@s']
+
+                        at @s as @e[type=marker, tag=_cloud_tag]:
+                            if Expr(self._tmp_int) == _cloud_id['@s']:
+                                function generate_path(f"reaper_framework/__internal__/entity_nbt/{self._cache_index}_{method_name}_p")
+
+                if entity @s[type=marker]:
+                    function generate_path(f"reaper_framework/__internal__/entity_nbt/{self._cache_index}_{method_name}_p")
+
+            function generate_path(f"reaper_framework/__internal__/entity_nbt/{self._cache_index}_{method_name}_p"):
+                yield
+
+
+def _setup():
+    @listener(on_server_tick)
+    def _garbage_collector():
+        dropped_id = Data.entity('@s').Item.tag.AttributeModifiers[0].Amount
+        tmp = var(int)
+
+        as @e[type=item, nbt={Item:{tag:{reaper_framework.entity_nbt.death_cleanup: 1b}}}]:
+            execute function reaper_framework:__internal__/entity_nbt/garbage_collector:
+                tmp = dropped_id
+                kill @s
+                as @e[type=marker, tag=_cloud_tag]:
+                    if Expr(_cloud_id['@s']) == tmp:
+                        kill @s
+
+    @defer
+    def _inject_loot_tables():
+        payload = json.loads(read_text("reapermc.resources", "entity_nbt_payload.json"))
+        vanilla = ctx.inject(Vanilla).mount("data/minecraft/loot_tables/entities")
+
+        _generate_vanilla_tables(vanilla)
+        _inject_tables(payload)
+
+    def _generate_vanilla_tables(vanilla):
+        exclude_list = ['minecraft:entities/player']
+
+        for name in vanilla.data.loot_tables.match('minecraft:entities/*'):
+            if name in exclude_list or name in ctx.data.loot_tables:
+                continue
+
+            table = deepcopy(vanilla.data.loot_tables[name])
+
+            if 'reapermc' in ctx.meta and ctx.meta.reapermc.doMobLoot == False:
+                table.data = {"type": "minecraft:entity"}
+
+            ctx.data[name] = table
+
+    def _inject_tables(payload):
+        exclude_list = ['minecraft:entities/player', "minecraft:entities/sheep/*"]
+
+        for name, contents in ctx.data.loot_tables.items():
+            skip = False
+
+            for n in exclude_list:
+                if fnmatch.fnmatch(name, n):
+                    skip = True
+                    continue
+
+            if skip:
+                continue
+
+            if 'pools' not in contents.data:
+                contents.data['pools'] = []
+
+            contents.data['pools'].append(payload)

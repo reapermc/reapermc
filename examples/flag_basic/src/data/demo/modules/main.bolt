@@ -1,33 +1,19 @@
-from reapermc:api import Flag
+from reapermc:api import Flag, is_in_air, is_sneaking
 
 
 
-function ./example:
-    if Flag('is_in_air'):
-        say in air
+function ./test_in_air:
+    if Flag(is_in_air):
+        say 'in air!'
     else:
-        say not in air
+        say 'on ground!'
 
 
-    # if Flag('is_in_air'):
-    #     say <hello debug message>
-
-    # if Flag('is_holding_netherite_block'):
-    #     say <hello debug message>
-
-
-    # if Flag('is_holding_netherite_block_offhand'):
-    #     say <hello debug message>
-
-
-    if Flag('is_holding_netherite_axe'):
-        tellraw @s {"text": "True", "color": "gold"}
+function ./test_sneaking:
+    if Flag(is_sneaking):
+        say 'true'
     else:
-        tellraw @s {"text": "False", "color": "gold"}
-
-
-    # if not Flag('is_in_air'):
-    #     say not in air
+        say 'false'
 
 
 

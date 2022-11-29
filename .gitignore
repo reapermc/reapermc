@@ -12,3 +12,5 @@ dist/
 # Cache
 .beet_cache/
 .pytest_cache/
+
+.v0.2.0 src/*

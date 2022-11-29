@@ -1,0 +1,25 @@
+from ../event_handler import Event, listener
+from ../flag_handler import Flag
+from ../tag import tag, untag
+from ../flag/is_swimming import is_swimming
+from ./on_player_tick import on_player_tick
+
+
+on_player_swim_start = Event('on_player_swim_start')
+on_player_swim_start.set_handler_path(f"reaper_framework:__internal__/event_handler/on_player_swim_start")
+
+
+@on_player_swim_start.handler
+def handler():
+
+    @listener(on_player_tick)
+    def _on_player_tick():
+        triggered = 'reaper_framework.event_handler.on_player_swim_start.triggered'
+        
+        if Flag(is_swimming):
+            if entity @s[tag=!triggered]:
+                execute function on_player_swim_start.generate_path('trigger'):
+                    tag(triggered)
+                    on_player_swim_start.trigger()
+        else:
+            untag(triggered)

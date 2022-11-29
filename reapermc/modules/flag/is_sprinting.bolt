@@ -1,0 +1,21 @@
+from ../flag_handler import NewFlag
+
+
+is_sprinting = NewFlag('is_sprinting')
+is_sprinting.set_handler_path(f"reaper_framework:__internal__/flag_handler/is_sprinting")
+
+
+@is_sprinting.handler
+def handler():
+    predicate is_sprinting.generate_path('is_sprinting') {
+        "condition": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+            "flags": {
+                "is_sprinting": true
+            }
+        }
+    }
+
+    with is_sprinting.set_condition():
+        if predicate is_sprinting.generate_path('is_sprinting')

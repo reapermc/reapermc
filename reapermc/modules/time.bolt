@@ -1,5 +1,5 @@
 from ./var import var
-from ./util import gen_path, logger, is_expression, binary_progression
+from ./util import logger, is_expression, binary_progression
 
 
 _tmp = var(int)
@@ -33,13 +33,13 @@ def set_time(value):
         gp_prog = binary_progression(16)
         gp_prog.reverse()
 
-        execute function gen_path('set_time/start', internal=True):
+        execute function generate_path('reaper_framework/__internal__/set_time/start'):
             time set 0
             
             for v in gp_prog:
                 if score tmp.holder tmp.obj matches (v, None):
                     # p_0 = ./set_time
-                    p_0 = gen_path('set_time', internal=True)
+                    p_0 = generate_path('reaper_framework/__internal__/set_time')
                     p_full = f"{p_0}/{v}"
                     
                     execute function p_full:

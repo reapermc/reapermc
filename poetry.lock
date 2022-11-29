@@ -14,7 +14,7 @@ tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy 
 
 [[package]]
 name = "beet"
-version = "0.79.2"
+version = "0.80.1"
 description = "The Minecraft pack development kit"
 category = "main"
 optional = false
@@ -73,28 +73,28 @@ dev = ["Sphinx (==4.3.2)", "black (==22.3.0)", "build (==0.8.0)", "flake8 (==4.0
 
 [[package]]
 name = "bolt"
-version = "0.20.1"
+version = "0.21.0"
 description = "Supercharge Minecraft commands with Python"
 category = "main"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = ">=3.10,<4.0"
 
 [package.dependencies]
-beet = ">=0.79.0"
-mecha = ">=0.57.4"
+beet = ">=0.80.1"
+mecha = ">=0.61.0"
 
 [[package]]
 name = "bolt-expressions"
-version = "0.9.0"
+version = "0.11.0"
 description = "Provides pandas-like expressions capabilities to the bolt extension of mecha"
 category = "main"
 optional = false
-python-versions = ">=3.9,<4.0"
+python-versions = ">=3.10,<4.0"
 
 [package.dependencies]
 beet = ">=0.55.0"
 bolt = ">=0.17.7"
-mecha = ">=0.48.1"
+mecha = ">=0.59.2"
 nbtlib = "1.12.1"
 
 [[package]]
@@ -405,14 +405,14 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "mecha"
-version = "0.58.1"
+version = "0.61.0"
 description = "A powerful Minecraft command library"
 category = "main"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = ">=3.10,<4.0"
 
 [package.dependencies]
-beet = ">=0.79.0"
+beet = ">=0.80.1"
 tokenstream = ">=1.4.2,<2.0.0"
 
 [[package]]
@@ -865,7 +865,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "2da256f28c53b25b7a332085f7eb16297c43f71823143908dcfa44aca4e28bf1"
+content-hash = "58fa3d4eb06cd75dca9310118486a5f43a92f523e907227ad05dcd5d11669d94"
 
 [metadata.files]
 attrs = [
@@ -873,8 +873,8 @@ attrs = [
     {file = "attrs-22.1.0.tar.gz", hash = "sha256:29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6"},
 ]
 beet = [
-    {file = "beet-0.79.2-py3-none-any.whl", hash = "sha256:f02e1d14cda88d5c25e84df483aba169a60687e63d1365ff5e0c65a9cfb656da"},
-    {file = "beet-0.79.2.tar.gz", hash = "sha256:ed683d68411b27e639ffd762d5c6a06cd09a040f1e441d6f6f6337b94cec6442"},
+    {file = "beet-0.80.1-py3-none-any.whl", hash = "sha256:499ffc70888afd0a81a41ba432dcbd5a7c08c016b9476b0e587624476fd0e17f"},
+    {file = "beet-0.80.1.tar.gz", hash = "sha256:4ccda72bef9ccfffc34dbefe8ec479852f1ed6e3da459feadaf71d0ddfefb530"},
 ]
 black = [
     {file = "black-22.10.0-1fixedarch-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:5cc42ca67989e9c3cf859e84c2bf014f6633db63d1cbdf8fdb666dcd9e77e3fa"},
@@ -904,12 +904,12 @@ bleach = [
     {file = "bleach-5.0.1.tar.gz", hash = "sha256:0d03255c47eb9bd2f26aa9bb7f2107732e7e8fe195ca2f64709fcf3b0a4a085c"},
 ]
 bolt = [
-    {file = "bolt-0.20.1-py3-none-any.whl", hash = "sha256:6965b1184710c3e711b9e6e486bba0f498d160692c294870ec5840306a0571b4"},
-    {file = "bolt-0.20.1.tar.gz", hash = "sha256:4a466f963ac9e4743a1d4b1c2a13416e9b31dcdbdcfd91dc3f9d7965fb5a951c"},
+    {file = "bolt-0.21.0-py3-none-any.whl", hash = "sha256:3dd8d0661df788287de8aebc39f3a9ffa061f545ec82a780d64c56481b055bc5"},
+    {file = "bolt-0.21.0.tar.gz", hash = "sha256:a4b7af931482233b8feacd7f3565e7d1a2cbfb76b236f8554bba80b9cf80c4ea"},
 ]
 bolt-expressions = [
-    {file = "bolt_expressions-0.9.0-py3-none-any.whl", hash = "sha256:f37f9c58ec59a657058f534493d1ff713a73fc8b1685917e99e506ff110d3059"},
-    {file = "bolt_expressions-0.9.0.tar.gz", hash = "sha256:de76a97ace21fa55e89440e5f2bb301c55c1f954224019f6b2cd8ed53d6f8446"},
+    {file = "bolt_expressions-0.11.0-py3-none-any.whl", hash = "sha256:65b6dc84bd36da82e56ceed8bc0a6e88eaa63eeebee86ccc3b30b5aaf791431b"},
+    {file = "bolt_expressions-0.11.0.tar.gz", hash = "sha256:966cb7f63b9b2e5448b8ee83ff516ba18eef8059dad7141f682bbb7be7ceab32"},
 ]
 certifi = [
     {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
@@ -1140,8 +1140,8 @@ mdurl = [
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
 ]
 mecha = [
-    {file = "mecha-0.58.1-py3-none-any.whl", hash = "sha256:4c879eeda99e85cabe10d9a4f8011b5e277f1aa2c92972c081e71a88e98836d6"},
-    {file = "mecha-0.58.1.tar.gz", hash = "sha256:419c5c8802888b32f7d7a859fcb5dc035d1b1b2f305935415caeaab75c951c59"},
+    {file = "mecha-0.61.0-py3-none-any.whl", hash = "sha256:305c00d16f2caf582d3779da8be1515ebf546ace3aa3b5f3707e7bc5834b0061"},
+    {file = "mecha-0.61.0.tar.gz", hash = "sha256:479cfcfabecf98c6866db8054702cbb62b3655024e33398c20322a536e087cf1"},
 ]
 more-itertools = [
     {file = "more-itertools-9.0.0.tar.gz", hash = "sha256:5a6257e40878ef0520b1803990e3e22303a41b5714006c32a3fd8304b26ea1ab"},

@@ -1,0 +1,49 @@
+from reapermc:api import scoreboard, Data, Expr
+
+
+scb = scoreboard('scb')['@s']
+stge = Data.storage('stge:stge').stge
+entity = Data.entity('@s').Health
+
+
+
+function ./scb_const:
+    if Expr(scb) <= 69:
+        say 'scb <= 69'
+    else:
+        say 'scb > 69'
+
+function ./scb_scb:
+    if Expr(scb) <= scb:
+        say 'scb <= scb'
+    else:
+        say 'scb > scb'
+
+function ./scb_stge:
+    if Expr(scb) <= stge:
+        say 'scb <= stge'
+    else:
+        say 'scb > stge'
+
+
+function ./stge_const:
+    if Expr(stge) <= 69:
+        say 'stge <= 69'
+    else:
+        say 'stge > 69'
+
+function ./stge_scb:
+    if Expr(stge) <= scb:
+        say 'stge <= scb'
+    else:
+        say 'stge > scb'
+
+function ./stge_stge:
+    if Expr(stge) <= stge:
+        say 'stge <= stge'
+    else:
+        say 'stge > stge'
+
+
+
+

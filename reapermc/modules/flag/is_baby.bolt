@@ -1,0 +1,21 @@
+from ../flag_handler import NewFlag
+
+
+is_baby = NewFlag('is_baby')
+is_baby.set_handler_path(f"reaper_framework:__internal__/flag_handler/is_baby")
+
+
+@is_baby.handler
+def handler():
+    predicate is_baby.generate_path('is_baby') {
+        "condition": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+            "flags": {
+                "is_baby": true
+            }
+        }
+    }
+
+    with is_baby.set_condition():
+        if predicate is_baby.generate_path('is_baby')

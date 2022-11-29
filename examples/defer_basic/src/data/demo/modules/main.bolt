@@ -1,0 +1,10 @@
+from reapermc:api import defer
+
+
+@defer
+def _runs_last():
+    print('last')
+
+
+
+print('first')

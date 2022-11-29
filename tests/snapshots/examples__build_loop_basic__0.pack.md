@@ -15,697 +15,161 @@
 
 ### demo
 
-`@function demo:main/nested_execute_0`
+`@function demo:test2`
 
 ```mcfunction
-data remove storage reaper:var data[2].v[0]
-data remove storage reaper:var data[3].v[0]
+function loop_basic:reaper_framework/__internal__/loop/1/sel
 ```
 
-`@function demo:main/nested_execute_1`
+### reaper_framework
 
-```mcfunction
-data remove storage reaper:var data[2].v[0]
-scoreboard players remove $9 reaper.var 1
-execute store result score $6 reaper.var run data get storage reaper:var data[3].v[0] 1
-data remove storage reaper:var data[3].v[0]
-scoreboard players add $6 reaper.var 1
-scoreboard players operation $3 reaper.var = $6 reaper.var
-data modify storage reaper:var data[2].v append value 0
-execute store result storage reaper:var data[2].v[-1] int 1 run scoreboard players get $9 reaper.var
-data modify storage reaper:var data[3].v append value 0
-execute store result storage reaper:var data[3].v[-1] int 1 run scoreboard players get $6 reaper.var
-function loop_basic:reaper_framework/loop/0
-function loop_basic:reaper_framework/__internal__/loop/cache/0_srv_cycle
+`@function_tag reaper_framework:__internal__/event_handler/on_server_load`
+
+```json
+{
+  "values": [
+    "loop_basic:reaper_framework/event/on_server_load"
+  ]
+}
 ```
 
-`@function demo:main/nested_execute_2`
+`@function_tag reaper_framework:__internal__/event_handler/on_server_tick`
 
-```mcfunction
-data modify storage reaper:var data[2].v append value -1
-function loop_basic:reaper_framework/__internal__/loop/cache/0_srv_cycle
+```json
+{
+  "values": [
+    "loop_basic:reaper_framework/event/on_server_tick"
+  ]
+}
 ```
 
-`@function demo:main/nested_execute_3`
+`@function_tag reaper_framework:__internal__/event_handler/on_player_tick`
 
-```mcfunction
-scoreboard players set $9 reaper.var -1
-data modify storage reaper:var data[3].v append value 0
-scoreboard players set $3 reaper.var 0
-function loop_basic:reaper_framework/loop/0
-execute unless score $9 reaper.var matches 0 run function demo:main/nested_execute_2
+```json
+{
+  "values": [
+    "loop_basic:reaper_framework/event/on_player_tick"
+  ]
+}
 ```
 
-`@function demo:main/nested_execute_4`
+`@function_tag reaper_framework:__internal__/event_handler/on_player_join`
 
-```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/8_0
-function loop_basic:reaper_framework/__internal__/object/cache/9_0
+```json
+{
+  "values": [
+    "loop_basic:reaper_framework/event/on_player_join"
+  ]
+}
 ```
 
-`@function demo:main/nested_execute_5`
+`@function reaper_framework:__internal__/event_handler/on_server_load/load`
 
 ```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/10_0
-scoreboard players remove $7 reaper.var 1
-function loop_basic:reaper_framework/__internal__/object/cache/11_0
-execute store result score $6 reaper.var run data get storage reaper:var data[0].v 1
-function loop_basic:reaper_framework/__internal__/object/cache/12_0
-scoreboard players add $6 reaper.var 1
-scoreboard players operation $3 reaper.var = $6 reaper.var
-function loop_basic:reaper_framework/__internal__/object/cache/13_0
-function loop_basic:reaper_framework/__internal__/object/cache/14_0
-function loop_basic:reaper_framework/loop/0
-function loop_basic:reaper_framework/__internal__/loop/cache/0_ent_cycle
+function #reaper_framework:__internal__/event_handler/on_server_load
 ```
 
-`@function demo:main/nested_execute_6`
+`@function reaper_framework:__internal__/event_handler/on_player_join/join`
 
 ```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/2_0
-function loop_basic:reaper_framework/__internal__/loop/cache/0_ent_cycle
+scoreboard players set @s reaper_framework.event_handler.on_player_join 0
+function #reaper_framework:__internal__/event_handler/on_player_join
 ```
 
-`@function demo:main/nested_execute_7`
+`@function reaper_framework:__internal__/event_handler/on_server_tick/tick`
 
 ```mcfunction
-execute if entity @s unless entity @s[tag=reaper.object.holder] run function loop_basic:reaper_framework/__internal__/object/ensure_entry
-scoreboard players set $7 reaper.var -1
-function loop_basic:reaper_framework/__internal__/object/cache/1_0
-scoreboard players set $3 reaper.var 0
-function loop_basic:reaper_framework/loop/0
-execute unless score $7 reaper.var matches 0 run function demo:main/nested_execute_6
+schedule function reaper_framework:__internal__/event_handler/on_server_tick/tick 1
+function #reaper_framework:__internal__/event_handler/on_server_tick
 ```
 
-### loop_basic
-
-`@function loop_basic:reaper_framework/__internal__/spark/on_join`
+`@function reaper_framework:__internal__/sleep/nested_run_at_ctx/0`
 
 ```mcfunction
-scoreboard players set @s reaper.spark 0
-function loop_basic:reaper_framework/spark/prejoin
-function loop_basic:reaper_framework/spark/join
-function loop_basic:reaper_framework/spark/postjoin
+forceload add ~ ~
+data modify entity @s Pos set from storage loop_basic:reaper_framework.var data[4].v.pos
+data modify entity @s Rotation set from storage loop_basic:reaper_framework.var data[4].v.rot
+tag @s add reaper_framework.sleep.ctx.target
 ```
 
-`@function loop_basic:reaper_framework/__internal__/spark/init`
+`@function reaper_framework:__internal__/sleep/nested_run_at_ctx/1`
 
 ```mcfunction
-scoreboard objectives add reaper.spark custom:leave_game {"text": "reaper.spark", "color": "#F06400"}
-scoreboard players set @a reaper.spark 1
-function loop_basic:reaper_framework/spark/preload
-function loop_basic:reaper_framework/spark/load
-function loop_basic:reaper_framework/spark/postload
-function loop_basic:reaper_framework/__internal__/spark/clock
+forceload remove ~ ~
+tag @s remove reaper_framework.sleep.ctx.target
+tp @s 69000 0 69000
 ```
 
-`@function loop_basic:reaper_framework/__internal__/spark/clock`
+`@function reaper_framework:__internal__/sleep/create_ctx_marker`
 
 ```mcfunction
-schedule function loop_basic:reaper_framework/__internal__/spark/clock 1
-execute as @a if score @s reaper.spark matches 1.. at @s run function loop_basic:reaper_framework/__internal__/spark/on_join
-function loop_basic:reaper_framework/spark/pretick
-function loop_basic:reaper_framework/spark/tick
-function loop_basic:reaper_framework/spark/posttick
-```
-
-`@function loop_basic:reaper_framework/spark/prejoin`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/sleep/onjoin_flush
-function loop_basic:reaper_framework/__internal__/loop/onjoin_flush
-```
-
-`@function loop_basic:reaper_framework/spark/preload`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/scoreboard/init
-function loop_basic:reaper_framework/__internal__/scoreboard/init_defaults
-function loop_basic:reaper_framework/__internal__/var/flush_memory
-function loop_basic:reaper_framework/__internal__/var/init_defaults
-```
-
-`@function loop_basic:reaper_framework/__internal__/scoreboard/init`
-
-```mcfunction
-scoreboard objectives add reaper.var dummy {"text": "reaper.var", "color": "#F06400"}
-scoreboard objectives add reaper.object dummy {"text": "reaper.object", "color": "#F06400"}
-scoreboard objectives add reaper.object.m dummy {"text": "reaper.object.m", "color": "#F06400"}
-scoreboard objectives add reaper.sleep.dim_id dummy {"text": "reaper.sleep.dim_id", "color": "#F06400"}
-scoreboard objectives add reaper.death_events dummy {"text": "reaper.death_events", "color": "#F06400"}
-```
-
-`@function loop_basic:reaper_framework/better_summon/0`
-
-```mcfunction
-scoreboard players operation @s reaper.object.m = #next reaper.object
-scoreboard players add #next reaper.object 1
-tag @s remove reaper.summon.init
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/garbage_collector`
-
-```mcfunction
-execute store result score $2 reaper.var run data get entity @s Item.tag.AttributeModifiers[0].Amount 1
-kill @s
-execute as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = $2 reaper.var run kill @s
-```
-
-`@function loop_basic:reaper_framework/__internal__/scoreboard/init_defaults`
-
-```mcfunction
-execute unless score #next reaper.object = #next reaper.object run scoreboard players set #next reaper.object 0
-```
-
-`@function loop_basic:reaper_framework/object/remove_entity`
-
-```mcfunction
-scoreboard players operation $1 reaper.var = @s reaper.object
-execute as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = $1 reaper.var run kill @s
-scoreboard players reset @s reaper.object
-tag @s remove reaper.object.holder
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/ensure_entry`
-
-```mcfunction
-scoreboard players operation @s reaper.object = #next reaper.object
 forceload add 69000 69000
-summon marker 69000 0 69000 {Tags: ["reaper.object.m", "reaper.summon.init"], CustomName: '{"text":"reaper.object.m","color":"#F06400"}'}
-execute as @e[type=minecraft:marker, tag=reaper.summon.init] at @s run function loop_basic:reaper_framework/better_summon/0
-tag @s add reaper.object.holder
+summon marker 69000 0 69000 {Tags: ["reaper_framework.sleep.ctx", "reaper_framework.summon.init"], CustomName: '{"text": "reaper_framework.sleep.ctx", "color": "#bf0000"}'}
+execute as @e[type=minecraft:marker, tag=reaper_framework.summon.init] at @s run function loop_basic:reaper_framework/summon/0
+scoreboard players add #i reaper_framework.sleep.dim_id 1
 ```
 
-`@function loop_basic:reaper_framework/spark/pretick`
+`@function reaper_framework:__internal__/sleep/get_world_ctx`
 
 ```mcfunction
-execute as @e[type=item, nbt={Item: {tag: {reaper.object.death_cleanup: 1b}}}] run function loop_basic:reaper_framework/__internal__/object/garbage_collector
-execute as @e[type=item] if data entity @s {Item: {tag: {reaper.death_event: 1b}}} at @s run function loop_basic:reaper_framework/__internal__/death_events/get_item_info
-```
-
-`@function loop_basic:reaper_framework/__internal__/death_events/get_item_info`
-
-```mcfunction
-execute store result score $find reaper.death_events run data get entity @s Item.tag.AttributeModifiers[0].Amount
-kill @s
-function loop_basic:reaper_framework/__internal__/death_events/find_event
-```
-
-`@function loop_basic:reaper_framework/better_summon/1`
-
-```mcfunction
-scoreboard players operation @s reaper.sleep.dim_id = #i reaper.sleep.dim_id
-tag @s remove reaper.summon.init
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/0_srv_ensure_ctx`
-
-```mcfunction
-summon marker 69000 0 69000 {Tags: ["reaper.sleep.ctx", "reaper.summon.init"], CustomName: '{"text":"reaper.sleep.ctx","color":"#F06400"}'}
-execute as @e[type=minecraft:marker, tag=reaper.summon.init] at @s run function loop_basic:reaper_framework/better_summon/1
-scoreboard players add #i reaper.sleep.dim_id 1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/0_srv_get_ctx`
-
-```mcfunction
+data remove storage loop_basic:reaper_framework.var data[3].v
 tp @s ~ ~ ~ ~ ~
-execute store result storage reaper:var data[1].v.dim int 1 run scoreboard players get @s reaper.sleep.dim_id
-data modify storage reaper:var data[1].v.pos set from entity @s Pos
-data modify storage reaper:var data[1].v.rot set from entity @s Rotation
+execute store result storage loop_basic:reaper_framework.var data[3].v.dim int 1 run scoreboard players get @s reaper_framework.sleep.dim_id
+data modify storage loop_basic:reaper_framework.var data[3].v.pos set from entity @s Pos
+data modify storage loop_basic:reaper_framework.var data[3].v.rot set from entity @s Rotation
 tp @s 69000 0 69000
 ```
 
-`@function loop_basic:reaper_framework/__internal__/sleep/0_srv_1`
+`@function reaper_framework:__internal__/sleep/run_at_ctx`
 
 ```mcfunction
-data modify entity @s Pos set from storage reaper:var data[5].v.pos
-data modify entity @s Rotation set from storage reaper:var data[5].v.rot
-tag @s add reaper.sleep.ctx.target
+execute as @e[type=marker, tag=reaper_framework.sleep.ctx] if score $5 loop_basic.reaper_framework.var = @s reaper_framework.sleep.dim_id at @s run function reaper_framework:__internal__/sleep/nested_run_at_ctx/0
 ```
 
-`@function loop_basic:reaper_framework/__internal__/sleep/0_srv_3`
+`@function reaper_framework:__internal__/sleep/run_at_ctx_1`
 
 ```mcfunction
-tag @s remove reaper.sleep.ctx.target
-tp @s 69000 0 69000
+execute as @e[type=marker, tag=reaper_framework.sleep.ctx.target] at @s run function reaper_framework:__internal__/sleep/nested_run_at_ctx/1
 ```
 
-`@function loop_basic:reaper_framework/__internal__/sleep/0_srv_2`
+`@function reaper_framework:__internal__/entity_nbt/garbage_collector`
 
 ```mcfunction
-execute as @e[tag=reaper.sleep.ctx.target] run function loop_basic:reaper_framework/__internal__/sleep/0_srv_3
-function loop_basic:reaper_framework/sleep/0
+execute store result score $15 loop_basic.reaper_framework.var run data get entity @s Item.tag.AttributeModifiers[0].Amount 1
+kill @s
+execute as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score @s reaper_framework.entity_nbt.cloud = $15 loop_basic.reaper_framework.var run kill @s
 ```
 
-`@function loop_basic:reaper_framework/__internal__/sleep/0_srv_sch`
+`@function reaper_framework:__internal__/entity_nbt/ensure_entry`
 
 ```mcfunction
-execute store result score $11 reaper.var run data get storage reaper:var data[4].v[0] 1
-execute store result score $12 reaper.var run data get storage reaper:var data[4].v[1] 1
-data remove storage reaper:var data[4].v[0]
-data modify storage reaper:var data[5].v set from storage reaper:var data[6].v[0]
-data remove storage reaper:var data[6].v[0]
-execute store result score $13 reaper.var run data get storage reaper:var data[5].v.dim 1
-execute as @e[tag=reaper.sleep.ctx] if score $13 reaper.var = @s reaper.sleep.dim_id run function loop_basic:reaper_framework/__internal__/sleep/0_srv_1
-execute at @e[tag=reaper.sleep.ctx.target] run function loop_basic:reaper_framework/__internal__/sleep/0_srv_2
-execute if score $12 reaper.var = $11 reaper.var run function loop_basic:reaper_framework/__internal__/sleep/0_srv_sch
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/0_srv_0`
-
-```mcfunction
-execute store result score $0 reaper.var run time query gametime
-data modify storage reaper:var data[4].v append value 0
-execute store result storage reaper:var data[4].v[-1] int 1 run scoreboard players get $0 reaper.var
-data remove storage reaper:var data[1].v
+tag @s add reaper_framework.entity_nbt.user
 forceload add 69000 69000
-execute unless entity @e[tag=reaper.sleep.ctx, x=0] run function loop_basic:reaper_framework/__internal__/sleep/0_srv_ensure_ctx
-execute as @e[tag=reaper.sleep.ctx, x=0] run function loop_basic:reaper_framework/__internal__/sleep/0_srv_get_ctx
-data modify storage reaper:var data[6].v append from storage reaper:var data[1].v
-schedule function loop_basic:reaper_framework/__internal__/sleep/0_srv_sch 20 append
+scoreboard players operation @s reaper_framework.entity_nbt.user = #i reaper_framework.entity_nbt.cloud
+summon marker 69000 0 69000 {Tags: ["reaper_framework.entity_nbt.cloud", "reaper_framework.summon.init"], CustomName: '{"text": "reaper_framework.entity_nbt.cloud", "color": "#bf0000"}'}
+execute as @e[type=minecraft:marker, tag=reaper_framework.summon.init] at @s run function loop_basic:reaper_framework/summon/1
 ```
 
-`@function loop_basic:reaper_framework/__internal__/sleep/0_exec`
+`@function reaper_framework:__internal__/loop/reset_joining_player`
 
 ```mcfunction
-execute unless entity @s run function loop_basic:reaper_framework/__internal__/sleep/0_srv_0
+execute if entity @s[tag=reaper_framework.entity_nbt.user] if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove
 ```
 
-`@function loop_basic:reaper_framework/sleep/0`
+`@function reaper_framework:__internal__/sleep/reset_joining_player1`
 
 ```mcfunction
-execute store result score $9 reaper.var run data get storage reaper:var data[2].v[0] 1
-execute if score $9 reaper.var matches 0 run function demo:main/nested_execute_0
-execute unless score $9 reaper.var matches 0 run function demo:main/nested_execute_1
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove
+tag @s remove loop_basic.reaper_framework.sleep.0
+tag @s remove loop_basic.reaper_framework.sleep.1
+tag @s remove loop_basic.reaper_framework.sleep.2
+tag @s remove loop_basic.reaper_framework.sleep.3
 ```
 
-`@function loop_basic:reaper_framework/__internal__/loop/cache/0_srv_cycle`
+`@function reaper_framework:__internal__/sleep/reset_joining_player`
 
 ```mcfunction
-function loop_basic:reaper_framework/__internal__/sleep/0_exec
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/cache/0_srv_break_thread`
-
-```mcfunction
-data modify storage reaper:var data[2].v[-1] set value 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/0_1`
-
-```mcfunction
-data modify entity @s data.__internal__.reaper.loop.0.cycles_left[-1] set value 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/0_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/0_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/1_1`
-
-```mcfunction
-data modify entity @s data.__internal__.reaper.loop.0.cycle_index append value 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/1_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/1_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/2_1`
-
-```mcfunction
-data modify entity @s data.__internal__.reaper.loop.0.cycles_left append value -1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/2_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/2_1
-```
-
-`@function loop_basic:reaper_framework/better_summon/2`
-
-```mcfunction
-scoreboard players operation @s reaper.sleep.dim_id = #i reaper.sleep.dim_id
-tag @s remove reaper.summon.init
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_ensure_ctx`
-
-```mcfunction
-summon marker 69000 0 69000 {Tags: ["reaper.sleep.ctx", "reaper.summon.init"], CustomName: '{"text":"reaper.sleep.ctx","color":"#F06400"}'}
-execute as @e[type=minecraft:marker, tag=reaper.summon.init] at @s run function loop_basic:reaper_framework/better_summon/2
-scoreboard players add #i reaper.sleep.dim_id 1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_get_ctx`
-
-```mcfunction
-tp @s ~ ~ ~ ~ ~
-execute store result storage reaper:var data[1].v.dim int 1 run scoreboard players get @s reaper.sleep.dim_id
-data modify storage reaper:var data[1].v.pos set from entity @s Pos
-data modify storage reaper:var data[1].v.rot set from entity @s Rotation
-tp @s 69000 0 69000
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/3_1`
-
-```mcfunction
-data modify entity @s data.__internal__.reaper.sleep.1 append from storage reaper:var data[8].v
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/3_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/3_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/4_1`
-
-```mcfunction
-data modify storage reaper:var data[0].v set from entity @s data.__internal__.reaper.sleep.1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/4_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/4_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/5_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.sleep.1[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/5_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/5_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/6_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.sleep.1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/6_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/6_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_3`
-
-```mcfunction
-tag @s remove reaper.sleep.1
-function loop_basic:reaper_framework/__internal__/object/cache/6_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_4`
-
-```mcfunction
-data modify entity @s Pos set from storage reaper:var data[7].v.pos
-data modify entity @s Rotation set from storage reaper:var data[7].v.rot
-tag @s add reaper.sleep.ctx.target
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_6`
-
-```mcfunction
-tag @s remove reaper.sleep.ctx.target
-tp @s 69000 0 69000
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_5`
-
-```mcfunction
-execute as @e[tag=reaper.sleep.ctx.target] run function loop_basic:reaper_framework/__internal__/sleep/1_ent_6
-function loop_basic:reaper_framework/sleep/1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_2`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/5_0
-data remove storage reaper:var data[9].v[0]
-execute store result score $15 reaper.var run data get storage reaper:var data[9].v[0].ts 1
-execute store result score $17 reaper.var run data get storage reaper:var data[9].v
-execute if score $17 reaper.var matches 0 run function loop_basic:reaper_framework/__internal__/sleep/1_ent_3
-data modify storage reaper:var data[7].v set from storage reaper:var data[10].v.ctx
-execute store result score $18 reaper.var run data get storage reaper:var data[7].v.dim 1
-execute as @e[tag=reaper.sleep.ctx] if score $18 reaper.var = @s reaper.sleep.dim_id run function loop_basic:reaper_framework/__internal__/sleep/1_ent_4
-execute at @e[tag=reaper.sleep.ctx.target] run function loop_basic:reaper_framework/__internal__/sleep/1_ent_5
-execute if score $15 reaper.var = $14 reaper.var run function loop_basic:reaper_framework/__internal__/sleep/1_ent_sch
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_1`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/4_0
-data modify storage reaper:var data[9].v set from storage reaper:var data[0].v
-data modify storage reaper:var data[10].v set from storage reaper:var data[9].v[0]
-execute store result score $14 reaper.var run data get storage reaper:var data[10].v.ts 1
-execute if score $14 reaper.var = $16 reaper.var run function loop_basic:reaper_framework/__internal__/sleep/1_ent_2
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_sch`
-
-```mcfunction
-execute store result score $0 reaper.var run time query gametime
-scoreboard players operation $16 reaper.var = $0 reaper.var
-scoreboard players remove $16 reaper.var 20
-execute as @e[tag=reaper.sleep.1] run function loop_basic:reaper_framework/__internal__/sleep/1_ent_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_ent_0`
-
-```mcfunction
-execute if entity @s unless entity @s[tag=reaper.object.holder] run function loop_basic:reaper_framework/__internal__/object/ensure_entry
-data remove storage reaper:var data[8].v
-execute store result score $0 reaper.var run time query gametime
-execute store result storage reaper:var data[8].v.ts int 1 run scoreboard players get $0 reaper.var
-data remove storage reaper:var data[1].v
-forceload add 69000 69000
-execute unless entity @e[tag=reaper.sleep.ctx, x=0] run function loop_basic:reaper_framework/__internal__/sleep/1_ent_ensure_ctx
-execute as @e[tag=reaper.sleep.ctx, x=0] run function loop_basic:reaper_framework/__internal__/sleep/1_ent_get_ctx
-data modify storage reaper:var data[8].v.ctx set from storage reaper:var data[1].v
-function loop_basic:reaper_framework/__internal__/object/cache/3_0
-tag @s add reaper.sleep.1
-schedule function loop_basic:reaper_framework/__internal__/sleep/1_ent_sch 20 append
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1_exec`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/sleep/1_ent_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/7_1`
-
-```mcfunction
-data modify storage reaper:var data[0].v set from entity @s data.__internal__.reaper.loop.0.cycles_left[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/7_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/7_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/8_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.loop.0.cycles_left[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/8_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/8_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/9_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.loop.0.cycle_index[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/9_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/9_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/10_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.loop.0.cycles_left[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/10_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/10_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/11_1`
-
-```mcfunction
-data modify storage reaper:var data[0].v set from entity @s data.__internal__.reaper.loop.0.cycle_index[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/11_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/11_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/12_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.loop.0.cycle_index[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/12_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/12_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/13_1`
-
-```mcfunction
-data modify entity @s data.__internal__.reaper.loop.0.cycles_left append value 0
-execute store result entity @s data.__internal__.reaper.loop.0.cycles_left[-1] int 1 run scoreboard players get $7 reaper.var
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/13_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/13_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/14_1`
-
-```mcfunction
-data modify entity @s data.__internal__.reaper.loop.0.cycle_index append value 0
-execute store result entity @s data.__internal__.reaper.loop.0.cycle_index[-1] int 1 run scoreboard players get $6 reaper.var
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/14_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/14_1
-```
-
-`@function loop_basic:reaper_framework/sleep/1`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/7_0
-execute store result score $7 reaper.var run data get storage reaper:var data[0].v 1
-execute if score $7 reaper.var matches 0 run function demo:main/nested_execute_4
-execute unless score $7 reaper.var matches 0 run function demo:main/nested_execute_5
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/cache/0_ent_cycle`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/sleep/1_exec
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/cache/0_ent_break_thread`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/0_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0_exec`
-
-```mcfunction
-execute unless entity @s run function demo:main/nested_execute_3
-execute if entity @s run function demo:main/nested_execute_7
-```
-
-`@function loop_basic:reaper_framework/loop/0`
-
-```mcfunction
-help '$LOOP_DATA +threading'
-scoreboard players set $5 reaper.var 0
-execute if data entity @p SelectedItem run scoreboard players set $5 reaper.var 1
-execute if score $5 reaper.var matches 1 unless entity @s run function loop_basic:reaper_framework/__internal__/loop/cache/0_srv_break_thread
-execute if score $5 reaper.var matches 1 if entity @s run function loop_basic:reaper_framework/__internal__/loop/cache/0_ent_break_thread
-execute unless score $5 reaper.var matches 1 run function loop_basic:reaper_framework/loop/break_nest/0_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/15_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.loop
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/15_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/15_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/onjoin_flush1`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/15_0
-tag @s remove reaper.loop.0
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/onjoin_flush`
-
-```mcfunction
-execute if entity @s[tag=reaper.object.holder] run function loop_basic:reaper_framework/__internal__/loop/onjoin_flush1
-```
-
-`@function loop_basic:reaper_framework/loop/break_nest/0_0`
-
-```mcfunction
-scoreboard players operation $4 reaper.var = $3 reaper.var
-tellraw @a {"score": {"name": "$4", "objective": "reaper.var"}, "color": "yellow"}
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/16_1`
-
-```mcfunction
-data remove entity @s data.__internal__.reaper.sleep
-```
-
-`@function loop_basic:reaper_framework/__internal__/object/cache/16_0`
-
-```mcfunction
-execute if entity @s at @s as @e[type=marker, tag=reaper.object.m] if score @s reaper.object.m = @e[tag=reaper.object.holder, sort=nearest, limit=1] reaper.object run function loop_basic:reaper_framework/__internal__/object/cache/16_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/onjoin_flush1`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/object/cache/16_0
-tag @s remove reaper.sleep.0
-tag @s remove reaper.sleep.1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/onjoin_flush`
-
-```mcfunction
-execute if entity @s[tag=reaper.object.holder] run function loop_basic:reaper_framework/__internal__/sleep/onjoin_flush1
-```
-
-`@function loop_basic:reaper_framework/__internal__/var/flush_memory`
-
-```mcfunction
-data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+execute if entity @s[tag=reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/sleep/reset_joining_player1
 ```
 
 ### minecraft
@@ -715,7 +179,871 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 ```json
 {
   "values": [
-    "loop_basic:reaper_framework/__internal__/spark/init"
+    "reaper_framework:__internal__/event_handler/on_server_load/load"
+  ]
+}
+```
+
+`@loot_table minecraft:entities/glow_squid`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:glow_ink_sac"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/horse`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:leather"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/cat`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:string"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/tropical_fish`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:tropical_fish"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.05,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bone_meal"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/skeleton_horse`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:bone"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/wither`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/hoglin`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:porkchop"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:leather"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/endermite`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/phantom`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:phantom_membrane"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/stray`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:arrow"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:bone"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant",
+              "limit": 1
+            },
+            {
+              "function": "minecraft:set_potion",
+              "id": "minecraft:slowness"
+            }
+          ],
+          "name": "minecraft:tipped_arrow"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
   ]
 }
 ```
@@ -815,7 +1143,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -824,7 +1152,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -832,7 +1160,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -845,57 +1173,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/player`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.death_events"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.death_event: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_properties",
-              "entity": "this",
-              "predicate": {
-                "nbt": "{Tags:[reaper.death_event]}"
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/iron_golem`
+`@loot_table minecraft:entities/parrot`
 
 ```json
 {
@@ -912,101 +1190,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "count": {
                 "type": "minecraft:uniform",
                 "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:poppy"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 5.0,
-                "min": 3.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:iron_ingot"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/turtle`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
+                "min": 1.0
               },
               "function": "minecraft:set_count"
             },
@@ -1019,26 +1203,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:seagrass",
-          "weight": 3
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:damage_source_properties",
-          "predicate": {
-            "is_lightning": true
-          }
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:bowl"
+          "name": "minecraft:feather"
         }
       ],
       "rolls": 1.0
@@ -1059,7 +1224,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -1068,7 +1233,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -1076,7 +1241,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -1089,7 +1254,80 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/wolf`
+`@loot_table minecraft:entities/snow_golem`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 15.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:snowball"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/fox`
 
 ```json
 {
@@ -1111,7 +1349,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -1120,7 +1358,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -1128,7 +1366,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -1141,7 +1379,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/mule`
+`@loot_table minecraft:entities/mooshroom`
 
 ```json
 {
@@ -1177,162 +1415,6 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
       "rolls": 1.0
     },
     {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/villager`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/pillager`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/tropical_fish`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
       "bonus_rolls": 0.0,
       "entries": [
         {
@@ -1340,27 +1422,37 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
           "functions": [
             {
               "add": false,
-              "count": 1.0,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
               "function": "minecraft:set_count"
+            },
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:tropical_fish"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "chance": 0.05,
-          "condition": "minecraft:random_chance"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:bone_meal"
+          "name": "minecraft:beef"
         }
       ],
       "rolls": 1.0
@@ -1381,7 +1473,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -1390,7 +1482,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -1398,7 +1490,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -1411,7 +1503,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/tadpole`
+`@loot_table minecraft:entities/giant`
 
 ```json
 {
@@ -1433,7 +1525,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -1442,7 +1534,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -1450,7 +1542,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -1458,6 +1550,36 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
           ]
         }
       ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/light_gray`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:light_gray_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
     }
   ]
 }
@@ -1557,7 +1679,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -1566,7 +1688,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -1574,7 +1696,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -1587,7 +1709,141 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/ravager`
+`@loot_table minecraft:entities/tadpole`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/gray`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gray_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/wandering_trader`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/zombie_villager`
 
 ```json
 {
@@ -1601,11 +1857,67 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
           "functions": [
             {
               "add": false,
-              "count": 1.0,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
               "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:saddle"
+          "name": "minecraft:rotten_flesh"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "chance": 0.025,
+          "condition": "minecraft:random_chance_with_looting",
+          "looting_multiplier": 0.01
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_ingot"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:carrot"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            }
+          ],
+          "name": "minecraft:potato"
         }
       ],
       "rolls": 1.0
@@ -1626,7 +1938,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -1635,7 +1947,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -1643,111 +1955,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/ocelot`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/wither`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -1826,7 +2034,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -1835,7 +2043,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -1843,7 +2051,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -1856,307 +2064,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/piglin_brute`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/blaze`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:blaze_rod"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/skeleton`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:arrow"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:bone"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/fox`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/glow_squid`
+`@loot_table minecraft:entities/zoglin`
 
 ```json
 {
@@ -2186,7 +2094,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:glow_ink_sac"
+          "name": "minecraft:rotten_flesh"
         }
       ],
       "rolls": 1.0
@@ -2207,7 +2115,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -2216,7 +2124,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -2224,7 +2132,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -2237,7 +2145,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/llama`
+`@loot_table minecraft:entities/iron_golem`
 
 ```json
 {
@@ -2257,17 +2165,30 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                 "min": 0.0
               },
               "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:leather"
+          "name": "minecraft:poppy"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:iron_ingot"
         }
       ],
       "rolls": 1.0
@@ -2288,7 +2209,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -2297,7 +2218,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -2305,7 +2226,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -2318,7 +2239,102 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/elder_guardian`
+`@loot_table minecraft:entities/sheep`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:mutton"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/guardian`
 
 ```json
 {
@@ -2383,7 +2399,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             }
           ],
           "name": "minecraft:cod",
-          "weight": 3
+          "weight": 2
         },
         {
           "type": "minecraft:item",
@@ -2402,21 +2418,6 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
         },
         {
           "type": "minecraft:empty"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:wet_sponge"
         }
       ],
       "rolls": 1.0
@@ -2473,7 +2474,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -2482,7 +2483,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -2490,7 +2491,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -2503,7 +2504,76 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/giant`
+`@loot_table minecraft:entities/panda`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:bamboo"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/illusioner`
 
 ```json
 {
@@ -2525,7 +2595,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -2534,7 +2604,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -2542,7 +2612,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -2555,7 +2625,37 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/donkey`
+`@loot_table(strip_final_newline) minecraft:entities/sheep/yellow`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:yellow_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/chicken`
 
 ```json
 {
@@ -2585,7 +2685,41 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:leather"
+          "name": "minecraft:feather"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:chicken"
         }
       ],
       "rolls": 1.0
@@ -2606,7 +2740,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -2615,7 +2749,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -2623,7 +2757,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -2636,7 +2770,149 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/cod`
+`@loot_table minecraft:entities/goat`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/cyan`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:cyan_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/light_blue`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:light_blue_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/orange`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:orange_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/spider`
 
 ```json
 {
@@ -2649,21 +2925,231 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
           "type": "minecraft:item",
           "functions": [
             {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:cod"
+          "name": "minecraft:string"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": -1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:spider_eye"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/axolotl`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/bee`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/pufferfish`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:pufferfish"
         }
       ],
       "rolls": 1.0
@@ -2700,7 +3186,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -2709,7 +3195,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -2717,7 +3203,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -2730,7 +3216,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/pig`
+`@loot_table(strip_final_newline) minecraft:entities/sheep/white`
 
 ```json
 {
@@ -2741,121 +3227,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:porkchop"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/ghast`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:ghast_tear"
+          "name": "minecraft:white_wool"
         }
       ],
       "rolls": 1.0
@@ -2864,378 +3236,11 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
       "bonus_rolls": 0.0,
       "entries": [
         {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:gunpowder"
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
         }
       ],
       "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/zombie_horse`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:rotten_flesh"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/dolphin`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            },
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            }
-          ],
-          "name": "minecraft:cod"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/wither_skeleton`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": -1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:coal"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:bone"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
-        {
-          "chance": 0.025,
-          "condition": "minecraft:random_chance_with_looting",
-          "looting_multiplier": 0.01
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:wither_skeleton_skull"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }
@@ -3344,7 +3349,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -3353,7 +3358,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -3361,7 +3366,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -3374,7 +3379,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/rabbit`
+`@loot_table(strip_final_newline) minecraft:entities/sheep/blue`
 
 ```json
 {
@@ -3385,26 +3390,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:rabbit_hide"
+          "name": "minecraft:blue_wool"
         }
       ],
       "rolls": 1.0
@@ -3413,112 +3399,17 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
       "bonus_rolls": 0.0,
       "entries": [
         {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:rabbit"
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
         }
       ],
       "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
-        {
-          "chance": 0.1,
-          "condition": "minecraft:random_chance_with_looting",
-          "looting_multiplier": 0.03
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:rabbit_foot"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }
 ```
 
-`@loot_table minecraft:entities/chicken`
+`@loot_table minecraft:entities/llama`
 
 ```json
 {
@@ -3548,41 +3439,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:feather"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:chicken"
+          "name": "minecraft:leather"
         }
       ],
       "rolls": 1.0
@@ -3603,7 +3460,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -3612,7 +3469,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -3620,7 +3477,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -3633,7 +3490,252 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/phantom`
+`@loot_table minecraft:entities/silverfish`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/purple`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:purple_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/red`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:red_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/strider`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:string"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/vex`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/vindicator`
 
 ```json
 {
@@ -3668,7 +3770,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:phantom_membrane"
+          "name": "minecraft:emerald"
         }
       ],
       "rolls": 1.0
@@ -3689,7 +3791,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -3698,7 +3800,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -3706,7 +3808,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -3719,33 +3821,12 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/snow_golem`
+`@loot_table minecraft:entities/piglin`
 
 ```json
 {
   "type": "minecraft:entity",
   "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 15.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:snowball"
-        }
-      ],
-      "rolls": 1.0
-    },
     {
       "rolls": 1,
       "entries": [
@@ -3762,7 +3843,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -3771,7 +3852,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -3779,7 +3860,111 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/ocelot`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/pillager`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -3943,7 +4128,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -3952,7 +4137,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -3960,7 +4145,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -3973,7 +4158,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/salmon`
+`@loot_table(strip_final_newline) minecraft:entities/sheep/green`
 
 ```json
 {
@@ -3984,90 +4169,26 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            }
-          ],
-          "name": "minecraft:salmon"
+          "name": "minecraft:green_wool"
         }
       ],
       "rolls": 1.0
     },
     {
       "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "chance": 0.05,
-          "condition": "minecraft:random_chance"
-        }
-      ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:bone_meal"
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
         }
       ],
       "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }
 ```
 
-`@loot_table minecraft:entities/zombie`
+`@loot_table minecraft:entities/skeleton`
 
 ```json
 {
@@ -4097,364 +4218,11 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "function": "minecraft:looting_enchant"
             }
           ],
-          "name": "minecraft:rotten_flesh"
+          "name": "minecraft:arrow"
         }
       ],
       "rolls": 1.0
     },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
-        {
-          "chance": 0.025,
-          "condition": "minecraft:random_chance_with_looting",
-          "looting_multiplier": 0.01
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:iron_ingot"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:carrot"
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            }
-          ],
-          "name": "minecraft:potato"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/silverfish`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/parrot`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:feather"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/hoglin`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 4.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:porkchop"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:leather"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/skeleton_horse`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
     {
       "bonus_rolls": 0.0,
       "entries": [
@@ -4500,7 +4268,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -4509,7 +4277,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -4517,7 +4285,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -4530,653 +4298,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/cave_spider`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:string"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": -1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:spider_eye"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/trader_llama`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:leather"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/drowned`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:rotten_flesh"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
-        {
-          "chance": 0.11,
-          "condition": "minecraft:random_chance_with_looting",
-          "looting_multiplier": 0.02
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:copper_ingot"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/enderman`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:ender_pearl"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/creeper`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:gunpowder"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:entity_properties",
-          "entity": "killer",
-          "predicate": {
-            "type": "#minecraft:skeletons"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:tag",
-          "expand": true,
-          "name": "minecraft:creeper_drop_music_discs"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/vindicator`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:emerald"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/zoglin`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:rotten_flesh"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/allay`
+`@loot_table minecraft:entities/villager`
 
 ```json
 {
@@ -5198,7 +4320,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -5207,7 +4329,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -5215,1310 +4337,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/illusioner`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/goat`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/spider`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:string"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": -1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:spider_eye"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/endermite`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/sheep`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:mutton"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/zombie_villager`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:rotten_flesh"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
-        {
-          "chance": 0.025,
-          "condition": "minecraft:random_chance_with_looting",
-          "looting_multiplier": 0.01
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:iron_ingot"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:carrot"
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            }
-          ],
-          "name": "minecraft:potato"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/guardian`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:prismarine_shard"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            },
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            }
-          ],
-          "name": "minecraft:cod",
-          "weight": 2
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:prismarine_crystals",
-          "weight": 2
-        },
-        {
-          "type": "minecraft:empty"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        },
-        {
-          "chance": 0.025,
-          "condition": "minecraft:random_chance_with_looting",
-          "looting_multiplier": 0.01
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:loot_table",
-          "functions": [
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            }
-          ],
-          "name": "minecraft:gameplay/fishing/fish"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/vex`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/piglin`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/strider`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 5.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:string"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/bat`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/cat`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:string"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/axolotl`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/bee`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/pufferfish`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": 1.0,
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:pufferfish"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "chance": 0.05,
-          "condition": "minecraft:random_chance"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:bone_meal"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/horse`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:leather"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/warden`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:sculk_catalyst"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -6631,7 +4450,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -6640,7 +4459,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -6648,7 +4467,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -6661,7 +4480,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-`@loot_table minecraft:entities/shulker`
+`@loot_table minecraft:entities/warden`
 
 ```json
 {
@@ -6669,17 +4488,10 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "chance": 0.5,
-          "condition": "minecraft:random_chance_with_looting",
-          "looting_multiplier": 0.0625
-        }
-      ],
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:shulker_shell"
+          "name": "minecraft:sculk_catalyst"
         }
       ],
       "rolls": 1.0
@@ -6700,7 +4512,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -6709,7 +4521,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -6717,713 +4529,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/wandering_trader`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/squid`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:ink_sac"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/panda`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": 1.0,
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:bamboo"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/ender_dragon`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/mooshroom`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:leather"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "conditions": [
-                {
-                  "condition": "minecraft:entity_properties",
-                  "entity": "this",
-                  "predicate": {
-                    "flags": {
-                      "is_on_fire": true
-                    }
-                  }
-                }
-              ],
-              "function": "minecraft:furnace_smelt"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:beef"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/slime`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type_specific": {
-              "type": "slime",
-              "size": 1
-            }
-          }
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecraft:inverted",
-              "term": {
-                "condition": "minecraft:damage_source_properties",
-                "predicate": {
-                  "source_entity": {
-                    "type": "minecraft:frog"
-                  }
-                }
-              }
-            }
-          ],
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:slime_ball"
-        },
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecraft:damage_source_properties",
-              "predicate": {
-                "source_entity": {
-                  "type": "minecraft:frog"
-                }
-              }
-            }
-          ],
-          "functions": [
-            {
-              "add": false,
-              "count": 1.0,
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:slime_ball"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/stray`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:arrow"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant"
-            }
-          ],
-          "name": "minecraft:bone"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:killed_by_player"
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "function": "minecraft:looting_enchant",
-              "limit": 1
-            },
-            {
-              "function": "minecraft:set_potion",
-              "id": "minecraft:slowness"
-            }
-          ],
-          "name": "minecraft:tipped_arrow"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
-                  "min": 0
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-`@loot_table minecraft:entities/frog`
-
-```json
-{
-  "type": "minecraft:entity",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:nether_star",
-          "functions": [
-            {
-              "function": "minecraft:set_attributes",
-              "modifiers": [
-                {
-                  "attribute": "minecraft:generic.luck",
-                  "name": "",
-                  "amount": {
-                    "type": "minecraft:score",
-                    "target": "this",
-                    "score": "reaper.object"
-                  },
-                  "operation": "addition",
-                  "slot": "feet"
-                }
-              ]
-            },
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
-            }
-          ],
-          "conditions": [
-            {
-              "condition": "minecraft:entity_scores",
-              "entity": "this",
-              "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -7630,7 +4736,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -7639,7 +4745,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -7647,7 +4753,2581 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/zombie_horse`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:rotten_flesh"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/lime`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:lime_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/creeper`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:gunpowder"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:entity_properties",
+          "entity": "killer",
+          "predicate": {
+            "type": "#minecraft:skeletons"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:tag",
+          "expand": true,
+          "name": "minecraft:creeper_drop_music_discs"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/trader_llama`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:leather"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/pig`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:porkchop"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/wither_skeleton`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": -1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:coal"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:bone"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "chance": 0.025,
+          "condition": "minecraft:random_chance_with_looting",
+          "looting_multiplier": 0.01
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:wither_skeleton_skull"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/brown`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:brown_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/elder_guardian`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:prismarine_shard"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            },
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            }
+          ],
+          "name": "minecraft:cod",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:prismarine_crystals",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:empty"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:wet_sponge"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "chance": 0.025,
+          "condition": "minecraft:random_chance_with_looting",
+          "looting_multiplier": 0.01
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "functions": [
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            }
+          ],
+          "name": "minecraft:gameplay/fishing/fish"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/wolf`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/magenta`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:magenta_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/mule`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:leather"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/ravager`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:saddle"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/piglin_brute`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/drowned`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:rotten_flesh"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "chance": 0.11,
+          "condition": "minecraft:random_chance_with_looting",
+          "looting_multiplier": 0.02
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:copper_ingot"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/squid`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:ink_sac"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/salmon`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            }
+          ],
+          "name": "minecraft:salmon"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.05,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bone_meal"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/blaze`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:blaze_rod"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/shulker`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.5,
+          "condition": "minecraft:random_chance_with_looting",
+          "looting_multiplier": 0.0625
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:shulker_shell"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/zombie`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:rotten_flesh"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "chance": 0.025,
+          "condition": "minecraft:random_chance_with_looting",
+          "looting_multiplier": 0.01
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_ingot"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:carrot"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            }
+          ],
+          "name": "minecraft:potato"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/rabbit`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:rabbit_hide"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:rabbit"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "chance": 0.1,
+          "condition": "minecraft:random_chance_with_looting",
+          "looting_multiplier": 0.03
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:rabbit_foot"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/turtle`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:seagrass",
+          "weight": 3
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:damage_source_properties",
+          "predicate": {
+            "is_lightning": true
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bowl"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/pink`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:pink_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/slime`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "type_specific": {
+              "type": "slime",
+              "size": 1
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:damage_source_properties",
+                "predicate": {
+                  "source_entity": {
+                    "type": "minecraft:frog"
+                  }
+                }
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:slime_ball"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:damage_source_properties",
+              "predicate": {
+                "source_entity": {
+                  "type": "minecraft:frog"
+                }
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:slime_ball"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table(strip_final_newline) minecraft:entities/sheep/black`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:black_wool"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "minecraft:entities/sheep"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/frog`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/cave_spider`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:string"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": -1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:spider_eye"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/ender_dragon`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/cod`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            }
+          ],
+          "name": "minecraft:cod"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.05,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bone_meal"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/dolphin`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            },
+            {
+              "conditions": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
+              ],
+              "function": "minecraft:furnace_smelt"
+            }
+          ],
+          "name": "minecraft:cod"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/ghast`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:ghast_tear"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:gunpowder"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/bat`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -7682,7 +7362,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
                   "amount": {
                     "type": "minecraft:score",
                     "target": "this",
-                    "score": "reaper.object"
+                    "score": "reaper_framework.entity_nbt.user"
                   },
                   "operation": "addition",
                   "slot": "feet"
@@ -7691,7 +7371,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
             },
             {
               "function": "minecraft:set_nbt",
-              "tag": "{reaper.object.death_cleanup: 1b}"
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
             }
           ],
           "conditions": [
@@ -7699,7 +7379,7 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
               "condition": "minecraft:entity_scores",
               "entity": "this",
               "scores": {
-                "reaper.object": {
+                "reaper_framework.entity_nbt.user": {
                   "min": 0
                 }
               }
@@ -7712,10 +7392,1390 @@ data modify storage reaper:var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {
 }
 ```
 
-### loop
+`@loot_table minecraft:entities/enderman`
 
-`@function loop:test`
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:ender_pearl"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/donkey`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 0.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "function": "minecraft:looting_enchant"
+            }
+          ],
+          "name": "minecraft:leather"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+`@loot_table minecraft:entities/allay`
+
+```json
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_star",
+          "functions": [
+            {
+              "function": "minecraft:set_attributes",
+              "modifiers": [
+                {
+                  "attribute": "minecraft:generic.luck",
+                  "name": "",
+                  "amount": {
+                    "type": "minecraft:score",
+                    "target": "this",
+                    "score": "reaper_framework.entity_nbt.user"
+                  },
+                  "operation": "addition",
+                  "slot": "feet"
+                }
+              ]
+            },
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{reaper_framework.entity_nbt.death_cleanup: 1b}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "minecraft:entity_scores",
+              "entity": "this",
+              "scores": {
+                "reaper_framework.entity_nbt.user": {
+                  "min": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### loop_basic
+
+`@function loop_basic:reaper_framework/event/on_server_load`
 
 ```mcfunction
-function loop_basic:reaper_framework/__internal__/loop/0_exec
+function loop_basic:reaper_framework/__internal__/scoreboard/init
+function loop_basic:reaper_framework/__internal__/scoreboard/init_defaults
+function loop_basic:reaper_framework/__internal__/var/flush_memory
+function loop_basic:reaper_framework/__internal__/var/init_defaults
+execute as @a run function reaper_framework:__internal__/sleep/reset_joining_player
+function reaper_framework:__internal__/event_handler/on_server_tick/tick
+execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
+execute store result score $29 loop_basic.reaper_framework.var run gamerule doMobLoot
+execute if score $29 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/mob_loot_gamerule_error
+```
+
+`@function loop_basic:reaper_framework/__internal__/scoreboard/init`
+
+```mcfunction
+scoreboard objectives add loop_basic.reaper_framework.var dummy {"text": "loop_basic.reaper_framework.var", "color": "#bf0000"}
+scoreboard objectives add reaper_framework.entity_nbt.user dummy {"text": "reaper_framework.entity_nbt.user", "color": "#bf0000"}
+scoreboard objectives add reaper_framework.entity_nbt.cloud dummy {"text": "reaper_framework.entity_nbt.cloud", "color": "#bf0000"}
+scoreboard objectives add loop_basic.reaper_framework.death_events dummy {"text": "loop_basic.reaper_framework.death_events", "color": "#bf0000"}
+scoreboard objectives add reaper_framework.sleep.dim_id dummy {"text": "reaper_framework.sleep.dim_id", "color": "#bf0000"}
+scoreboard objectives add reaper_framework.event_handler.on_player_join custom:leave_game {"text": "reaper_framework.event_handler.on_player_join", "color": "#bf0000"}
+```
+
+`@function loop_basic:reaper_framework/event/on_server_tick`
+
+```mcfunction
+execute as @a at @s run function #reaper_framework:__internal__/event_handler/on_player_tick
+execute as @e[type=item, nbt={Item: {tag: {reaper_framework.entity_nbt.death_cleanup: 1b}}}] run function reaper_framework:__internal__/entity_nbt/garbage_collector
+```
+
+`@function loop_basic:reaper_framework/event/on_player_tick`
+
+```mcfunction
+execute if score @s reaper_framework.event_handler.on_player_join matches -1 run function reaper_framework:__internal__/event_handler/on_player_join/join
+execute if score @s reaper_framework.event_handler.on_player_join matches 1.. run scoreboard players set @s reaper_framework.event_handler.on_player_join -1
+```
+
+`@function loop_basic:reaper_framework/event/on_player_join`
+
+```mcfunction
+function reaper_framework:__internal__/sleep/reset_joining_player
+function reaper_framework:__internal__/loop/reset_joining_player
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_2`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[6].v append value 0
+data modify storage loop_basic:reaper_framework.var data[5].v append value 0
+execute store result storage loop_basic:reaper_framework.var data[5].v[-1] int 1 run scoreboard players get $11 loop_basic.reaper_framework.var
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_3`
+
+```mcfunction
+data remove storage loop_basic:reaper_framework.var data[5].v[-1]
+data remove storage loop_basic:reaper_framework.var data[6].v[-1]
+```
+
+`@function loop_basic:reaper_framework/summon/0`
+
+```mcfunction
+scoreboard players operation @s reaper_framework.sleep.dim_id = #i reaper_framework.sleep.dim_id
+tag @s remove reaper_framework.summon.init
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/0/run_at_ctx`
+
+```mcfunction
+function reaper_framework:__internal__/sleep/run_at_ctx_1
+function loop_basic:reaper_framework/sleep/0
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/0/s_sch`
+
+```mcfunction
+execute store result score $13 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[7].v[0] 1
+execute store result score $14 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[7].v[1] 1
+data remove storage loop_basic:reaper_framework.var data[7].v[0]
+execute if score $14 loop_basic.reaper_framework.var = $13 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/0/s_sch
+data modify storage loop_basic:reaper_framework.var data[9].v set from storage loop_basic:reaper_framework.var data[10].v[0]
+data remove storage loop_basic:reaper_framework.var data[10].v[0]
+execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[9].v.dim 1
+data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[9].v
+function reaper_framework:__internal__/sleep/run_at_ctx
+execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/0/run_at_ctx
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/0/s_0`
+
+```mcfunction
+execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
+execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
+data modify storage loop_basic:reaper_framework.var data[10].v append from storage loop_basic:reaper_framework.var data[3].v
+execute store result score $4 loop_basic.reaper_framework.var run time query gametime
+data modify storage loop_basic:reaper_framework.var data[7].v append value 0
+execute store result storage loop_basic:reaper_framework.var data[7].v[-1] int 1 run scoreboard players get $4 loop_basic.reaper_framework.var
+schedule function loop_basic:reaper_framework/__internal__/sleep/0/s_sch 20 append
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/0/sel`
+
+```mcfunction
+execute unless entity @s run function loop_basic:reaper_framework/__internal__/sleep/0/s_0
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_5`
+
+```mcfunction
+scoreboard players remove $11 loop_basic.reaper_framework.var 1
+scoreboard players add $10 loop_basic.reaper_framework.var 1
+```
+
+`@function loop_basic:reaper_framework/sleep/0`
+
+```mcfunction
+execute store result score $11 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[5].v[0] 1
+execute store result score $10 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[6].v[0] 1
+data remove storage loop_basic:reaper_framework.var data[5].v[0]
+data remove storage loop_basic:reaper_framework.var data[6].v[0]
+execute unless score $11 loop_basic.reaper_framework.var matches ..0 run function loop_basic:reaper_framework/__internal__/loop/0/s_5
+data modify storage loop_basic:reaper_framework.var data[5].v append value 0
+execute store result storage loop_basic:reaper_framework.var data[5].v[-1] int 1 run scoreboard players get $11 loop_basic.reaper_framework.var
+data modify storage loop_basic:reaper_framework.var data[6].v append value 0
+execute store result storage loop_basic:reaper_framework.var data[6].v[-1] int 1 run scoreboard players get $10 loop_basic.reaper_framework.var
+scoreboard players operation $7 loop_basic.reaper_framework.var = $10 loop_basic.reaper_framework.var
+function loop_basic:reaper_framework/loop/0
+function loop_basic:reaper_framework/__internal__/loop/0/s_start
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_4`
+
+```mcfunction
+function loop_basic:reaper_framework/__internal__/sleep/0/sel
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_start`
+
+```mcfunction
+execute store result score $11 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[5].v[-1] 1
+execute if score $11 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_3
+execute unless score $11 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_4
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_1`
+
+```mcfunction
+execute if score $12 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_2
+function loop_basic:reaper_framework/__internal__/loop/0/s_start
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_break_thread`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[5].v[-1] set value 0
+scoreboard players set $12 loop_basic.reaper_framework.var 1
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/s_0`
+
+```mcfunction
+scoreboard players set $12 loop_basic.reaper_framework.var 0
+scoreboard players set $11 loop_basic.reaper_framework.var 4
+scoreboard players set $7 loop_basic.reaper_framework.var 0
+function loop_basic:reaper_framework/loop/0
+execute unless score $11 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_1
+```
+
+`@function loop_basic:reaper_framework/summon/1`
+
+```mcfunction
+scoreboard players operation @s reaper_framework.entity_nbt.cloud = #i reaper_framework.entity_nbt.cloud
+scoreboard players add #i reaper_framework.entity_nbt.cloud 1
+tag @s remove reaper_framework.summon.init
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/0_set`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[-1] set value 0
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[-1]
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[-1]
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/e_1`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/3_append`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index append value 0
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/4_append`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left append value 4
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/5_append`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.sleep.1 append from storage loop_basic:reaper_framework.var data[11].v
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/6_get`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_p`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.sleep.1
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep.1[0]
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep.1
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_3`
+
+```mcfunction
+tag @s remove loop_basic.reaper_framework.sleep.1
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/1/run_at_ctx`
+
+```mcfunction
+function reaper_framework:__internal__/sleep/run_at_ctx_1
+function loop_basic:reaper_framework/sleep/1
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_2`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove
+data remove storage loop_basic:reaper_framework.var data[13].v[0]
+execute store result score $19 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[13].v[0].ts 1
+execute store result score $21 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[13].v
+execute if score $21 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_3
+data modify storage loop_basic:reaper_framework.var data[16].v set from storage loop_basic:reaper_framework.var data[12].v.ctx
+execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[16].v.dim 1
+data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[16].v
+function reaper_framework:__internal__/sleep/run_at_ctx
+execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/1/run_at_ctx
+execute if score $19 loop_basic.reaper_framework.var = $18 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_1`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get
+data modify storage loop_basic:reaper_framework.var data[13].v set from storage loop_basic:reaper_framework.var data[2].v
+data modify storage loop_basic:reaper_framework.var data[12].v set from storage loop_basic:reaper_framework.var data[13].v[0]
+execute store result score $18 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[12].v.ts 1
+execute if score $18 loop_basic.reaper_framework.var = $20 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_2
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch`
+
+```mcfunction
+execute store result score $4 loop_basic.reaper_framework.var run time query gametime
+scoreboard players operation $20 loop_basic.reaper_framework.var = $4 loop_basic.reaper_framework.var
+scoreboard players remove $20 loop_basic.reaper_framework.var 20
+execute as @e[tag=loop_basic.reaper_framework.sleep.1] run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_1
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/1/e_0`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[12].v set from storage loop_basic:reaper_framework.var data[14].v
+execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
+data remove storage loop_basic:reaper_framework.var data[11].v
+execute store result score $4 loop_basic.reaper_framework.var run time query gametime
+execute store result storage loop_basic:reaper_framework.var data[11].v.ts int 1 run scoreboard players get $4 loop_basic.reaper_framework.var
+execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
+execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
+data modify storage loop_basic:reaper_framework.var data[11].v.ctx set from storage loop_basic:reaper_framework.var data[3].v
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append
+tag @s add loop_basic.reaper_framework.sleep.1
+schedule function loop_basic:reaper_framework/__internal__/sleep/1/e_sch 20 append
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/1/sel`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/sleep/1/e_0
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/9_get`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_p`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[0]
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[0]
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[0]
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/e_3`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[0]
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/13_get`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_p`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[0]
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[0]
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/15_append`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left append value 0
+execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[-1] int 1 run scoreboard players get $17 loop_basic.reaper_framework.var
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/16_append`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index append value 0
+execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[-1] int 1 run scoreboard players get $16 loop_basic.reaper_framework.var
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/e_4`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove
+scoreboard players remove $17 loop_basic.reaper_framework.var 1
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get
+execute store result score $16 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove
+scoreboard players add $16 loop_basic.reaper_framework.var 1
+scoreboard players operation $7 loop_basic.reaper_framework.var = $16 loop_basic.reaper_framework.var
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append
+function loop_basic:reaper_framework/loop/0
+function loop_basic:reaper_framework/__internal__/loop/0/e_start
+```
+
+`@function loop_basic:reaper_framework/sleep/1`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get
+execute store result score $17 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
+execute if score $17 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/e_3
+execute unless score $17 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/e_4
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/e_start`
+
+```mcfunction
+function loop_basic:reaper_framework/__internal__/sleep/1/sel
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/e_2`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append
+function loop_basic:reaper_framework/__internal__/loop/0/e_start
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/e_break_thread`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set
+execute if score $17 loop_basic.reaper_framework.var matches 4 run function loop_basic:reaper_framework/__internal__/loop/0/e_1
+scoreboard players set $17 loop_basic.reaper_framework.var 0
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/e_0`
+
+```mcfunction
+execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
+scoreboard players set $17 loop_basic.reaper_framework.var 4
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append
+scoreboard players set $7 loop_basic.reaper_framework.var 0
+function loop_basic:reaper_framework/loop/0
+execute unless score $17 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/e_2
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/0/sel`
+
+```mcfunction
+execute unless entity @s run function loop_basic:reaper_framework/__internal__/loop/0/s_0
+execute if entity @s run function loop_basic:reaper_framework/__internal__/loop/0/e_0
+```
+
+`@function loop_basic:reaper_framework/loop/0`
+
+```mcfunction
+help '$LOOP_DATA +threading'
+say hi
+execute if score $7 loop_basic.reaper_framework.var matches 1 run say hello <cycle 1 only>
+scoreboard players set $6 loop_basic.reaper_framework.var 0
+execute if data entity @p SelectedItem run scoreboard players set $6 loop_basic.reaper_framework.var 1
+execute if score $6 loop_basic.reaper_framework.var matches 1 unless entity @s run function loop_basic:reaper_framework/__internal__/loop/0/s_break_thread
+execute if score $6 loop_basic.reaper_framework.var matches 1 if entity @s run function loop_basic:reaper_framework/__internal__/loop/0/e_break_thread
+execute unless score $6 loop_basic.reaper_framework.var matches 1 run function loop_basic:reaper_framework/loop/break_nest/0_0
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/2/run_at_ctx`
+
+```mcfunction
+function reaper_framework:__internal__/sleep/run_at_ctx_1
+function loop_basic:reaper_framework/sleep/2
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/2/s_sch`
+
+```mcfunction
+execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[17].v.dim 1
+data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[17].v
+function reaper_framework:__internal__/sleep/run_at_ctx
+execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/2/run_at_ctx
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/2/s_0`
+
+```mcfunction
+execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
+execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
+data modify storage loop_basic:reaper_framework.var data[17].v set from storage loop_basic:reaper_framework.var data[3].v
+schedule function loop_basic:reaper_framework/__internal__/sleep/2/s_sch 20 replace
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/2/sel`
+
+```mcfunction
+execute unless entity @s run function loop_basic:reaper_framework/__internal__/sleep/2/s_0
+```
+
+`@function loop_basic:reaper_framework/sleep/2`
+
+```mcfunction
+scoreboard players remove $22 loop_basic.reaper_framework.var 1
+scoreboard players add $23 loop_basic.reaper_framework.var 1
+scoreboard players operation $7 loop_basic.reaper_framework.var = $23 loop_basic.reaper_framework.var
+function loop_basic:reaper_framework/loop/1
+execute unless score $22 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/s_start
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/s_start`
+
+```mcfunction
+function loop_basic:reaper_framework/__internal__/sleep/2/sel
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/s_break`
+
+```mcfunction
+scoreboard players set $22 loop_basic.reaper_framework.var 0
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/s_0`
+
+```mcfunction
+scoreboard players set $22 loop_basic.reaper_framework.var 2
+scoreboard players set $23 loop_basic.reaper_framework.var 0
+scoreboard players operation $7 loop_basic.reaper_framework.var = $23 loop_basic.reaper_framework.var
+function loop_basic:reaper_framework/loop/1
+execute unless score $22 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/s_start
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.1
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/18_set`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycle_index set value 0
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/19_set`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycles_left set value 2
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/20_set`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_p`
+
+```mcfunction
+data modify entity @s data.__internal__.loop_basic.reaper_framework.sleep.3 set from storage loop_basic:reaper_framework.var data[18].v
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/21_get`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_p`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.sleep.3
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep.3
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/3/run_at_ctx`
+
+```mcfunction
+function reaper_framework:__internal__/sleep/run_at_ctx_1
+function loop_basic:reaper_framework/sleep/3
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_2`
+
+```mcfunction
+tag @s remove loop_basic.reaper_framework.sleep.3
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove
+data modify storage loop_basic:reaper_framework.var data[21].v set from storage loop_basic:reaper_framework.var data[19].v.ctx
+execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[21].v.dim 1
+data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[21].v
+function reaper_framework:__internal__/sleep/run_at_ctx
+execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/3/run_at_ctx
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_1`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get
+data modify storage loop_basic:reaper_framework.var data[19].v set from storage loop_basic:reaper_framework.var data[2].v
+execute store result score $26 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[19].v.ts 1
+execute if score $26 loop_basic.reaper_framework.var = $27 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_2
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/3/e_sch`
+
+```mcfunction
+execute store result score $4 loop_basic.reaper_framework.var run time query gametime
+scoreboard players operation $27 loop_basic.reaper_framework.var = $4 loop_basic.reaper_framework.var
+scoreboard players remove $27 loop_basic.reaper_framework.var 20
+execute as @e[tag=loop_basic.reaper_framework.sleep.3] run function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_1
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/3/e_0`
+
+```mcfunction
+execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
+data remove storage loop_basic:reaper_framework.var data[18].v
+execute store result score $4 loop_basic.reaper_framework.var run time query gametime
+execute store result storage loop_basic:reaper_framework.var data[18].v.ts int 1 run scoreboard players get $4 loop_basic.reaper_framework.var
+execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
+execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
+data modify storage loop_basic:reaper_framework.var data[18].v.ctx set from storage loop_basic:reaper_framework.var data[3].v
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set
+tag @s add loop_basic.reaper_framework.sleep.3
+schedule function loop_basic:reaper_framework/__internal__/sleep/3/e_sch 20 replace
+```
+
+`@function loop_basic:reaper_framework/__internal__/sleep/3/sel`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/sleep/3/e_0
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/23_get`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_p`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycles_left
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/24_set`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_p`
+
+```mcfunction
+execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycles_left int 1 run scoreboard players get $25 loop_basic.reaper_framework.var
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/25_get`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_p`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycle_index
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/26_set`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_p`
+
+```mcfunction
+execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycle_index int 1 run scoreboard players get $24 loop_basic.reaper_framework.var
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.1
+```
+
+`@function loop_basic:reaper_framework/sleep/3`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get
+execute store result score $25 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
+scoreboard players remove $25 loop_basic.reaper_framework.var 1
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get
+execute store result score $24 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
+scoreboard players add $24 loop_basic.reaper_framework.var 1
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set
+scoreboard players operation $7 loop_basic.reaper_framework.var = $24 loop_basic.reaper_framework.var
+execute if score $25 loop_basic.reaper_framework.var matches 0 if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove
+function loop_basic:reaper_framework/loop/1
+execute unless score $25 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/e_start
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/e_start`
+
+```mcfunction
+function loop_basic:reaper_framework/__internal__/sleep/3/sel
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/e_1`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set
+function loop_basic:reaper_framework/__internal__/loop/1/e_start
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/e_break`
+
+```mcfunction
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove
+scoreboard players set $25 loop_basic.reaper_framework.var 0
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/e_0`
+
+```mcfunction
+execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
+scoreboard players set $25 loop_basic.reaper_framework.var 2
+execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set
+scoreboard players set $7 loop_basic.reaper_framework.var 0
+function loop_basic:reaper_framework/loop/1
+execute unless score $25 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/e_1
+```
+
+`@function loop_basic:reaper_framework/__internal__/loop/1/sel`
+
+```mcfunction
+execute unless entity @s run function loop_basic:reaper_framework/__internal__/loop/1/s_0
+execute if entity @s run function loop_basic:reaper_framework/__internal__/loop/1/e_0
+```
+
+`@function loop_basic:reaper_framework/loop/1`
+
+```mcfunction
+help '$LOOP_DATA -threading'
+summon pig ~ ~5 ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime: 13s}
+```
+
+`@function loop_basic:reaper_framework/__internal__/mob_loot_gamerule_error`
+
+```mcfunction
+gamerule doMobLoot true
+tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " Gamerule 'doMobLoot' was changed to 'True'. ", "color": "red"}, {"text": "Explanation", "color": "red", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "red", "hoverEvent": {"action": "show_text", "contents": ""}}]
+```
+
+`@function loop_basic:reaper_framework/uninstall`
+
+```mcfunction
+function loop_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l
+function loop_basic:reaper_framework/var/u_n_i_n_s_t_a_l_l
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.loop
+```
+
+`@function loop_basic:reaper_framework/loop/break_nest/0_0`
+
+```mcfunction
+summon pig ~ ~5 ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime: 13s}
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_nm`
+
+```mcfunction
+scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove`
+
+```mcfunction
+execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_nm
+execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_p
+```
+
+`@function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_p`
+
+```mcfunction
+data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep
+```
+
+`@function loop_basic:reaper_framework/var/u_n_i_n_s_t_a_l_l`
+
+```mcfunction
+data remove storage loop_basic:reaper_framework.var data
+```
+
+`@function loop_basic:reaper_framework/__internal__/var/flush_memory`
+
+```mcfunction
+data modify storage loop_basic:reaper_framework.var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+```
+
+`@function loop_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l`
+
+```mcfunction
+scoreboard objectives remove loop_basic.reaper_framework.var
+scoreboard objectives remove loop_basic.reaper_framework.death_events
+```
+
+### looptest
+
+`@function looptest:test`
+
+```mcfunction
+function loop_basic:reaper_framework/__internal__/loop/0/sel
 ```

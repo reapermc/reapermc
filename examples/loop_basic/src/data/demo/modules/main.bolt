@@ -1,12 +1,19 @@
-from reapermc:api import loop, loop_break, loop_cycle
-from reapermc:util import print_score
+from reapermc:api import loop, loop_break, loop_cycle, Expr
 
 
-function f"loop:test":
-    with loop(0, 20, threading=True):
+function looptest:test:
+    with loop(5, 20):
+        say hi
+
+        if Expr(loop_cycle) == 1:
+            say hello <cycle 1 only>
+
         if data entity @p SelectedItem:
             loop_break()
 
-        print_score(loop_cycle.get())
-        
+        summon pig ~ ~5 ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime:13s}
 
+
+function ./test2:
+    with loop(3, 20, threading=False):
+        summon pig ~ ~5 ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime:13s}

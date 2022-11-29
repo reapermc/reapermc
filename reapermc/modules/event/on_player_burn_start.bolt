@@ -1,0 +1,25 @@
+from ../event_handler import Event, listener
+from ../flag_handler import Flag
+from ../tag import tag, untag
+from ../flag/is_on_fire import is_on_fire
+from ./on_player_tick import on_player_tick
+
+
+on_player_burn_start = Event('on_player_burn_start')
+on_player_burn_start.set_handler_path(f"reaper_framework:__internal__/event_handler/on_player_burn_start")
+
+
+@on_player_burn_start.handler
+def handler():
+
+    @listener(on_player_tick)
+    def _on_player_tick():
+        triggered = 'reaper_framework.event_handler.on_player_burn_start.triggered'
+        
+        if Flag(is_on_fire):
+            if entity @s[tag=!triggered]:
+                execute function on_player_burn_start.generate_path('trigger'):
+                    tag(triggered)
+                    on_player_burn_start.trigger()
+        else:
+            untag(triggered)

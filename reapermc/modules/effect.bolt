@@ -1,5 +1,4 @@
 from nbtlib import Byte, Float
-
 from ./util import get_dict_key
 
 
@@ -45,14 +44,10 @@ def effect(id, duration, amplifier, show_particles=False):
     hide_particles = not show_particles
     effect give @s id duration amplifier hide_particles
 
-
-
-
-
-def effect_raw(id, duration, amplifier, show_particles=False):
+def effect_raw(id, duration_ticks, amplifier, show_particles=False):
     num_id = get_dict_key(ALL_EFFECTS, id)
 
     if entity @s[type=player]:
-        summon area_effect_cloud ~ ~ ~ {Radius: Float(0.0), Age: 4, WaitTime: 0, Duration: 6, Effects:[{Id: Byte(num_id), Amplifier: Byte(amplifier), Duration: duration, ShowParticles: Byte(show_particles)}]}
+        summon area_effect_cloud ~ ~ ~ {Radius: Float(0.0), Age: 4, WaitTime: 0, Duration: 6, Effects:[{Id: Byte(num_id), Amplifier: Byte(amplifier), Duration: duration_ticks, ShowParticles: Byte(show_particles)}]}
     if entity @s[type=!player]:
-        data modify entity @s ActiveEffects append value {Id: num_id, Duration: duration, Amplifier: Byte(amplifier), ShowIcon: 0b, ShowParticles: Byte(show_particles), Ambient: 0b}
+        data modify entity @s ActiveEffects append value {Id: num_id, Duration: duration_ticks, Amplifier: Byte(amplifier), ShowIcon: 0b, ShowParticles: Byte(show_particles), Ambient: 0b}

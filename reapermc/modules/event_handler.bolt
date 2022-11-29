@@ -1,0 +1,59 @@
+from ./util import logger
+
+
+class Event:
+    created_events = set()
+
+    def __init__(self, name):
+        if name in Event.created_events:
+            return logger.error(f"Conflicting event name '{name}'. An event with that name already exists.")
+
+        Event.created_events.add(name)
+
+        self.name = name
+        self.active = False
+        self.has_trigger = False
+        self.handler_ref = None
+        self.handler_path = generate_path(f"reaper_framework/event_handler/{self.name}")
+        self.contents_path = generate_path(f"reaper_framework/event/{self.name}")
+
+    def handler(self, f):
+        self.handler_ref = f
+
+        return f
+
+    def trigger(self):
+        self.has_trigger = True
+
+        function f"#{self.handler_path}"
+        merge function_tag self.handler_path {"values": [self.contents_path]}
+
+    def activate(self):
+        if not self.active:
+            self.active = True
+
+            f = self.handler_ref
+            f()
+
+    def generate_path(self, path):
+        return f"{self.handler_path}/{path}"
+
+    def set_handler_path(self, path):
+        self.handler_path = path
+
+
+def listener(event):
+    def decorator(f):
+        if not event.handler_ref:
+            return logger.error(f"Failed to register listener for event '{event.name}'. Event is missing a handler.")
+
+        event.activate()
+
+        if not event.has_trigger:
+            return logger.error(f"Failed to register listener for event '{event.name}'. Event is never triggered in the handler.")
+
+        append function event.contents_path:
+            f()
+
+        return f
+    return decorator

@@ -1,13 +1,25 @@
-from reapermc:api import get_time, set_time, scoreboard
+from reapermc:api import set_time, get_time, var, Expr
 
 
 
+foo = var(int)
+
+
+function ./test:
+    set_time(324)
+    foo = get_time()
+
+function ./test2:
+    foo = 1234
+
+    set_time(foo)
 
 
 function ./example:
-    say hello
-
-    demo = scoreboard('demo')['$demo']
-
-    set_time(demo + 10)
-    demo = get_time()
+    # day = heal, night = damage
+    if Expr(get_time()) < 13000:
+        effect give @s instant_health
+        say heal!
+    else:
+        effect give @s instant_damage
+        say damage!

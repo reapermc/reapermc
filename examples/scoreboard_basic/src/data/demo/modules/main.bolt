@@ -1,8 +1,10 @@
-from reapermc:api import scoreboard
+from reapermc:api import scoreboard, listener, on_server_load
 
 
-foo = scoreboard('fooscb')
+foo = scoreboard('bar')
 
 
 function ./test:
-    foo['$bar'] = 123
+    foo['$bar'] += 1
+
+

@@ -1,52 +1,23 @@
-from reapermc:api import sleep, preload
+from reapermc:api import sleep
 
 
 
-function f"sleep:no_context":
-    with sleep(20, threading=False, world_ctx=False):
-        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
 
-        particle flash
-        say hello
+function ./test:
+    say hello
 
-        # unless data entity @p SelectedItem:
-        #     function f"sleep:no_context"
-
-
-function f"sleep:context":
-    with sleep(20, threading=False, world_ctx=True):
-        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
-        particle flash
-
-        say hello
-
-        unless data entity @p SelectedItem:
-            function f"sleep:context"
-
-
-function f"sleep:no_context_threaded":
-    with sleep(20, threading=True, world_ctx=False):
-        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
-        particle flash
-
-        say hello
-
-        unless data entity @p SelectedItem:
-            function f"sleep:no_context_threaded"
-
-
-function f"sleep:context_threaded":
-    with sleep(20, threading=True, world_ctx=True):
-        summon sheep ~ ~5 ~ {Health:1, DeathLootTable:"idont:dropitems",DeathTime:15}
-
-        say hello
-        particle flash
-        
-        unless data entity @p SelectedItem:
-            function f"sleep:context_threaded"
+    with sleep(40):
+        say delayed hello
+        summon pig ~ ~ ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime:13s}
 
 
 
 
 
+function ./test2:
+    say hello
+
+    with sleep(40, threading=False):
+        say delayed hello
+        summon pig ~ ~ ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime:13s}
 

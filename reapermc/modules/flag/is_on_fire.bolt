@@ -1,0 +1,21 @@
+from ../flag_handler import NewFlag
+
+
+is_on_fire = NewFlag('is_on_fire')
+is_on_fire.set_handler_path(f"reaper_framework:__internal__/flag_handler/is_on_fire")
+
+
+@is_on_fire.handler
+def handler():
+    predicate is_on_fire.generate_path('is_on_fire') {
+        "condition": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+            "flags": {
+                "is_on_fire": true
+            }
+        }
+    }
+
+    with is_on_fire.set_condition():
+        if predicate is_on_fire.generate_path('is_on_fire')

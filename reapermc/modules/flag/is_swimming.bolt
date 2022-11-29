@@ -1,0 +1,21 @@
+from ../flag_handler import NewFlag
+
+
+is_swimming = NewFlag('is_swimming')
+is_swimming.set_handler_path(f"reaper_framework:__internal__/flag_handler/is_swimming")
+
+
+@is_swimming.handler
+def handler():
+    predicate is_swimming.generate_path('is_swimming') {
+        "condition": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+            "flags": {
+                "is_swimming": true
+            }
+        }
+    }
+
+    with is_swimming.set_condition():
+        if predicate is_swimming.generate_path('is_swimming')

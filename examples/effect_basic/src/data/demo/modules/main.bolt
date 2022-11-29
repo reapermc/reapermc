@@ -1,0 +1,15 @@
+from reapermc:api import effect, effect_raw
+
+
+
+
+function ./test:
+    effect('speed', 5, 10)
+
+function ./test1:
+    effect_raw('levitation', 6, 30)
+
+
+
+
+

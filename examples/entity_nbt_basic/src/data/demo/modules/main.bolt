@@ -1,0 +1,24 @@
+from reapermc:api import EntityNBT, var
+
+
+foo = var(int)
+
+
+function ./test:
+    my_obj = EntityNBT('key.wtf')
+    my_obj.set(69)
+
+    foo = my_obj.get()
+
+
+
+
+
+
+
+
+function ./test2:
+    my_obj = EntityNBT('key.test')
+    my_obj.merge(234324)
+
+    foo = my_obj.get()
