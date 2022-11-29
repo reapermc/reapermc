@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.0 (2022-11-29)
+### Feature
+* V2 release ([`6e4805d`](https://github.com/reapermc/reapermc/commit/6e4805da3c5d1cc371f40aa70abbec6cbfcde223))
+
+### Breaking
+* v2 release  ([`6e4805d`](https://github.com/reapermc/reapermc/commit/6e4805da3c5d1cc371f40aa70abbec6cbfcde223))
+
+### Documentation
+* Flags docs formatting ([`5d3da2f`](https://github.com/reapermc/reapermc/commit/5d3da2fcaf740a24e88ecf6f22fbe7abd1e39698))
+
 ## v0.2.0 (2022-11-17)
 ### Feature
 * Added new feature Flag() ([`c110ba8`](https://github.com/reapermc/reapermc/commit/c110ba824fa55f3130ef0c3d61e94865e492cde3))
