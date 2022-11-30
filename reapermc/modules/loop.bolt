@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
 from ./var import var
-from ./util import logger, SelectorServer
+from ./util import logger, SelectorServer, parsed_project_name
 from ./expr import Expr
 from ./sleep import sleep
 from ./defer import defer
@@ -42,7 +42,7 @@ def _on_player_join():
 @defer
 def _reset_joining_player():
     # counteracts all bugs that may occur when the player leaves before a loop finished
-    loop_root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.loop", ensure_entry=False)
+    loop_root_nbt = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.loop", ensure_entry=False)
     tmp = var()
 
     if _CACHE_ID == -1:
@@ -200,9 +200,9 @@ def _server_threaded(count, interval, world_ctx):
 
 def _entity(count, interval, world_ctx):
     execute function f"{_CACHE_PATH}/e_0":
-        root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.loop.{_CACHE_ID}")
-        cycles_left = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.loop.{_CACHE_ID}.cycles_left", ensure_entry=False)
-        cycle_index = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.loop.{_CACHE_ID}.cycle_index", ensure_entry=False)
+        root_nbt = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.loop.{_CACHE_ID}")
+        cycles_left = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.loop.{_CACHE_ID}.cycles_left", ensure_entry=False)
+        cycle_index = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.loop.{_CACHE_ID}.cycle_index", ensure_entry=False)
         tmp = var(int)
         cycle = var(int)
 
@@ -247,8 +247,8 @@ def _entity(count, interval, world_ctx):
 
 def _entity_threaded(count, interval, world_ctx):
     execute function f"{_CACHE_PATH}/e_0":
-        cycles_left = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.loop.{_CACHE_ID}.cycles_left")
-        cycle_index = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.loop.{_CACHE_ID}.cycle_index", ensure_entry=False)
+        cycles_left = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.loop.{_CACHE_ID}.cycles_left")
+        cycle_index = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.loop.{_CACHE_ID}.cycle_index", ensure_entry=False)
         tmp = var(int)
         cycle = var(int)
 

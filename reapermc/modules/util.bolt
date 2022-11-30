@@ -7,6 +7,8 @@ from contextlib import contextmanager
 logger = logging.getLogger("reapermc")
 data_self = bolt_expressions.Data.entity('@s')
 sys_col_hex = '#bf0000'
+parsed_project_name = ctx.project_name.replace(' ', '_')
+
 
 
 def print_data(expr, color='yellow'):

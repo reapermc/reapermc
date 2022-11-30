@@ -3,10 +3,11 @@ from ./scoreboard import scoreboard
 from ./event_handler import listener
 from ./event/on_server_load import on_server_load
 from ./defer import defer
+from ./util import parsed_project_name
 
 
-_scb = scoreboard(f"{ctx.project_name}.reaper_framework.var", _internal=True)
-_stge = Data.storage(f"{ctx.project_name}:reaper_framework.var").data
+_scb = scoreboard(f"{parsed_project_name}.reaper_framework.var", _internal=True)
+_stge = Data.storage(f"{parsed_project_name}:reaper_framework.var").data
 
 _scb_id = -1
 _stge_id = -1

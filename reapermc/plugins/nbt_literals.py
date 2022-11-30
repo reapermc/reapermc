@@ -1,7 +1,5 @@
-# type: ignore
-
 from dataclasses import dataclass, field
-from typing import Dict, Type
+from typing import Dict, Type, Any
 from beet import Context
 from beet.core.utils import required_field
 from bolt import Accumulator, Runtime
@@ -16,8 +14,8 @@ SUFFIXED_NUMBER = r"[+-]?(?:[0-9]*?\.[0-9]+|[0-9]+\.[0-9]*?|[1-9][0-9]*|0)(?:[eE
 
 # nbtlib monkey patch :)
 def patch_nbtlib():
-    def op_method(op, reverse=False):
-        def method(self, other):
+    def op_method(op: Any, reverse: Any = False):
+        def method(self: Any, other: Any):
             value = op(other.real, self.real) if reverse else op(self.real, other.real)
             return self.__class__(value)
 
