@@ -3,7 +3,7 @@ from ./defer import defer
 from ./scoreboard import scoreboard
 from ./var import var
 from ./expr import Expr
-from ./tag import tag
+from ./tag import tag, untag
 from ./event_handler import Event, listener
 from ./flag_handler import NewFlag, Flag
 from ./entity_nbt import EntityNBT
