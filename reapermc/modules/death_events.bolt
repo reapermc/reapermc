@@ -9,11 +9,12 @@ from ./event/on_server_tick import on_server_tick
 from ./defer import defer
 from ./scoreboard import scoreboard
 from ./tag import tag
+from ./util import parsed_project_name
 
 _CACHE_ID = -1
 _INITIALIZED = False
 
-_event_id_scb = scoreboard(f"{ctx.project_name}.reaper_framework.death_events", _internal=True)
+_event_id_scb = scoreboard(f"{parsed_project_name}.reaper_framework.death_events", _internal=True)
 
 def register_death_event(death_event):
     global _CACHE_ID, _INITIALIZED
@@ -64,7 +65,7 @@ def _setup():
         payload = json.loads(read_text("reapermc.resources", "death_events_payload.json"))
         vanilla = ctx.inject(Vanilla).mount("data/minecraft/loot_tables/entities")
 
-        payload['entries'][0]['functions'][0]['modifiers'][0]['amount']['score'] = f"{ctx.project_name}{payload['entries'][0]['functions'][0]['modifiers'][0]['amount']['score']}"
+        payload['entries'][0]['functions'][0]['modifiers'][0]['amount']['score'] = f"{parsed_project_name}{payload['entries'][0]['functions'][0]['modifiers'][0]['amount']['score']}"
 
         _generate_vanilla_tables(vanilla)
         _inject_tables(payload)

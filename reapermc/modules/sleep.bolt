@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from ./util import logger, SelectorServer, sys_col_hex, data_self
+from ./util import logger, SelectorServer, sys_col_hex, data_self, parsed_project_name
 from ./var import var
 from ./scoreboard import scoreboard
 from ./summon import summon
@@ -32,7 +32,7 @@ def _increment_cache_id():
     _CACHE_ID += 1
     _CACHE_PATH = generate_path(f"reaper_framework/__internal__/sleep/{_CACHE_ID}")
     _PAYLOAD_PATH = generate_path(f"reaper_framework/sleep/{_CACHE_ID}")
-    _FILTER_TAG = f"{ctx.project_name}.reaper_framework.sleep.{_CACHE_ID}"
+    _FILTER_TAG = f"{parsed_project_name}.reaper_framework.sleep.{_CACHE_ID}"
 
 
 def _setup():
@@ -90,7 +90,7 @@ def _on_player_join():
 @defer
 def _reset_joining_player():
     # counteracts all bugs that may occur when the player leaves before a sleep finished
-    sleep_root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.sleep", ensure_entry=False)
+    sleep_root_nbt = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.sleep", ensure_entry=False)
     tmp = var()
 
     if _CACHE_ID == -1:
@@ -103,7 +103,7 @@ def _reset_joining_player():
                 sleep_root_nbt.remove()
 
                 for n in range(_CACHE_ID + 1):
-                    untag(f"{ctx.project_name}.reaper_framework.sleep.{n}")
+                    untag(f"{parsed_project_name}.reaper_framework.sleep.{n}")
 
 
 def _ensure_ctx_marker():
@@ -252,7 +252,7 @@ def _entity(interval, world_ctx):
         tmp = var()
         tmp1 = var()
         tmp_int = var(int)
-        root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.sleep.{_CACHE_ID}")
+        root_nbt = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.sleep.{_CACHE_ID}")
 
         tmp.remove()
         tmp.ts = get_time('gametime')
@@ -303,7 +303,7 @@ def _entity_threading(interval, world_ctx):
         threads = var()
         thread_current = var()
         thread_count = var(int)
-        root_nbt = EntityNBT(f"__internal__.{ctx.project_name}.reaper_framework.sleep.{_CACHE_ID}")
+        root_nbt = EntityNBT(f"__internal__.{parsed_project_name}.reaper_framework.sleep.{_CACHE_ID}")
 
         tmp.remove()
         tmp.ts = get_time('gametime')

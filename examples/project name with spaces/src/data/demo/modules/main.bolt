@@ -1,0 +1,7 @@
+from reapermc:api import listener, on_server_load
+
+
+
+@listener(on_server_load)
+def load():
+    say hello!
