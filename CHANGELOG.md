@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.1 (2022-11-30)
+### Fix
+* Project names with spaces bricking the system ([`202dd3b`](https://github.com/reapermc/reapermc/commit/202dd3b234d28f32c7cabc4e50b84f895e0c8f83))
+
 ## v1.0.0 (2022-11-29)
 ### Feature
 * Major  release ([`5b90c57`](https://github.com/reapermc/reapermc/commit/5b90c57c0a2e04dd0424bf7e3b29cebc0abb52fb))
