@@ -29,7 +29,7 @@ def var(var_type=None, default_value=None):
             if var_type == int:
                 _scb[f"${_scb_id}"] = default_value
             else:
-                _stge[_stge_id] = default_value
+                _stge[_stge_id].v = default_value
 
     return expr
 

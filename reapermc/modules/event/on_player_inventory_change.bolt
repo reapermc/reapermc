@@ -1,0 +1,26 @@
+from ../event_handler import Event
+
+
+on_player_inventory_change = Event('on_player_inventory_change')
+on_player_inventory_change.set_handler_path(f"reaper_framework:__internal__/event_handler/on_player_inventory_change")
+
+
+@on_player_inventory_change.handler
+def handler():
+    path_advancement = on_player_inventory_change.generate_path('inventory_changed')
+    path_reward = on_player_inventory_change.generate_path('advancement_reward')
+
+    advancement path_advancement {
+        "criteria": {
+            "requirement": {
+                "trigger": "minecraft:inventory_changed"
+            }
+        },
+        "rewards": {
+            "function": path_reward
+        }
+    }
+
+    function path_reward:
+        advancement revoke @s only path_advancement
+        on_player_inventory_change.trigger()

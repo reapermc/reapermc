@@ -55,36 +55,6 @@
 }
 ```
 
-`@function_tag reaper_framework:__internal__/event_handler/on_player_glide_start`
-
-```json
-{
-  "values": [
-    "event_basic3:reaper_framework/event/on_player_glide_start"
-  ]
-}
-```
-
-`@function_tag reaper_framework:__internal__/event_handler/on_player_land`
-
-```json
-{
-  "values": [
-    "event_basic3:reaper_framework/event/on_player_land"
-  ]
-}
-```
-
-`@function_tag reaper_framework:__internal__/event_handler/on_player_jump`
-
-```json
-{
-  "values": [
-    "event_basic3:reaper_framework/event/on_player_jump"
-  ]
-}
-```
-
 `@function reaper_framework:__internal__/event_handler/on_server_load/load`
 
 ```mcfunction
@@ -103,63 +73,6 @@ function #reaper_framework:__internal__/event_handler/on_player_join
 ```mcfunction
 schedule function reaper_framework:__internal__/event_handler/on_server_tick/tick 1
 function #reaper_framework:__internal__/event_handler/on_server_tick
-```
-
-`@function reaper_framework:__internal__/event_handler/on_player_glide_start/trigger`
-
-```mcfunction
-tag @s add reaper_framework.event_handler.on_player_glide_start.triggered
-function #reaper_framework:__internal__/event_handler/on_player_glide_start
-```
-
-`@function reaper_framework:__internal__/flag_handler/is_gliding/__condition__`
-
-```mcfunction
-execute store result score $2 event_basic3.reaper_framework.var if predicate reaper_framework:__internal__/flag_handler/is_gliding/is_gliding
-```
-
-`@function reaper_framework:__internal__/event_handler/on_player_land/trigger`
-
-```mcfunction
-tag @s remove reaper_framework.event_handler.on_player_land.available
-function #reaper_framework:__internal__/event_handler/on_player_land
-```
-
-`@function reaper_framework:__internal__/flag_handler/is_in_air/__condition__`
-
-```mcfunction
-execute store result score $2 event_basic3.reaper_framework.var if predicate reaper_framework:__internal__/flag_handler/is_in_air/is_in_air
-```
-
-`@function reaper_framework:__internal__/event_handler/on_player_jump/jump`
-
-```mcfunction
-scoreboard players set @s reaper_framework.event_handler.on_player_jump 0
-function #reaper_framework:__internal__/event_handler/on_player_jump
-```
-
-`@predicate reaper_framework:__internal__/flag_handler/is_gliding/is_gliding`
-
-```json
-{
-  "condition": "minecraft:entity_properties",
-  "entity": "this",
-  "predicate": {
-    "nbt": "{FallFlying: 1b}"
-  }
-}
-```
-
-`@predicate reaper_framework:__internal__/flag_handler/is_in_air/is_in_air`
-
-```json
-{
-  "condition": "minecraft:entity_properties",
-  "entity": "this",
-  "predicate": {
-    "nbt": "{OnGround: 0b}"
-  }
-}
 ```
 
 ### minecraft
@@ -199,7 +112,6 @@ scoreboard objectives add reaper_framework.entity_nbt.cloud dummy {"text": "reap
 scoreboard objectives add event_basic3.reaper_framework.death_events dummy {"text": "event_basic3.reaper_framework.death_events", "color": "#bf0000"}
 scoreboard objectives add reaper_framework.sleep.dim_id dummy {"text": "reaper_framework.sleep.dim_id", "color": "#bf0000"}
 scoreboard objectives add reaper_framework.event_handler.on_player_join custom:leave_game {"text": "reaper_framework.event_handler.on_player_join", "color": "#bf0000"}
-scoreboard objectives add reaper_framework.event_handler.on_player_jump custom:jump {"text": "reaper_framework.event_handler.on_player_jump", "color": "#bf0000"}
 ```
 
 `@function event_basic3:reaper_framework/event/on_server_tick`
@@ -213,13 +125,6 @@ execute as @a at @s run function #reaper_framework:__internal__/event_handler/on
 ```mcfunction
 execute if score @s reaper_framework.event_handler.on_player_join matches -1 run function reaper_framework:__internal__/event_handler/on_player_join/join
 execute if score @s reaper_framework.event_handler.on_player_join matches 1.. run scoreboard players set @s reaper_framework.event_handler.on_player_join -1
-function reaper_framework:__internal__/flag_handler/is_gliding/__condition__
-execute if score $2 event_basic3.reaper_framework.var matches 1 if entity @s[tag=!reaper_framework.event_handler.on_player_glide_start.triggered] run function reaper_framework:__internal__/event_handler/on_player_glide_start/trigger
-execute if score $2 event_basic3.reaper_framework.var matches 0 run tag @s remove reaper_framework.event_handler.on_player_glide_start.triggered
-function reaper_framework:__internal__/flag_handler/is_in_air/__condition__
-execute if score $2 event_basic3.reaper_framework.var matches 1 run tag @s add reaper_framework.event_handler.on_player_land.available
-execute if score $2 event_basic3.reaper_framework.var matches 0 if entity @s[tag=reaper_framework.event_handler.on_player_land.available] run function reaper_framework:__internal__/event_handler/on_player_land/trigger
-execute if score @s reaper_framework.event_handler.on_player_jump matches 1.. run function reaper_framework:__internal__/event_handler/on_player_jump/jump
 ```
 
 `@function event_basic3:reaper_framework/event/on_player_join`
@@ -227,24 +132,6 @@ execute if score @s reaper_framework.event_handler.on_player_jump matches 1.. ru
 ```mcfunction
 function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/loop/reset_joining_player
-```
-
-`@function event_basic3:reaper_framework/event/on_player_glide_start`
-
-```mcfunction
-execute rotated ~180 -35 run function delta:api/launch_looking
-```
-
-`@function event_basic3:reaper_framework/event/on_player_land`
-
-```mcfunction
-item replace entity @s armor.chest with elytra
-```
-
-`@function event_basic3:reaper_framework/event/on_player_jump`
-
-```mcfunction
-say <event_basic3> jumped!
 ```
 
 `@function event_basic3:reaper_framework/__internal__/mob_loot_gamerule_error`
