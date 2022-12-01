@@ -10,8 +10,11 @@ from reapermc:api import
     on_player_sneak_end,
     on_player_glide,
     on_player_glide_end,
-    on_player_glide_start
-    on_player_sprint
+    on_player_glide_start,
+    on_player_sprint,
+    on_player_inventory_change,
+    on_player_offhand_change,
+    effect_raw
 
 
 
@@ -61,26 +64,45 @@ from reapermc:api import
 
 
 
+# fully functional simple double jump lol
+
+# @listener(on_player_glide_start)
+# def double_jump_trigger():
+#     # say glide start!
+
+#     # tp @s @s
+#     item replace entity @s armor.chest with air
+#     effect_raw('levitation', 3, 50)
 
 
-@listener(on_player_glide_start)
-def _on_player_glide_start():
-    # say glide start!
-
-    # tp @s @s
-    rotated ~180 -35:
-        # item replace entity @s armor.chest with air
-        function delta:api/launch_looking
-    
-
-@listener(on_player_land)
-def _retrieve_elytra():
-    item replace entity @s armor.chest with elytra
+# @listener(on_player_land)
+# def restore_elytra():
+#     item replace entity @s armor.chest with elytra
 
 
-@listener(on_player_jump)
-def _on_player_jump():
-    say <event_basic3> jumped!
+
+
+
+
+
+# @listener(on_player_jump)
+# def _on_player_jump():
+#     say <event_basic3> jumped!
+
+
+
+
+# @listener(on_player_inventory_change)
+# def _on_player_inventory_change():
+#     say <inventory change>
+
+
+
+# @listener(on_player_offhand_change)
+# def _on_player_offhand_change():
+#     say <offhand change>
+#     # item replace entity @s weapon.mainhand from entity @s weapon.offhand
+#     # item replace entity @s weapon.offhand with air
 
 
 

@@ -22,3 +22,5 @@
 * [on_player_swim_start](./events/on_player_swim_start.md)
 * [on_player_swim](./events/on_player_swim.md)
 * [on_player_swim_end](./events/on_player_swim_end.md)
+* [on_player_inventory_change](./events/on_player_inventory_change.md)
+* [on_player_offhand_change](./events/on_player_offhand_change.md)

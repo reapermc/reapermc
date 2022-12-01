@@ -1,0 +1,34 @@
+from bolt_expressions import Data
+
+from ../event_handler import Event, listener
+from ../var import var
+from ../expr import Expr
+from ../entity_nbt import EntityNBT
+from ./on_player_inventory_change import on_player_inventory_change
+
+
+on_player_offhand_change = Event('on_player_offhand_change')
+on_player_offhand_change.set_handler_path(f"reaper_framework:__internal__/event_handler/on_player_offhand_change")
+
+
+@on_player_offhand_change.handler
+def handler():
+    previous_item = var()
+    current_item = var()
+
+    @listener(on_player_inventory_change)
+    def inventory_change():
+        nonlocal previous_item, current_item
+
+        saved_previous_item = EntityNBT('__internal__.reaper_framework.event_handler.on_player_offhand_change.saved_previous_item')
+
+        current_item = ''
+        current_item = Data.entity('@s').Inventory[{Slot: Byte(-106b)}]
+        
+        previous_item = ''
+        previous_item = saved_previous_item.get()
+
+        if Expr(previous_item) != current_item:
+            on_player_offhand_change.trigger()
+
+        saved_previous_item.set(current_item)

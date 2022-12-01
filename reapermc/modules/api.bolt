@@ -37,6 +37,8 @@ from ./event/on_player_swim_end import on_player_swim_end
 from ./event/on_player_burn import on_player_burn
 from ./event/on_player_burn_start import on_player_burn_start
 from ./event/on_player_burn_end import on_player_burn_end
+from ./event/on_player_inventory_change import on_player_inventory_change
+from ./event/on_player_offhand_change import on_player_offhand_change
 
 from ./flag/is_on_fire import is_on_fire
 from ./flag/is_sneaking import is_sneaking
