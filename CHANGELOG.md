@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.2 (2022-11-30)
+### Fix
+* Untag() missing from API ([`9c024fe`](https://github.com/reapermc/reapermc/commit/9c024fed6edcb4edcc58a99dfaddf5a0eb45497c))
+* Untag() missing from API ([`92c9192`](https://github.com/reapermc/reapermc/commit/92c9192b4a0438e859089d1c9d36d06ce9d177b4))
+
 ## v1.0.1 (2022-11-30)
 ### Fix
 * Project names with spaces bricking the system ([`202dd3b`](https://github.com/reapermc/reapermc/commit/202dd3b234d28f32c7cabc4e50b84f895e0c8f83))
