@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.0 (2022-12-01)
+### Feature
+* Add event on_player_inventory_change ([`3cac8af`](https://github.com/reapermc/reapermc/commit/3cac8afd559590300d90c685ca527300632f830c))
+
 ## v1.0.2 (2022-11-30)
 ### Fix
 * Untag() missing from API ([`9c024fe`](https://github.com/reapermc/reapermc/commit/9c024fed6edcb4edcc58a99dfaddf5a0eb45497c))
