@@ -1,4 +1,4 @@
-from reapermc:api import loop, loop_break, loop_cycle, Expr
+from reapermc:api import loop, loop_break, loop_cycle, Expr, var
 
 
 function looptest:test:
@@ -17,3 +17,13 @@ function looptest:test:
 function ./test2:
     with loop(3, 20, threading=False):
         summon pig ~ ~5 ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime:13s}
+
+
+
+function ./test_insta:
+    cycles = var()
+
+    cycles = 30
+
+    with loop(cycles, 0):
+        say hello

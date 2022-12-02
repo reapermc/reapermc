@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
 from ./var import var
-from ./util import logger, SelectorServer, parsed_project_name
+from ./util import logger, SelectorServer, parsed_project_name, is_expression
 from ./expr import Expr
 from ./sleep import sleep
 from ./defer import defer
@@ -12,6 +12,7 @@ from ./event/on_server_load import on_server_load
 from ./loop_break import _BREAK_BOOL_VAR
 from ./loop_cycle import set_public_cycle
 
+
 _CACHE_ID = -1
 _CACHE_PATH = ''
 _PAYLOAD_PATH = ''
@@ -20,6 +21,7 @@ _TMP_INT_0 = var(int)
 _TMP_INT_1 = var(int)
 
 _INITIALIZED = False
+
 
 def _increment_cache_id():
     global _CACHE_ID, _PAYLOAD_PATH, _CACHE_PATH
@@ -72,32 +74,53 @@ def loop(count, interval, selector='auto', threading=True, world_ctx=True):
         return
 
 
-    execute function f"{_CACHE_PATH}/sel":
-        if selector in ('server', 's'):
-            if SelectorServer():
-                if not threading:
-                    _server(count, interval, world_ctx)
-                else:
-                    _server_threaded(count, interval, world_ctx)
+    if interval == 0:
+        if is_expression(count):
+            index = var(int)
+            index_max = var(int)
 
-        elif selector in ('entity', 'e'):
-            if not SelectorServer():
-                if not threading:
-                    _entity(count, interval, world_ctx)
-                else:
-                    _entity_threaded(count, interval, world_ctx)
+            index = 0
+            index_max = count
 
-        elif selector == 'auto':
-            if SelectorServer():
-                if not threading:
-                    _server(count, interval, world_ctx)
+            execute function f"{_CACHE_PATH}/recursive":
+                index += 1
+
+                function _PAYLOAD_PATH
+
+                if Expr(index) < index_max:
+                    function f"{_CACHE_PATH}/recursive"
+
+        else:
+            for _ in range(count):
+               function _PAYLOAD_PATH
+
+    else:
+        execute function f"{_CACHE_PATH}/sel":
+            if selector in ('server', 's'):
+                if SelectorServer():
+                    if not threading:
+                        _server(count, interval, world_ctx)
+                    else:
+                        _server_threaded(count, interval, world_ctx)
+
+            elif selector in ('entity', 'e'):
+                if not SelectorServer():
+                    if not threading:
+                        _entity(count, interval, world_ctx)
+                    else:
+                        _entity_threaded(count, interval, world_ctx)
+
+            elif selector == 'auto':
+                if SelectorServer():
+                    if not threading:
+                        _server(count, interval, world_ctx)
+                    else:
+                        _server_threaded(count, interval, world_ctx)
                 else:
-                    _server_threaded(count, interval, world_ctx)
-            else:
-                if not threading:
-                    _entity(count, interval, world_ctx)
-                else:
-                    _entity_threaded(count, interval, world_ctx)
+                    if not threading:
+                        _entity(count, interval, world_ctx)
+                    else:
+                        _entity_threaded(count, interval, world_ctx)
 
     function _PAYLOAD_PATH:
         if threading:
