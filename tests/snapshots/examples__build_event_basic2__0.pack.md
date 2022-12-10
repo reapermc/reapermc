@@ -117,8 +117,8 @@ execute as @a run function reaper_framework:__internal__/sleep/reset_joining_pla
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
 say event_basic2 load
-execute store result score $10 event_basic2.reaper_framework.var run gamerule doMobLoot
-execute if score $10 event_basic2.reaper_framework.var matches 0 run function event_basic2:reaper_framework/__internal__/mob_loot_gamerule_error
+execute store result score $14 event_basic2.reaper_framework.var run gamerule doMobLoot
+execute if score $14 event_basic2.reaper_framework.var matches 0 run function event_basic2:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
 `@function event_basic2:reaper_framework/__internal__/scoreboard/init`

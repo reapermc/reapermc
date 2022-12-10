@@ -99,8 +99,8 @@ function defer_basic:reaper_framework/__internal__/var/init_defaults
 execute as @a run function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
-execute store result score $10 defer_basic.reaper_framework.var run gamerule doMobLoot
-execute if score $10 defer_basic.reaper_framework.var matches 0 run function defer_basic:reaper_framework/__internal__/mob_loot_gamerule_error
+execute store result score $14 defer_basic.reaper_framework.var run gamerule doMobLoot
+execute if score $14 defer_basic.reaper_framework.var matches 0 run function defer_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
 `@function defer_basic:reaper_framework/__internal__/scoreboard/init`
