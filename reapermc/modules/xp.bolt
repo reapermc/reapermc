@@ -1,0 +1,105 @@
+from ./util import logger, is_expression, binary_progression
+from ./var import var
+
+
+tmp = var(int)
+tmp2 = var(int)
+get_xp_output = var(int)
+set_xp_bar_percent_current_level = var(int)
+
+
+
+def get_xp(mode='points'):
+    global get_xp_output
+
+    store result score get_xp_output.holder get_xp_output.obj:
+        if mode in ('p', 'points'):
+            xp query @s points
+        elif mode in ('l', 'levels'):
+            xp query @s levels
+        else:
+            logger.error(f"Invalid 'get_xp()' mode of {mode}. Valid modes: ['points', 'levels', 'p', 'l'].")
+            return 1
+
+    return get_xp_output
+
+
+def set_xp(amount, mode='points'):
+    global tmp
+
+    if not is_expression(amount):
+        if mode in ('p', 'points'):
+            xp set @s amount points
+        elif mode in ('l', 'levels'):
+            xp set @s amount levels
+        else:
+            logger.error(f"Invalid 'get_xp()' mode of {mode}. Valid modes: ['points', 'levels', 'p', 'l'].")
+            return 1
+
+    else:
+        tmp = amount
+
+        bin_prog = binary_progression(28)
+        bin_prog.reverse()
+
+
+        if mode in ('p', 'points'):
+            execute function generate_path('reaper_framework/__internal__/set_xp/points/start'):
+                xp set @s 0 points
+
+                for v in bin_prog:
+                    if score tmp.holder tmp.obj matches (v, None):
+                        p_0 = generate_path('reaper_framework/__internal__/set_xp/points')
+                        p_full = f"{p_0}/{v}"
+
+                        execute function p_full:
+                            tmp -= v
+                            xp add @s v points
+        
+        elif mode in ('l', 'levels'):
+            execute function generate_path('reaper_framework/__internal__/set_xp/levels/start'):
+                xp set @s 0 levels
+
+                for v in bin_prog:
+                    if score tmp.holder tmp.obj matches (v, None):
+                        p_0 = generate_path('reaper_framework/__internal__/set_xp/levels')
+                        p_full = f"{p_0}/{v}"
+
+                        execute function p_full:
+                            tmp -= v
+                            xp add @s v levels
+
+
+def set_xp_bar_percent(amount):
+    global tmp2, set_xp_bar_percent_current_level
+
+    # save levels
+    set_xp_bar_percent_current_level = get_xp('levels')
+
+    set_xp(8662, 'levels')
+    set_xp(0)
+
+    bin_prog = binary_progression(7)
+    bin_prog.reverse()
+
+    tmp2 = amount
+
+    for v in bin_prog:
+        if score tmp2.holder tmp2.obj matches (v, None):
+            p_0 = generate_path('reaper_framework/__internal__/set_xp_bar_percent')
+            p_full = f"{p_0}/{v}"
+
+            xp_to_add = v * 778        # 778xp = exactly 1% of bar
+
+            # prevents 100% bar from going back to 0%
+            if v == 64:
+                if score tmp.holder tmp.obj matches 100:
+                    xp_to_add -= 1
+
+            execute function p_full:                    
+                tmp2 -= v
+                xp add @s xp_to_add
+                
+
+    # restore levels
+    set_xp(set_xp_bar_percent_current_level, 'levels')

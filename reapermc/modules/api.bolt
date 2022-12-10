@@ -15,6 +15,8 @@ from ./sleep import sleep
 from ./loop import loop
 from ./loop_break import loop_break
 from ./loop_cycle import loop_cycle
+from ./xp import get_xp, set_xp, set_xp_bar_percent
+
 
 from ./event/on_server_load import on_server_load
 from ./event/on_server_tick import on_server_tick

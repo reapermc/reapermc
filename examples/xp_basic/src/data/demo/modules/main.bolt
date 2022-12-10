@@ -1,0 +1,23 @@
+from reapermc:api import set_xp, get_xp, set_xp_bar_percent, var
+
+
+
+foo = var(int)
+bar = var(int)
+
+function ./test:
+    set_xp(324)
+
+function ./test2:
+    bar = 69
+    set_xp(bar)
+
+
+function ./test3:
+    foo = get_xp('points')
+
+    tellraw @a foo
+
+
+function ./test4:
+    set_xp_bar_percent(100)
