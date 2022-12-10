@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.0 (2022-12-10)
+### Feature
+* Add set_xp, get_xp, set_xp_bar_percent ([`18b22b6`](https://github.com/reapermc/reapermc/commit/18b22b6a540d566cb407bf70f5e56c8117fcf784))
+
 ## v1.1.1 (2022-12-02)
 ### Fix
 * Loop support for recursive mode on count of 0 ([`fe5bcf5`](https://github.com/reapermc/reapermc/commit/fe5bcf54c150adf2da9bfab4a1ec98b742029915))
