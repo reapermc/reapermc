@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.1 (2022-12-02)
+### Fix
+* Loop support for recursive mode on count of 0 ([`fe5bcf5`](https://github.com/reapermc/reapermc/commit/fe5bcf54c150adf2da9bfab4a1ec98b742029915))
+
 ## v1.1.0 (2022-12-01)
 ### Feature
 * Add event on_player_inventory_change ([`3cac8af`](https://github.com/reapermc/reapermc/commit/3cac8afd559590300d90c685ca527300632f830c))
