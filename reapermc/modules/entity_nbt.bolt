@@ -15,7 +15,8 @@ from ./summon import summon
 from ./event_handler import listener
 from ./event/on_server_tick import on_server_tick
 from ./defer import defer
-from ./tag import tag
+from ./tag import tag, untag
+
 
 _user_id = scoreboard('reaper_framework.entity_nbt.user', _internal=True)
 _cloud_id = scoreboard('reaper_framework.entity_nbt.cloud', _internal=True)
@@ -91,6 +92,13 @@ class EntityNBT(Rebindable):
                 _cloud_data[self.path].remove()
             else:
                 _cloud_data[self.path][index].remove()
+
+
+    def delete_entry(self):
+        untag(_cloud_tag)
+
+        with self._cloud_selector('delete_entry'):
+            say hello this is the marker
 
     @contextmanager
     def _cloud_selector(self, method_name):

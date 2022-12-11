@@ -15,19 +15,17 @@
 
 ### demo
 
-`@function demo:test2`
+`@function demo:newobj`
 
 ```mcfunction
-function loop_basic:reaper_framework/__internal__/loop/1/sel
+execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
+execute if entity @s run function kill_basic:reaper_framework/__internal__/entity_nbt/0_set
 ```
 
-`@function demo:test_insta`
+`@function demo:test`
 
 ```mcfunction
-data modify storage loop_basic:reaper_framework.var data[22].v set value 30
-scoreboard players set $45 loop_basic.reaper_framework.var 0
-execute store result score $46 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[22].v 1
-function loop_basic:reaper_framework/__internal__/loop/2/recursive
+function kill_basic:reaper_framework/__internal__/kill/cache/0
 ```
 
 ### reaper_framework
@@ -37,7 +35,7 @@ function loop_basic:reaper_framework/__internal__/loop/2/recursive
 ```json
 {
   "values": [
-    "loop_basic:reaper_framework/event/on_server_load"
+    "kill_basic:reaper_framework/event/on_server_load"
   ]
 }
 ```
@@ -47,7 +45,7 @@ function loop_basic:reaper_framework/__internal__/loop/2/recursive
 ```json
 {
   "values": [
-    "loop_basic:reaper_framework/event/on_server_tick"
+    "kill_basic:reaper_framework/event/on_server_tick"
   ]
 }
 ```
@@ -57,7 +55,7 @@ function loop_basic:reaper_framework/__internal__/loop/2/recursive
 ```json
 {
   "values": [
-    "loop_basic:reaper_framework/event/on_player_tick"
+    "kill_basic:reaper_framework/event/on_player_tick"
   ]
 }
 ```
@@ -67,7 +65,7 @@ function loop_basic:reaper_framework/__internal__/loop/2/recursive
 ```json
 {
   "values": [
-    "loop_basic:reaper_framework/event/on_player_join"
+    "kill_basic:reaper_framework/event/on_player_join"
   ]
 }
 ```
@@ -92,61 +90,12 @@ schedule function reaper_framework:__internal__/event_handler/on_server_tick/tic
 function #reaper_framework:__internal__/event_handler/on_server_tick
 ```
 
-`@function reaper_framework:__internal__/sleep/nested_run_at_ctx/0`
-
-```mcfunction
-forceload add ~ ~
-data modify entity @s Pos set from storage loop_basic:reaper_framework.var data[4].v.pos
-data modify entity @s Rotation set from storage loop_basic:reaper_framework.var data[4].v.rot
-tag @s add reaper_framework.sleep.ctx.target
-```
-
-`@function reaper_framework:__internal__/sleep/nested_run_at_ctx/1`
-
-```mcfunction
-forceload remove ~ ~
-tag @s remove reaper_framework.sleep.ctx.target
-tp @s 69000 0 69000
-```
-
-`@function reaper_framework:__internal__/sleep/create_ctx_marker`
-
-```mcfunction
-forceload add 69000 69000
-summon marker 69000 0 69000 {Tags: ["reaper_framework.sleep.ctx", "reaper_framework.summon.init"], CustomName: '{"text": "reaper_framework.sleep.ctx", "color": "#bf0000"}'}
-execute as @e[type=minecraft:marker, tag=reaper_framework.summon.init] at @s run function loop_basic:reaper_framework/summon/0
-scoreboard players add #i reaper_framework.sleep.dim_id 1
-```
-
-`@function reaper_framework:__internal__/sleep/get_world_ctx`
-
-```mcfunction
-data remove storage loop_basic:reaper_framework.var data[3].v
-tp @s ~ ~ ~ ~ ~
-execute store result storage loop_basic:reaper_framework.var data[3].v.dim int 1 run scoreboard players get @s reaper_framework.sleep.dim_id
-data modify storage loop_basic:reaper_framework.var data[3].v.pos set from entity @s Pos
-data modify storage loop_basic:reaper_framework.var data[3].v.rot set from entity @s Rotation
-tp @s 69000 0 69000
-```
-
-`@function reaper_framework:__internal__/sleep/run_at_ctx`
-
-```mcfunction
-execute as @e[type=marker, tag=reaper_framework.sleep.ctx] if score $5 loop_basic.reaper_framework.var = @s reaper_framework.sleep.dim_id at @s run function reaper_framework:__internal__/sleep/nested_run_at_ctx/0
-```
-
-`@function reaper_framework:__internal__/sleep/run_at_ctx_1`
-
-```mcfunction
-execute as @e[type=marker, tag=reaper_framework.sleep.ctx.target] at @s run function reaper_framework:__internal__/sleep/nested_run_at_ctx/1
-```
-
 `@function reaper_framework:__internal__/entity_nbt/garbage_collector`
 
 ```mcfunction
-execute store result score $31 loop_basic.reaper_framework.var run data get entity @s Item.tag.AttributeModifiers[0].Amount 1
+execute store result score $26 kill_basic.reaper_framework.var run data get entity @s Item.tag.AttributeModifiers[0].Amount 1
 kill @s
-execute as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score @s reaper_framework.entity_nbt.cloud = $31 loop_basic.reaper_framework.var run kill @s
+execute as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score @s reaper_framework.entity_nbt.cloud = $26 kill_basic.reaper_framework.var run kill @s
 ```
 
 `@function reaper_framework:__internal__/entity_nbt/ensure_entry`
@@ -156,29 +105,7 @@ tag @s add reaper_framework.entity_nbt.user
 forceload add 69000 69000
 scoreboard players operation @s reaper_framework.entity_nbt.user = #i reaper_framework.entity_nbt.cloud
 summon marker 69000 0 69000 {Tags: ["reaper_framework.entity_nbt.cloud", "reaper_framework.summon.init"], CustomName: '{"text": "reaper_framework.entity_nbt.cloud", "color": "#bf0000"}'}
-execute as @e[type=minecraft:marker, tag=reaper_framework.summon.init] at @s run function loop_basic:reaper_framework/summon/1
-```
-
-`@function reaper_framework:__internal__/loop/reset_joining_player`
-
-```mcfunction
-execute if entity @s[tag=reaper_framework.entity_nbt.user] if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove
-```
-
-`@function reaper_framework:__internal__/sleep/reset_joining_player1`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove
-tag @s remove loop_basic.reaper_framework.sleep.0
-tag @s remove loop_basic.reaper_framework.sleep.1
-tag @s remove loop_basic.reaper_framework.sleep.2
-tag @s remove loop_basic.reaper_framework.sleep.3
-```
-
-`@function reaper_framework:__internal__/sleep/reset_joining_player`
-
-```mcfunction
-execute if entity @s[tag=reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/sleep/reset_joining_player1
+execute as @e[type=minecraft:marker, tag=reaper_framework.summon.init] at @s run function kill_basic:reaper_framework/summon/0
 ```
 
 ### minecraft
@@ -7615,179 +7542,55 @@ execute if entity @s[tag=reaper_framework.entity_nbt.user] run function reaper_f
 }
 ```
 
-### loop_basic
+### kill_basic
 
-`@function loop_basic:reaper_framework/event/on_server_load`
+`@function kill_basic:reaper_framework/event/on_server_load`
 
 ```mcfunction
-function loop_basic:reaper_framework/__internal__/scoreboard/init
-function loop_basic:reaper_framework/__internal__/scoreboard/init_defaults
-function loop_basic:reaper_framework/__internal__/var/flush_memory
-function loop_basic:reaper_framework/__internal__/var/init_defaults
+function kill_basic:reaper_framework/__internal__/scoreboard/init
+function kill_basic:reaper_framework/__internal__/scoreboard/init_defaults
+function kill_basic:reaper_framework/__internal__/var/flush_memory
+function kill_basic:reaper_framework/__internal__/var/init_defaults
 execute as @a run function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
-execute store result score $47 loop_basic.reaper_framework.var run gamerule doMobLoot
-execute if score $47 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/mob_loot_gamerule_error
+execute store result score $27 kill_basic.reaper_framework.var run gamerule doMobLoot
+execute if score $27 kill_basic.reaper_framework.var matches 0 run function kill_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
-`@function loop_basic:reaper_framework/__internal__/scoreboard/init`
+`@function kill_basic:reaper_framework/__internal__/scoreboard/init`
 
 ```mcfunction
-scoreboard objectives add loop_basic.reaper_framework.var dummy {"text": "loop_basic.reaper_framework.var", "color": "#bf0000"}
+scoreboard objectives add kill_basic.reaper_framework.var dummy {"text": "kill_basic.reaper_framework.var", "color": "#bf0000"}
 scoreboard objectives add reaper_framework.entity_nbt.user dummy {"text": "reaper_framework.entity_nbt.user", "color": "#bf0000"}
 scoreboard objectives add reaper_framework.entity_nbt.cloud dummy {"text": "reaper_framework.entity_nbt.cloud", "color": "#bf0000"}
-scoreboard objectives add loop_basic.reaper_framework.death_events dummy {"text": "loop_basic.reaper_framework.death_events", "color": "#bf0000"}
+scoreboard objectives add kill_basic.reaper_framework.death_events dummy {"text": "kill_basic.reaper_framework.death_events", "color": "#bf0000"}
 scoreboard objectives add reaper_framework.sleep.dim_id dummy {"text": "reaper_framework.sleep.dim_id", "color": "#bf0000"}
 scoreboard objectives add reaper_framework.event_handler.on_player_join custom:leave_game {"text": "reaper_framework.event_handler.on_player_join", "color": "#bf0000"}
 ```
 
-`@function loop_basic:reaper_framework/event/on_server_tick`
+`@function kill_basic:reaper_framework/event/on_server_tick`
 
 ```mcfunction
 execute as @a at @s run function #reaper_framework:__internal__/event_handler/on_player_tick
 execute as @e[type=item, nbt={Item: {tag: {reaper_framework.entity_nbt.death_cleanup: 1b}}}] run function reaper_framework:__internal__/entity_nbt/garbage_collector
 ```
 
-`@function loop_basic:reaper_framework/event/on_player_tick`
+`@function kill_basic:reaper_framework/event/on_player_tick`
 
 ```mcfunction
 execute if score @s reaper_framework.event_handler.on_player_join matches -1 run function reaper_framework:__internal__/event_handler/on_player_join/join
 execute if score @s reaper_framework.event_handler.on_player_join matches 1.. run scoreboard players set @s reaper_framework.event_handler.on_player_join -1
 ```
 
-`@function loop_basic:reaper_framework/event/on_player_join`
+`@function kill_basic:reaper_framework/event/on_player_join`
 
 ```mcfunction
 function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/loop/reset_joining_player
 ```
 
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_2`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[6].v append value 0
-data modify storage loop_basic:reaper_framework.var data[5].v append value 0
-execute store result storage loop_basic:reaper_framework.var data[5].v[-1] int 1 run scoreboard players get $27 loop_basic.reaper_framework.var
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_3`
-
-```mcfunction
-data remove storage loop_basic:reaper_framework.var data[5].v[-1]
-data remove storage loop_basic:reaper_framework.var data[6].v[-1]
-```
-
-`@function loop_basic:reaper_framework/summon/0`
-
-```mcfunction
-scoreboard players operation @s reaper_framework.sleep.dim_id = #i reaper_framework.sleep.dim_id
-tag @s remove reaper_framework.summon.init
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/0/run_at_ctx`
-
-```mcfunction
-function reaper_framework:__internal__/sleep/run_at_ctx_1
-function loop_basic:reaper_framework/sleep/0
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/0/s_sch`
-
-```mcfunction
-execute store result score $29 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[7].v[0] 1
-execute store result score $30 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[7].v[1] 1
-data remove storage loop_basic:reaper_framework.var data[7].v[0]
-execute if score $30 loop_basic.reaper_framework.var = $29 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/0/s_sch
-data modify storage loop_basic:reaper_framework.var data[9].v set from storage loop_basic:reaper_framework.var data[10].v[0]
-data remove storage loop_basic:reaper_framework.var data[10].v[0]
-execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[9].v.dim 1
-data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[9].v
-function reaper_framework:__internal__/sleep/run_at_ctx
-execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/0/run_at_ctx
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/0/s_0`
-
-```mcfunction
-execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
-execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
-data modify storage loop_basic:reaper_framework.var data[10].v append from storage loop_basic:reaper_framework.var data[3].v
-execute store result score $4 loop_basic.reaper_framework.var run time query gametime
-data modify storage loop_basic:reaper_framework.var data[7].v append value 0
-execute store result storage loop_basic:reaper_framework.var data[7].v[-1] int 1 run scoreboard players get $4 loop_basic.reaper_framework.var
-schedule function loop_basic:reaper_framework/__internal__/sleep/0/s_sch 20 append
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/0/sel`
-
-```mcfunction
-execute unless entity @s run function loop_basic:reaper_framework/__internal__/sleep/0/s_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_5`
-
-```mcfunction
-scoreboard players remove $27 loop_basic.reaper_framework.var 1
-scoreboard players add $26 loop_basic.reaper_framework.var 1
-```
-
-`@function loop_basic:reaper_framework/sleep/0`
-
-```mcfunction
-execute store result score $27 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[5].v[0] 1
-execute store result score $26 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[6].v[0] 1
-data remove storage loop_basic:reaper_framework.var data[5].v[0]
-data remove storage loop_basic:reaper_framework.var data[6].v[0]
-execute unless score $27 loop_basic.reaper_framework.var matches ..0 run function loop_basic:reaper_framework/__internal__/loop/0/s_5
-data modify storage loop_basic:reaper_framework.var data[5].v append value 0
-execute store result storage loop_basic:reaper_framework.var data[5].v[-1] int 1 run scoreboard players get $27 loop_basic.reaper_framework.var
-data modify storage loop_basic:reaper_framework.var data[6].v append value 0
-execute store result storage loop_basic:reaper_framework.var data[6].v[-1] int 1 run scoreboard players get $26 loop_basic.reaper_framework.var
-scoreboard players operation $7 loop_basic.reaper_framework.var = $26 loop_basic.reaper_framework.var
-function loop_basic:reaper_framework/loop/0
-function loop_basic:reaper_framework/__internal__/loop/0/s_start
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_4`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/sleep/0/sel
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_start`
-
-```mcfunction
-execute store result score $27 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[5].v[-1] 1
-execute if score $27 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_3
-execute unless score $27 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_4
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_1`
-
-```mcfunction
-execute if score $28 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_2
-function loop_basic:reaper_framework/__internal__/loop/0/s_start
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_break_thread`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[5].v[-1] set value 0
-scoreboard players set $28 loop_basic.reaper_framework.var 1
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/s_0`
-
-```mcfunction
-scoreboard players set $28 loop_basic.reaper_framework.var 0
-scoreboard players set $27 loop_basic.reaper_framework.var 4
-scoreboard players set $7 loop_basic.reaper_framework.var 0
-function loop_basic:reaper_framework/loop/0
-execute unless score $27 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/s_1
-```
-
-`@function loop_basic:reaper_framework/summon/1`
+`@function kill_basic:reaper_framework/summon/0`
 
 ```mcfunction
 scoreboard players operation @s reaper_framework.entity_nbt.cloud = #i reaper_framework.entity_nbt.cloud
@@ -7795,1011 +7598,90 @@ scoreboard players add #i reaper_framework.entity_nbt.cloud 1
 tag @s remove reaper_framework.summon.init
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_nm`
+`@function kill_basic:reaper_framework/__internal__/entity_nbt/0_set_nm`
 
 ```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_p
+scoreboard players operation $3 kill_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 kill_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function kill_basic:reaper_framework/__internal__/entity_nbt/0_set_p
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/0_set`
+`@function kill_basic:reaper_framework/__internal__/entity_nbt/0_set`
 
 ```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_p
+execute if entity @s[type=!marker] run function kill_basic:reaper_framework/__internal__/entity_nbt/0_set_nm
+execute if entity @s[type=marker] run function kill_basic:reaper_framework/__internal__/entity_nbt/0_set_p
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/0_set_p`
+`@function kill_basic:reaper_framework/__internal__/entity_nbt/0_set_p`
 
 ```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[-1] set value 0
+data modify entity @s data.test.path set value 69
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_nm`
+`@function kill_basic:reaper_framework/__internal__/entity_nbt/1_delete_entry_nm`
 
 ```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_p
+scoreboard players operation $3 kill_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
+execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 kill_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function kill_basic:reaper_framework/__internal__/entity_nbt/1_delete_entry_p
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove`
+`@function kill_basic:reaper_framework/__internal__/entity_nbt/1_delete_entry`
 
 ```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_p
+execute if entity @s[type=!marker] run function kill_basic:reaper_framework/__internal__/entity_nbt/1_delete_entry_nm
+execute if entity @s[type=marker] run function kill_basic:reaper_framework/__internal__/entity_nbt/1_delete_entry_p
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove_p`
+`@function kill_basic:reaper_framework/__internal__/entity_nbt/1_delete_entry_p`
 
 ```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[-1]
+say hello this is the marker
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_nm`
+`@function kill_basic:reaper_framework/__internal__/kill/cache/0_a`
 
 ```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_p
+tag @s remove reaper_framework.entity_nbt.cloud
+execute if entity @s run function kill_basic:reaper_framework/__internal__/entity_nbt/1_delete_entry
+kill @s
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove`
+`@function kill_basic:reaper_framework/__internal__/kill/cache/0`
 
 ```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_p
+execute if entity @s[type=player] run kill @s
+execute if entity @s[type=!player] run function kill_basic:reaper_framework/__internal__/kill/cache/0_a
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[-1]
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/e_1`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/1_remove
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/2_remove
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/3_append`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/3_append_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index append value 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/4_append`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/4_append_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left append value 4
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/5_append`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/5_append_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.sleep.1 append from storage loop_basic:reaper_framework.var data[11].v
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/6_get`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/6_get_p`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.sleep.1
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep.1[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep.1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_3`
-
-```mcfunction
-tag @s remove loop_basic.reaper_framework.sleep.1
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/8_remove
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1/run_at_ctx`
-
-```mcfunction
-function reaper_framework:__internal__/sleep/run_at_ctx_1
-function loop_basic:reaper_framework/sleep/1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_2`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/7_remove
-data remove storage loop_basic:reaper_framework.var data[13].v[0]
-execute store result score $35 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[13].v[0].ts 1
-execute store result score $37 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[13].v
-execute if score $37 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_3
-data modify storage loop_basic:reaper_framework.var data[16].v set from storage loop_basic:reaper_framework.var data[12].v.ctx
-execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[16].v.dim 1
-data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[16].v
-function reaper_framework:__internal__/sleep/run_at_ctx
-execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/1/run_at_ctx
-execute if score $35 loop_basic.reaper_framework.var = $34 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_1`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/6_get
-data modify storage loop_basic:reaper_framework.var data[13].v set from storage loop_basic:reaper_framework.var data[2].v
-data modify storage loop_basic:reaper_framework.var data[12].v set from storage loop_basic:reaper_framework.var data[13].v[0]
-execute store result score $34 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[12].v.ts 1
-execute if score $34 loop_basic.reaper_framework.var = $36 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_2
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1/e_sch`
-
-```mcfunction
-execute store result score $4 loop_basic.reaper_framework.var run time query gametime
-scoreboard players operation $36 loop_basic.reaper_framework.var = $4 loop_basic.reaper_framework.var
-scoreboard players remove $36 loop_basic.reaper_framework.var 20
-execute as @e[tag=loop_basic.reaper_framework.sleep.1] run function loop_basic:reaper_framework/__internal__/sleep/1/e_sch_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1/e_0`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[12].v set from storage loop_basic:reaper_framework.var data[14].v
-execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
-data remove storage loop_basic:reaper_framework.var data[11].v
-execute store result score $4 loop_basic.reaper_framework.var run time query gametime
-execute store result storage loop_basic:reaper_framework.var data[11].v.ts int 1 run scoreboard players get $4 loop_basic.reaper_framework.var
-execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
-execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
-data modify storage loop_basic:reaper_framework.var data[11].v.ctx set from storage loop_basic:reaper_framework.var data[3].v
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/5_append
-tag @s add loop_basic.reaper_framework.sleep.1
-schedule function loop_basic:reaper_framework/__internal__/sleep/1/e_sch 20 append
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/1/sel`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/sleep/1/e_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/9_get`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/9_get_p`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/e_3`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/10_remove
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/11_remove
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/13_get`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/13_get_p`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[0]
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/15_append`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/15_append_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left append value 0
-execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycles_left[-1] int 1 run scoreboard players get $33 loop_basic.reaper_framework.var
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/16_append`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/16_append_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index append value 0
-execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.0.cycle_index[-1] int 1 run scoreboard players get $32 loop_basic.reaper_framework.var
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/e_4`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/12_remove
-scoreboard players remove $33 loop_basic.reaper_framework.var 1
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/13_get
-execute store result score $32 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/14_remove
-scoreboard players add $32 loop_basic.reaper_framework.var 1
-scoreboard players operation $7 loop_basic.reaper_framework.var = $32 loop_basic.reaper_framework.var
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/15_append
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/16_append
-function loop_basic:reaper_framework/loop/0
-function loop_basic:reaper_framework/__internal__/loop/0/e_start
-```
-
-`@function loop_basic:reaper_framework/sleep/1`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/9_get
-execute store result score $33 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
-execute if score $33 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/e_3
-execute unless score $33 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/e_4
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/e_start`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/sleep/1/sel
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/e_2`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/4_append
-function loop_basic:reaper_framework/__internal__/loop/0/e_start
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/e_break_thread`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/0_set
-execute if score $33 loop_basic.reaper_framework.var matches 4 run function loop_basic:reaper_framework/__internal__/loop/0/e_1
-scoreboard players set $33 loop_basic.reaper_framework.var 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/e_0`
-
-```mcfunction
-execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
-scoreboard players set $33 loop_basic.reaper_framework.var 4
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/3_append
-scoreboard players set $7 loop_basic.reaper_framework.var 0
-function loop_basic:reaper_framework/loop/0
-execute unless score $33 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/0/e_2
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/0/sel`
-
-```mcfunction
-execute unless entity @s run function loop_basic:reaper_framework/__internal__/loop/0/s_0
-execute if entity @s run function loop_basic:reaper_framework/__internal__/loop/0/e_0
-```
-
-`@function loop_basic:reaper_framework/loop/0`
-
-```mcfunction
-help '$LOOP_DATA +threading'
-say hi
-execute if score $7 loop_basic.reaper_framework.var matches 1 run say hello <cycle 1 only>
-scoreboard players set $6 loop_basic.reaper_framework.var 0
-execute if data entity @p SelectedItem run scoreboard players set $6 loop_basic.reaper_framework.var 1
-execute if score $6 loop_basic.reaper_framework.var matches 1 unless entity @s run function loop_basic:reaper_framework/__internal__/loop/0/s_break_thread
-execute if score $6 loop_basic.reaper_framework.var matches 1 if entity @s run function loop_basic:reaper_framework/__internal__/loop/0/e_break_thread
-execute unless score $6 loop_basic.reaper_framework.var matches 1 run function loop_basic:reaper_framework/loop/break_nest/0_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/2/run_at_ctx`
-
-```mcfunction
-function reaper_framework:__internal__/sleep/run_at_ctx_1
-function loop_basic:reaper_framework/sleep/2
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/2/s_sch`
-
-```mcfunction
-execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[17].v.dim 1
-data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[17].v
-function reaper_framework:__internal__/sleep/run_at_ctx
-execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/2/run_at_ctx
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/2/s_0`
-
-```mcfunction
-execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
-execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
-data modify storage loop_basic:reaper_framework.var data[17].v set from storage loop_basic:reaper_framework.var data[3].v
-schedule function loop_basic:reaper_framework/__internal__/sleep/2/s_sch 20 replace
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/2/sel`
-
-```mcfunction
-execute unless entity @s run function loop_basic:reaper_framework/__internal__/sleep/2/s_0
-```
-
-`@function loop_basic:reaper_framework/sleep/2`
-
-```mcfunction
-scoreboard players remove $38 loop_basic.reaper_framework.var 1
-scoreboard players add $39 loop_basic.reaper_framework.var 1
-scoreboard players operation $7 loop_basic.reaper_framework.var = $39 loop_basic.reaper_framework.var
-function loop_basic:reaper_framework/loop/1
-execute unless score $38 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/s_start
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/s_start`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/sleep/2/sel
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/s_break`
-
-```mcfunction
-scoreboard players set $38 loop_basic.reaper_framework.var 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/s_0`
-
-```mcfunction
-scoreboard players set $38 loop_basic.reaper_framework.var 2
-scoreboard players set $39 loop_basic.reaper_framework.var 0
-scoreboard players operation $7 loop_basic.reaper_framework.var = $39 loop_basic.reaper_framework.var
-function loop_basic:reaper_framework/loop/1
-execute unless score $38 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/s_start
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.1
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/18_set`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/18_set_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycle_index set value 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/19_set`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/19_set_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycles_left set value 2
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/20_set`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/20_set_p`
-
-```mcfunction
-data modify entity @s data.__internal__.loop_basic.reaper_framework.sleep.3 set from storage loop_basic:reaper_framework.var data[18].v
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/21_get`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/21_get_p`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.sleep.3
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep.3
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/3/run_at_ctx`
-
-```mcfunction
-function reaper_framework:__internal__/sleep/run_at_ctx_1
-function loop_basic:reaper_framework/sleep/3
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_2`
-
-```mcfunction
-tag @s remove loop_basic.reaper_framework.sleep.3
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/22_remove
-data modify storage loop_basic:reaper_framework.var data[21].v set from storage loop_basic:reaper_framework.var data[19].v.ctx
-execute store result score $5 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[21].v.dim 1
-data modify storage loop_basic:reaper_framework.var data[4].v set from storage loop_basic:reaper_framework.var data[21].v
-function reaper_framework:__internal__/sleep/run_at_ctx
-execute at @e[type=marker, tag=reaper_framework.sleep.ctx.target, limit=1] run function loop_basic:reaper_framework/__internal__/sleep/3/run_at_ctx
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_1`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/21_get
-data modify storage loop_basic:reaper_framework.var data[19].v set from storage loop_basic:reaper_framework.var data[2].v
-execute store result score $42 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[19].v.ts 1
-execute if score $42 loop_basic.reaper_framework.var = $43 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_2
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/3/e_sch`
-
-```mcfunction
-execute store result score $4 loop_basic.reaper_framework.var run time query gametime
-scoreboard players operation $43 loop_basic.reaper_framework.var = $4 loop_basic.reaper_framework.var
-scoreboard players remove $43 loop_basic.reaper_framework.var 20
-execute as @e[tag=loop_basic.reaper_framework.sleep.3] run function loop_basic:reaper_framework/__internal__/sleep/3/e_sch_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/3/e_0`
-
-```mcfunction
-execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
-data remove storage loop_basic:reaper_framework.var data[18].v
-execute store result score $4 loop_basic.reaper_framework.var run time query gametime
-execute store result storage loop_basic:reaper_framework.var data[18].v.ts int 1 run scoreboard players get $4 loop_basic.reaper_framework.var
-execute unless entity @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/create_ctx_marker
-execute as @e[tag=reaper_framework.sleep.ctx, x=0] run function reaper_framework:__internal__/sleep/get_world_ctx
-data modify storage loop_basic:reaper_framework.var data[18].v.ctx set from storage loop_basic:reaper_framework.var data[3].v
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/20_set
-tag @s add loop_basic.reaper_framework.sleep.3
-schedule function loop_basic:reaper_framework/__internal__/sleep/3/e_sch 20 replace
-```
-
-`@function loop_basic:reaper_framework/__internal__/sleep/3/sel`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/sleep/3/e_0
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/23_get`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/23_get_p`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycles_left
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/24_set`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/24_set_p`
-
-```mcfunction
-execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycles_left int 1 run scoreboard players get $41 loop_basic.reaper_framework.var
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/25_get`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/25_get_p`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data[2].v set from entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycle_index
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/26_set`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/26_set_p`
-
-```mcfunction
-execute store result entity @s data.__internal__.loop_basic.reaper_framework.loop.1.cycle_index int 1 run scoreboard players get $40 loop_basic.reaper_framework.var
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop.1
-```
-
-`@function loop_basic:reaper_framework/sleep/3`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/23_get
-execute store result score $41 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
-scoreboard players remove $41 loop_basic.reaper_framework.var 1
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/24_set
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/25_get
-execute store result score $40 loop_basic.reaper_framework.var run data get storage loop_basic:reaper_framework.var data[2].v 1
-scoreboard players add $40 loop_basic.reaper_framework.var 1
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/26_set
-scoreboard players operation $7 loop_basic.reaper_framework.var = $40 loop_basic.reaper_framework.var
-execute if score $41 loop_basic.reaper_framework.var matches 0 if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/27_remove
-function loop_basic:reaper_framework/loop/1
-execute unless score $41 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/e_start
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/e_start`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/sleep/3/sel
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/e_1`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/19_set
-function loop_basic:reaper_framework/__internal__/loop/1/e_start
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/e_break`
-
-```mcfunction
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/17_remove
-scoreboard players set $41 loop_basic.reaper_framework.var 0
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/e_0`
-
-```mcfunction
-execute if entity @s[type=!marker, tag=!reaper_framework.entity_nbt.user] run function reaper_framework:__internal__/entity_nbt/ensure_entry
-scoreboard players set $41 loop_basic.reaper_framework.var 2
-execute if entity @s run function loop_basic:reaper_framework/__internal__/entity_nbt/18_set
-scoreboard players set $7 loop_basic.reaper_framework.var 0
-function loop_basic:reaper_framework/loop/1
-execute unless score $41 loop_basic.reaper_framework.var matches 0 run function loop_basic:reaper_framework/__internal__/loop/1/e_1
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/1/sel`
-
-```mcfunction
-execute unless entity @s run function loop_basic:reaper_framework/__internal__/loop/1/s_0
-execute if entity @s run function loop_basic:reaper_framework/__internal__/loop/1/e_0
-```
-
-`@function loop_basic:reaper_framework/loop/1`
-
-```mcfunction
-help '$LOOP_DATA -threading'
-summon pig ~ ~5 ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime: 13s}
-```
-
-`@function loop_basic:reaper_framework/__internal__/loop/2/recursive`
-
-```mcfunction
-scoreboard players add $45 loop_basic.reaper_framework.var 1
-function loop_basic:reaper_framework/loop/2
-execute if score $45 loop_basic.reaper_framework.var < $46 loop_basic.reaper_framework.var run function loop_basic:reaper_framework/__internal__/loop/2/recursive
-```
-
-`@function loop_basic:reaper_framework/loop/2`
-
-```mcfunction
-help '$LOOP_DATA +threading'
-say hello
-```
-
-`@function loop_basic:reaper_framework/__internal__/mob_loot_gamerule_error`
+`@function kill_basic:reaper_framework/__internal__/mob_loot_gamerule_error`
 
 ```mcfunction
 gamerule doMobLoot true
 tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " WARN Gamerule 'doMobLoot' was changed to 'True'. ", "color": "gold"}, {"text": "Explanation", "color": "gold", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "gold", "hoverEvent": {"action": "show_text", "contents": [{"text": "", "color": "gray"}]}}]
 ```
 
-`@function loop_basic:reaper_framework/uninstall`
+`@function kill_basic:reaper_framework/uninstall`
 
 ```mcfunction
-function loop_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l
-function loop_basic:reaper_framework/var/u_n_i_n_s_t_a_l_l
+function kill_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l
+function kill_basic:reaper_framework/var/u_n_i_n_s_t_a_l_l
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_nm`
+`@function kill_basic:reaper_framework/var/u_n_i_n_s_t_a_l_l`
 
 ```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_p
+data remove storage kill_basic:reaper_framework.var data
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove`
+`@function kill_basic:reaper_framework/__internal__/var/flush_memory`
 
 ```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_p
+data modify storage kill_basic:reaper_framework.var data set value [{}, {}, {}, {}, {}, {}, {}]
 ```
 
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/28_remove_p`
+`@function kill_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l`
 
 ```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.loop
-```
-
-`@function loop_basic:reaper_framework/loop/break_nest/0_0`
-
-```mcfunction
-summon pig ~ ~5 ~ {Health: 1.0f, DeathLootTable: "idont:exist", DeathTime: 13s}
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_nm`
-
-```mcfunction
-scoreboard players operation $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.user
-execute at @s as @e[type=marker, tag=reaper_framework.entity_nbt.cloud] if score $3 loop_basic.reaper_framework.var = @s reaper_framework.entity_nbt.cloud run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove`
-
-```mcfunction
-execute if entity @s[type=!marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_nm
-execute if entity @s[type=marker] run function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_p
-```
-
-`@function loop_basic:reaper_framework/__internal__/entity_nbt/29_remove_p`
-
-```mcfunction
-data remove entity @s data.__internal__.loop_basic.reaper_framework.sleep
-```
-
-`@function loop_basic:reaper_framework/var/u_n_i_n_s_t_a_l_l`
-
-```mcfunction
-data remove storage loop_basic:reaper_framework.var data
-```
-
-`@function loop_basic:reaper_framework/__internal__/var/flush_memory`
-
-```mcfunction
-data modify storage loop_basic:reaper_framework.var data set value [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
-```
-
-`@function loop_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l`
-
-```mcfunction
-scoreboard objectives remove loop_basic.reaper_framework.var
-scoreboard objectives remove loop_basic.reaper_framework.death_events
-```
-
-### looptest
-
-`@function looptest:test`
-
-```mcfunction
-function loop_basic:reaper_framework/__internal__/loop/0/sel
+scoreboard objectives remove kill_basic.reaper_framework.var
+scoreboard objectives remove kill_basic.reaper_framework.death_events
 ```
