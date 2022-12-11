@@ -34,14 +34,14 @@ say damage!
 ```mcfunction
 time set 324
 execute store result score $4 time_basic.reaper_framework.var run time query daytime
-scoreboard players operation $14 time_basic.reaper_framework.var = $4 time_basic.reaper_framework.var
+scoreboard players operation $26 time_basic.reaper_framework.var = $4 time_basic.reaper_framework.var
 ```
 
 `@function demo:test2`
 
 ```mcfunction
-scoreboard players set $14 time_basic.reaper_framework.var 1234
-scoreboard players operation $4 time_basic.reaper_framework.var = $14 time_basic.reaper_framework.var
+scoreboard players set $26 time_basic.reaper_framework.var 1234
+scoreboard players operation $4 time_basic.reaper_framework.var = $26 time_basic.reaper_framework.var
 function time_basic:reaper_framework/__internal__/set_time/start
 ```
 
@@ -139,8 +139,8 @@ function time_basic:reaper_framework/__internal__/var/init_defaults
 execute as @a run function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
-execute store result score $15 time_basic.reaper_framework.var run gamerule doMobLoot
-execute if score $15 time_basic.reaper_framework.var matches 0 run function time_basic:reaper_framework/__internal__/mob_loot_gamerule_error
+execute store result score $27 time_basic.reaper_framework.var run gamerule doMobLoot
+execute if score $27 time_basic.reaper_framework.var matches 0 run function time_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
 `@function time_basic:reaper_framework/__internal__/scoreboard/init`
@@ -312,7 +312,7 @@ execute if score $4 time_basic.reaper_framework.var matches 1.. run function tim
 
 ```mcfunction
 gamerule doMobLoot true
-tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " Gamerule 'doMobLoot' was changed to 'True'. ", "color": "red"}, {"text": "Explanation", "color": "red", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "red", "hoverEvent": {"action": "show_text", "contents": ""}}]
+tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " WARN Gamerule 'doMobLoot' was changed to 'True'. ", "color": "gold"}, {"text": "Explanation", "color": "gold", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "gold", "hoverEvent": {"action": "show_text", "contents": [{"text": "", "color": "gray"}]}}]
 ```
 
 `@function time_basic:reaper_framework/uninstall`

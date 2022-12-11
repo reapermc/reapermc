@@ -1,0 +1,43 @@
+from reapermc:api import var, math
+
+
+
+foo = var(int)
+
+function ./random:
+    foo = math.random(0, 1)
+    tellraw @a foo
+
+    foo = math.random(5, 10)
+    tellraw @a foo
+
+    foo = math.random(1, 100)
+    tellraw @a foo
+
+
+function ./pow:
+    foo = math.pow(4, 3)
+    tellraw @a foo
+   
+    foo = math.pow(2, 5)
+    tellraw @a foo
+
+    foo = math.pow(6, 2)
+    tellraw @a foo
+
+
+function ./sqrt:
+    foo = math.sqrt(3)
+    tellraw @a foo
+
+    foo = math.sqrt(6)
+    tellraw @a foo
+
+    foo = math.sqrt(17)
+    tellraw @a foo
+
+
+
+
+
+

@@ -37,8 +37,8 @@ xp set @s 324 points
 `@function demo:test2`
 
 ```mcfunction
-scoreboard players set $15 xp_basic.reaper_framework.var 69
-scoreboard players operation $10 xp_basic.reaper_framework.var = $15 xp_basic.reaper_framework.var
+scoreboard players set $27 xp_basic.reaper_framework.var 69
+scoreboard players operation $10 xp_basic.reaper_framework.var = $27 xp_basic.reaper_framework.var
 function xp_basic:reaper_framework/__internal__/set_xp/points/start
 ```
 
@@ -46,8 +46,8 @@ function xp_basic:reaper_framework/__internal__/set_xp/points/start
 
 ```mcfunction
 execute store result score $12 xp_basic.reaper_framework.var run xp query @s points
-scoreboard players operation $14 xp_basic.reaper_framework.var = $12 xp_basic.reaper_framework.var
-tellraw @a {"score": {"name": "$14", "objective": "xp_basic.reaper_framework.var"}}
+scoreboard players operation $26 xp_basic.reaper_framework.var = $12 xp_basic.reaper_framework.var
+tellraw @a {"score": {"name": "$26", "objective": "xp_basic.reaper_framework.var"}}
 ```
 
 `@function demo:test4`
@@ -155,8 +155,8 @@ function xp_basic:reaper_framework/__internal__/var/init_defaults
 execute as @a run function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
-execute store result score $16 xp_basic.reaper_framework.var run gamerule doMobLoot
-execute if score $16 xp_basic.reaper_framework.var matches 0 run function xp_basic:reaper_framework/__internal__/mob_loot_gamerule_error
+execute store result score $28 xp_basic.reaper_framework.var run gamerule doMobLoot
+execute if score $28 xp_basic.reaper_framework.var matches 0 run function xp_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
 `@function xp_basic:reaper_framework/__internal__/scoreboard/init`
@@ -703,7 +703,7 @@ execute if score $10 xp_basic.reaper_framework.var matches 1.. run function xp_b
 
 ```mcfunction
 gamerule doMobLoot true
-tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " Gamerule 'doMobLoot' was changed to 'True'. ", "color": "red"}, {"text": "Explanation", "color": "red", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "red", "hoverEvent": {"action": "show_text", "contents": ""}}]
+tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " WARN Gamerule 'doMobLoot' was changed to 'True'. ", "color": "gold"}, {"text": "Explanation", "color": "gold", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "gold", "hoverEvent": {"action": "show_text", "contents": [{"text": "", "color": "gray"}]}}]
 ```
 
 `@function xp_basic:reaper_framework/uninstall`
