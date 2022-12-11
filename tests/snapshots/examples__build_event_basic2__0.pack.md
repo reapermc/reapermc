@@ -117,8 +117,8 @@ execute as @a run function reaper_framework:__internal__/sleep/reset_joining_pla
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
 say event_basic2 load
-execute store result score $14 event_basic2.reaper_framework.var run gamerule doMobLoot
-execute if score $14 event_basic2.reaper_framework.var matches 0 run function event_basic2:reaper_framework/__internal__/mob_loot_gamerule_error
+execute store result score $26 event_basic2.reaper_framework.var run gamerule doMobLoot
+execute if score $26 event_basic2.reaper_framework.var matches 0 run function event_basic2:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
 `@function event_basic2:reaper_framework/__internal__/scoreboard/init`
@@ -164,7 +164,7 @@ say <event_basic2> jumped!
 
 ```mcfunction
 gamerule doMobLoot true
-tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " Gamerule 'doMobLoot' was changed to 'True'. ", "color": "red"}, {"text": "Explanation", "color": "red", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "red", "hoverEvent": {"action": "show_text", "contents": ""}}]
+tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " WARN Gamerule 'doMobLoot' was changed to 'True'. ", "color": "gold"}, {"text": "Explanation", "color": "gold", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "gold", "hoverEvent": {"action": "show_text", "contents": [{"text": "", "color": "gray"}]}}]
 ```
 
 `@function event_basic2:reaper_framework/uninstall`

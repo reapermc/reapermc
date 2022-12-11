@@ -1,0 +1,102 @@
+from ./var import var
+from ./event_handler import listener
+from ./event/on_server_load import on_server_load
+from ./expr import Expr
+from ./util import logger
+
+
+INITIALIZED = False
+
+min = var(int)
+max = var(int)
+size = var(int)
+lcg = var(int)
+output = var(int)
+lcg_a = var(int)
+lcg_c = var(int)
+lcg_m = var(int)
+value = var(int)
+exponent = var(int)
+tmp = var(int)
+tmp1 = var(int)
+
+
+def _init():
+    @listener(on_server_load)
+    def server_load():
+        global lcg, lcg_a, lcg_c, lcg_m
+
+        lcg_a = 1630111353
+        lcg_c = 1623164762
+        lcg_m = 2147483647
+
+        execute function reaper_framework:__internal__/math/random/init:
+            if Expr(lcg) != lcg:
+                store result score lcg.holder lcg.obj:
+                    seed
+
+def random(value_min, value_max):
+    global INITIALIZED, min, max, size, lcg, lcg_a, lcg_c, lcg_m, output
+
+    if not INITIALIZED:
+        INITIALIZED = False
+        _init()
+
+    min = value_min
+    max = value_max
+    
+    execute function reaper_framework:__internal__/math/random/exec:
+        size = max - min + 1
+        lcg = (lcg * lcg_a + lcg_c) % lcg_m
+        output = lcg / 8 % size + min
+
+    return output
+
+def pow(val, exp):
+    global output, value, exponent
+
+    value = val
+    exponent = exp
+    output = value
+
+    execute function reaper_framework:__internal__/math/pow/exec:
+        output *= value
+        exponent -= 1
+
+        if Expr(exponent) > 1:
+            function reaper_framework:__internal__/math/pow/exec
+
+    return output
+
+def sqrt(val):
+    global output, value, tmp, tmp1
+
+    value = val
+
+    if Expr(value) >= 214748:
+        tellraw @a [{"text":"\nreapermc ","color":"gray"},{"text":" ERROR 'math.sqrt()' overflow. Input value of ","color":"red"},{"score":{"name": value.holder, "objective": value.obj},"color":"red"},{"text":" is too large.","color":"red"}]
+
+    if Expr(value) < 0:
+        tellraw @a [{"text":"\nreapermc ","color":"gray"},{"text":" ERROR 'math.sqrt()' received input value ","color":"red"},{"score":{"name": value.holder, "objective": value.obj},"color":"red"},{"text":". Negative input values not supported.","color":"red"}]
+
+    tmp1 = value
+    value *= 10000
+    output = 1255
+
+    for _ in range(4):
+        execute function reaper_framework:__internal__/math/root/newton_raphson:
+            tmp = value / output
+            output += tmp
+            output /= 2
+
+    if Expr(tmp1) >= 10000:
+        function reaper_framework:__internal__/math/root/newton_raphson
+    if Expr(tmp1) >= 100000:
+        function reaper_framework:__internal__/math/root/newton_raphson
+
+    if Expr(output) <= 0:
+        output *= -1
+
+    return output
+
+

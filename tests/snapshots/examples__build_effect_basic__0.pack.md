@@ -114,8 +114,8 @@ function effect_basic:reaper_framework/__internal__/var/init_defaults
 execute as @a run function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
-execute store result score $14 effect_basic.reaper_framework.var run gamerule doMobLoot
-execute if score $14 effect_basic.reaper_framework.var matches 0 run function effect_basic:reaper_framework/__internal__/mob_loot_gamerule_error
+execute store result score $26 effect_basic.reaper_framework.var run gamerule doMobLoot
+execute if score $26 effect_basic.reaper_framework.var matches 0 run function effect_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
 `@function effect_basic:reaper_framework/__internal__/scoreboard/init`
@@ -153,7 +153,7 @@ function reaper_framework:__internal__/loop/reset_joining_player
 
 ```mcfunction
 gamerule doMobLoot true
-tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " Gamerule 'doMobLoot' was changed to 'True'. ", "color": "red"}, {"text": "Explanation", "color": "red", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "red", "hoverEvent": {"action": "show_text", "contents": ""}}]
+tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " WARN Gamerule 'doMobLoot' was changed to 'True'. ", "color": "gold"}, {"text": "Explanation", "color": "gold", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "gold", "hoverEvent": {"action": "show_text", "contents": [{"text": "", "color": "gray"}]}}]
 ```
 
 `@function effect_basic:reaper_framework/uninstall`
