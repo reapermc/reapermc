@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.4.0 (2022-12-11)
+### Feature
+* Add kill function ([`208f861`](https://github.com/reapermc/reapermc/commit/208f86129babf4b76310dd88eab3a4886ba66152))
+
 ## v1.3.0 (2022-12-11)
 ### Feature
 * Add basic math module ([`ecb1ed1`](https://github.com/reapermc/reapermc/commit/ecb1ed135537c861fdf4684694cf8cc5c53f04c5))
