@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.4.1 (2022-12-11)
+### Fix
+* Kill function produced debug message instead of actually killing the entity ([`95ec915`](https://github.com/reapermc/reapermc/commit/95ec915758dadadce22374b36c79a0ffc55f5ae3))
+
 ## v1.4.0 (2022-12-11)
 ### Feature
 * Add kill function ([`208f861`](https://github.com/reapermc/reapermc/commit/208f86129babf4b76310dd88eab3a4886ba66152))
