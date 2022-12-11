@@ -98,7 +98,7 @@ class EntityNBT(Rebindable):
         untag(_cloud_tag)
 
         with self._cloud_selector('delete_entry'):
-            say hello this is the marker
+            kill @s
 
     @contextmanager
     def _cloud_selector(self, method_name):
