@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.0 (2022-12-11)
+### Feature
+* Add basic math module ([`ecb1ed1`](https://github.com/reapermc/reapermc/commit/ecb1ed135537c861fdf4684694cf8cc5c53f04c5))
+
 ## v1.2.0 (2022-12-10)
 ### Feature
 * Add set_xp, get_xp, set_xp_bar_percent ([`18b22b6`](https://github.com/reapermc/reapermc/commit/18b22b6a540d566cb407bf70f5e56c8117fcf784))
