@@ -1,0 +1,13 @@
+from reapermc:api import kill, EntityNBT
+
+
+function ./newobj:
+    testpath = EntityNBT('test.path')
+
+    testpath.set(69)
+
+
+function ./test:
+    kill()
+
+

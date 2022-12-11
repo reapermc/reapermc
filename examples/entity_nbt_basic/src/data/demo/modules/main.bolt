@@ -10,13 +10,6 @@ function ./test:
 
     foo = my_obj.get()
 
-
-
-
-
-
-
-
 function ./test2:
     my_obj = EntityNBT('key.test')
     my_obj.merge(234324)

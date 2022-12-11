@@ -1,0 +1,20 @@
+from ./entity_nbt import EntityNBT
+from ./util import SelectorPlayer
+
+base_path = EntityNBT('', ensure_entry=False)
+CACHE_ID = -1
+
+def kill():
+    # if it's an entity => safekill, ensures object entry is deleted before killing
+    # if player => regular kill
+    global CACHE_ID
+
+    CACHE_ID += 1
+
+    execute function generate_path(f"reaper_framework/__internal__/kill/cache/{CACHE_ID}"):
+        if SelectorPlayer():
+            kill @s
+        else:
+            execute function generate_path(f"reaper_framework/__internal__/kill/cache/{CACHE_ID}_a"):
+                base_path.delete_entry()
+                kill @s
