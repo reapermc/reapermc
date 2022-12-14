@@ -1,17 +1,17 @@
+from bolt_expressions import Data
 from ./var import var
 from ./event_handler import listener
 from ./event/on_server_load import on_server_load
 from ./expr import Expr
-from ./util import logger
+from ./util import logger, sys_col_hex
 
-
-INITIALIZED = False
 
 min = var(int)
 max = var(int)
 size = var(int)
 lcg = var(int)
 output = var(int)
+output_stge = var()
 lcg_a = var(int)
 lcg_c = var(int)
 lcg_m = var(int)
@@ -19,28 +19,31 @@ value = var(int)
 exponent = var(int)
 tmp = var(int)
 tmp1 = var(int)
+math_marker = 'reaper_framework.math'
 
 
-def _init():
-    @listener(on_server_load)
-    def server_load():
-        global lcg, lcg_a, lcg_c, lcg_m
+@listener(on_server_load)
+def server_load():
+    global lcg, lcg_a, lcg_c, lcg_m
 
-        lcg_a = 1630111353
-        lcg_c = 1623164762
-        lcg_m = 2147483647
+    # random
+    lcg_a = 1630111353
+    lcg_c = 1623164762
+    lcg_m = 2147483647
 
-        execute function reaper_framework:__internal__/math/random/init:
-            if Expr(lcg) != lcg:
-                store result score lcg.holder lcg.obj:
-                    seed
+    execute function reaper_framework:__internal__/math/random/init:
+        if Expr(lcg) != lcg:
+            store result score lcg.holder lcg.obj:
+                seed
+
+    # trig
+    forceload add 0 0
+    kill @e[type=marker, tag=math_marker]
+    summon marker 0.0 0.0 0.0 {Tags:[math_marker], CustomName: f"{{\"text\": \"reaper_framework.math\", \"color\": \"{sys_col_hex}\"}}"}
+
 
 def random(value_min, value_max):
-    global INITIALIZED, min, max, size, lcg, lcg_a, lcg_c, lcg_m, output
-
-    if not INITIALIZED:
-        INITIALIZED = False
-        _init()
+    global min, max, size, lcg, lcg_a, lcg_c, lcg_m, output
 
     min = value_min
     max = value_max
@@ -51,6 +54,7 @@ def random(value_min, value_max):
         output = lcg / 8 % size + min
 
     return output
+
 
 def pow(val, exp):
     global output, value, exponent
@@ -68,6 +72,7 @@ def pow(val, exp):
 
     return output
 
+
 def sqrt(val):
     global output, value, tmp, tmp1
 
@@ -84,19 +89,86 @@ def sqrt(val):
     output = 1255
 
     for _ in range(4):
-        execute function reaper_framework:__internal__/math/root/newton_raphson:
+        execute function reaper_framework:__internal__/math/sqrt/newton_raphson:
             tmp = value / output
             output += tmp
             output /= 2
 
     if Expr(tmp1) >= 10000:
-        function reaper_framework:__internal__/math/root/newton_raphson
+        function reaper_framework:__internal__/math/sqrt/newton_raphson
     if Expr(tmp1) >= 100000:
-        function reaper_framework:__internal__/math/root/newton_raphson
+        function reaper_framework:__internal__/math/sqrt/newton_raphson
 
     if Expr(output) <= 0:
         output *= -1
 
     return output
+
+
+def cos(val):
+    global output_stge, value, tmp
+
+    value = val
+
+    as @e[type=marker, tag=math_marker] at @s:
+        this = Data.entity('@s')
+
+        this.Rotation[0] = Data.cast(value, 'float')
+        at @s tp @s ^ ^ ^10
+        tmp = this.Pos[2] * 100
+        output_stge = Data.cast(tmp / 1000, 'float')
+        tp @s 0.0 0.0 0.0
+
+    return output_stge
+
+
+
+def sin(val):
+    global output_stge, value, tmp
+
+    value = val
+
+    as @e[type=marker, tag=math_marker] at @s:
+        this = Data.entity('@s')
+
+        this.Rotation[0] = Data.cast(value, 'float')
+        at @s tp @s ^ ^ ^-10
+        tmp = this.Pos[0] * 100
+        output_stge = Data.cast(tmp / 1000, 'float')
+        tp @s 0.0 0.0 0.0
+
+    return output_stge
+
+
+
+def tan(val):
+    global output_stge, value, tmp, tmp1
+
+    value = val
+
+    as @e[type=marker, tag=math_marker] at @s:
+        this = Data.entity('@s')
+
+        this.Rotation[0] = Data.cast(value, 'float')
+        at @s tp @s ^ ^ ^10
+        tmp = this.Pos[2] * -100
+        tmp1 = this.Pos[0] * 100
+        tmp1 *= 1000
+        tmp1 /= tmp
+        output_stge = tmp1
+        tp @s 0.0 0.0 0.0
+
+    return output_stge
+
+
+
+
+
+
+
+
+
+
+
 
 

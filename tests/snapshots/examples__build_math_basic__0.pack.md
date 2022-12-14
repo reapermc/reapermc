@@ -67,12 +67,12 @@ execute unless score $22 math_basic.reaper_framework.var matches 0.. run tellraw
 scoreboard players operation $25 math_basic.reaper_framework.var = $22 math_basic.reaper_framework.var
 scoreboard players operation $22 math_basic.reaper_framework.var *= $10000 bolt.expr.const
 scoreboard players set $18 math_basic.reaper_framework.var 1255
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-execute if score $25 math_basic.reaper_framework.var matches 10000.. run function reaper_framework:__internal__/math/root/newton_raphson
-execute if score $25 math_basic.reaper_framework.var matches 100000.. run function reaper_framework:__internal__/math/root/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+execute if score $25 math_basic.reaper_framework.var matches 10000.. run function reaper_framework:__internal__/math/sqrt/newton_raphson
+execute if score $25 math_basic.reaper_framework.var matches 100000.. run function reaper_framework:__internal__/math/sqrt/newton_raphson
 execute if score $18 math_basic.reaper_framework.var matches ..0 run scoreboard players operation $18 math_basic.reaper_framework.var *= $-1 bolt.expr.const
 scoreboard players operation $26 math_basic.reaper_framework.var = $18 math_basic.reaper_framework.var
 tellraw @a {"score": {"name": "$26", "objective": "math_basic.reaper_framework.var"}}
@@ -82,12 +82,12 @@ execute unless score $22 math_basic.reaper_framework.var matches 0.. run tellraw
 scoreboard players operation $25 math_basic.reaper_framework.var = $22 math_basic.reaper_framework.var
 scoreboard players operation $22 math_basic.reaper_framework.var *= $10000 bolt.expr.const
 scoreboard players set $18 math_basic.reaper_framework.var 1255
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-execute if score $25 math_basic.reaper_framework.var matches 10000.. run function reaper_framework:__internal__/math/root/newton_raphson
-execute if score $25 math_basic.reaper_framework.var matches 100000.. run function reaper_framework:__internal__/math/root/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+execute if score $25 math_basic.reaper_framework.var matches 10000.. run function reaper_framework:__internal__/math/sqrt/newton_raphson
+execute if score $25 math_basic.reaper_framework.var matches 100000.. run function reaper_framework:__internal__/math/sqrt/newton_raphson
 execute if score $18 math_basic.reaper_framework.var matches ..0 run scoreboard players operation $18 math_basic.reaper_framework.var *= $-1 bolt.expr.const
 scoreboard players operation $26 math_basic.reaper_framework.var = $18 math_basic.reaper_framework.var
 tellraw @a {"score": {"name": "$26", "objective": "math_basic.reaper_framework.var"}}
@@ -97,12 +97,12 @@ execute unless score $22 math_basic.reaper_framework.var matches 0.. run tellraw
 scoreboard players operation $25 math_basic.reaper_framework.var = $22 math_basic.reaper_framework.var
 scoreboard players operation $22 math_basic.reaper_framework.var *= $10000 bolt.expr.const
 scoreboard players set $18 math_basic.reaper_framework.var 1255
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-function reaper_framework:__internal__/math/root/newton_raphson
-execute if score $25 math_basic.reaper_framework.var matches 10000.. run function reaper_framework:__internal__/math/root/newton_raphson
-execute if score $25 math_basic.reaper_framework.var matches 100000.. run function reaper_framework:__internal__/math/root/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+function reaper_framework:__internal__/math/sqrt/newton_raphson
+execute if score $25 math_basic.reaper_framework.var matches 10000.. run function reaper_framework:__internal__/math/sqrt/newton_raphson
+execute if score $25 math_basic.reaper_framework.var matches 100000.. run function reaper_framework:__internal__/math/sqrt/newton_raphson
 execute if score $18 math_basic.reaper_framework.var matches ..0 run scoreboard players operation $18 math_basic.reaper_framework.var *= $-1 bolt.expr.const
 scoreboard players operation $26 math_basic.reaper_framework.var = $18 math_basic.reaper_framework.var
 tellraw @a {"score": {"name": "$26", "objective": "math_basic.reaper_framework.var"}}
@@ -199,7 +199,7 @@ scoreboard players remove $23 math_basic.reaper_framework.var 1
 execute unless score $23 math_basic.reaper_framework.var matches ..1 run function reaper_framework:__internal__/math/pow/exec
 ```
 
-`@function reaper_framework:__internal__/math/root/newton_raphson`
+`@function reaper_framework:__internal__/math/sqrt/newton_raphson`
 
 ```mcfunction
 scoreboard players operation $24 math_basic.reaper_framework.var = $22 math_basic.reaper_framework.var
@@ -237,14 +237,9 @@ scoreboard players set $19 math_basic.reaper_framework.var 1630111353
 scoreboard players set $20 math_basic.reaper_framework.var 1623164762
 scoreboard players set $21 math_basic.reaper_framework.var 2147483647
 function reaper_framework:__internal__/math/random/init
-scoreboard players set $19 math_basic.reaper_framework.var 1630111353
-scoreboard players set $20 math_basic.reaper_framework.var 1623164762
-scoreboard players set $21 math_basic.reaper_framework.var 2147483647
-function reaper_framework:__internal__/math/random/init
-scoreboard players set $19 math_basic.reaper_framework.var 1630111353
-scoreboard players set $20 math_basic.reaper_framework.var 1623164762
-scoreboard players set $21 math_basic.reaper_framework.var 2147483647
-function reaper_framework:__internal__/math/random/init
+forceload add 0 0
+kill @e[type=marker, tag=reaper_framework.math]
+summon marker 0.0 0.0 0.0 {Tags: ["reaper_framework.math"], CustomName: '{"text": "reaper_framework.math", "color": "#bf0000"}'}
 execute store result score $27 math_basic.reaper_framework.var run gamerule doMobLoot
 execute if score $27 math_basic.reaper_framework.var matches 0 run function math_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
@@ -303,7 +298,7 @@ data remove storage math_basic:reaper_framework.var data
 `@function math_basic:reaper_framework/__internal__/var/flush_memory`
 
 ```mcfunction
-data modify storage math_basic:reaper_framework.var data set value [{}, {}, {}, {}, {}, {}, {}]
+data modify storage math_basic:reaper_framework.var data set value [{}, {}, {}, {}, {}, {}, {}, {}]
 ```
 
 `@function math_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l`
