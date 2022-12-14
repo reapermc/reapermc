@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.5.0 (2022-12-14)
+### Feature
+* Add math.cos, math.sin, math.tan ([`11dbfd2`](https://github.com/reapermc/reapermc/commit/11dbfd2426623fe0dbc390a16361db6d2d2c3a27))
+* Add math.cos, math.sin, math.tan ([`f5f7a5e`](https://github.com/reapermc/reapermc/commit/f5f7a5ed6928ddbd84f45a977916b9713345e618))
+
 ## v1.4.1 (2022-12-11)
 ### Fix
 * Kill function produced debug message instead of actually killing the entity ([`95ec915`](https://github.com/reapermc/reapermc/commit/95ec915758dadadce22374b36c79a0ffc55f5ae3))
