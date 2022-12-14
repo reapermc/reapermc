@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.5.1 (2022-12-14)
+### Fix
+* DoMobLoot error when enbt module not used ([`c9582fa`](https://github.com/reapermc/reapermc/commit/c9582fa24ddbb957d5742c9657832f068fe091cc))
+
 ## v1.5.0 (2022-12-14)
 ### Feature
 * Add math.cos, math.sin, math.tan ([`11dbfd2`](https://github.com/reapermc/reapermc/commit/11dbfd2426623fe0dbc390a16361db6d2d2c3a27))
