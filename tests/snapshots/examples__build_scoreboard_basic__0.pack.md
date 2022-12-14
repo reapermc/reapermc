@@ -83,6 +83,12 @@ schedule function reaper_framework:__internal__/event_handler/on_server_tick/tic
 function #reaper_framework:__internal__/event_handler/on_server_tick
 ```
 
+`@function reaper_framework:__internal__/math/random/init`
+
+```mcfunction
+execute unless score $17 scoreboard_basic.reaper_framework.var = $17 scoreboard_basic.reaper_framework.var store result score $17 scoreboard_basic.reaper_framework.var run seed
+```
+
 ### minecraft
 
 `@function_tag minecraft:load`
@@ -107,6 +113,13 @@ function scoreboard_basic:reaper_framework/__internal__/var/init_defaults
 execute as @a run function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/event_handler/on_server_tick/tick
 execute as @a run function reaper_framework:__internal__/loop/reset_joining_player
+scoreboard players set $19 scoreboard_basic.reaper_framework.var 1630111353
+scoreboard players set $20 scoreboard_basic.reaper_framework.var 1623164762
+scoreboard players set $21 scoreboard_basic.reaper_framework.var 2147483647
+function reaper_framework:__internal__/math/random/init
+forceload add 0 0
+kill @e[type=marker, tag=reaper_framework.math]
+summon marker 0.0 0.0 0.0 {Tags: ["reaper_framework.math"], CustomName: '{"text": "reaper_framework.math", "color": "#bf0000"}'}
 execute store result score $26 scoreboard_basic.reaper_framework.var run gamerule doMobLoot
 execute if score $26 scoreboard_basic.reaper_framework.var matches 0 run function scoreboard_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
@@ -166,7 +179,7 @@ data remove storage scoreboard_basic:reaper_framework.var data
 `@function scoreboard_basic:reaper_framework/__internal__/var/flush_memory`
 
 ```mcfunction
-data modify storage scoreboard_basic:reaper_framework.var data set value [{}, {}, {}, {}, {}, {}, {}]
+data modify storage scoreboard_basic:reaper_framework.var data set value [{}, {}, {}, {}, {}, {}, {}, {}]
 ```
 
 `@function scoreboard_basic:reaper_framework/scoreboard/u_n_i_n_s_t_a_l_l`

@@ -1,0 +1,31 @@
+from reapermc:api import var, math
+
+
+function ./cos:             # super accurate
+    tellraw @a math.cos(6)
+    tellraw @a math.cos(12)
+    tellraw @a math.cos(99999)
+    tellraw @a math.cos(3333)
+    tellraw @a math.cos(3336)
+
+function ./sin:             # not super accurate (a bit)
+    tellraw @a math.sin(6)
+    tellraw @a math.sin(12)
+    tellraw @a math.sin(99999)
+    tellraw @a math.sin(3333)
+    tellraw @a math.sin(3336)
+
+
+
+function ./tan:             # what the fuck?
+    tellraw @a math.tan(6)
+    tellraw @a math.tan(12)
+    tellraw @a math.tan(99999)
+    tellraw @a math.tan(3333)
+    tellraw @a math.tan(3336)
+
+
+
+
+
+
