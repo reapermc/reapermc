@@ -240,8 +240,6 @@ function reaper_framework:__internal__/math/random/init
 forceload add 0 0
 kill @e[type=marker, tag=reaper_framework.math]
 summon marker 0.0 0.0 0.0 {Tags: ["reaper_framework.math"], CustomName: '{"text": "reaper_framework.math", "color": "#bf0000"}'}
-execute store result score $27 math_basic.reaper_framework.var run gamerule doMobLoot
-execute if score $27 math_basic.reaper_framework.var matches 0 run function math_basic:reaper_framework/__internal__/mob_loot_gamerule_error
 ```
 
 `@function math_basic:reaper_framework/__internal__/scoreboard/init`
@@ -273,13 +271,6 @@ execute if score @s reaper_framework.event_handler.on_player_join matches 1.. ru
 ```mcfunction
 function reaper_framework:__internal__/sleep/reset_joining_player
 function reaper_framework:__internal__/loop/reset_joining_player
-```
-
-`@function math_basic:reaper_framework/__internal__/mob_loot_gamerule_error`
-
-```mcfunction
-gamerule doMobLoot true
-tellraw @a [{"text": "\nreapermc ", "color": "gray"}, {"text": " WARN Gamerule 'doMobLoot' was changed to 'True'. ", "color": "gold"}, {"text": "Explanation", "color": "gold", "underlined": true, "hoverEvent": {"action": "show_text", "contents": [{"text": "ReaperMC Docs: How to disable doMobLoot.", "color": "gray"}]}, "clickEvent": {"action": "open_url", "value": "https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}}, {"text": ".", "color": "gold", "hoverEvent": {"action": "show_text", "contents": [{"text": "", "color": "gray"}]}}]
 ```
 
 `@function math_basic:reaper_framework/uninstall`

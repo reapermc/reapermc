@@ -3,7 +3,7 @@ from ./event/on_server_load import on_server_load
 from ./expr import Expr
 from ./scoreboard import uninstall_scoreboards
 from ./var import var, uninstall_vars
-
+import ./entity_nbt as enbt
 
 function generate_path('reaper_framework/uninstall'):
     uninstall_scoreboards()
@@ -12,11 +12,14 @@ function generate_path('reaper_framework/uninstall'):
 
 @listener(on_server_load)
 def _gamerule_mobloot_override():
+    if not enbt.EntityNBT._initialized:
+        return 0
+
     bool = var(int)
 
     store result score bool.holder bool.obj run gamerule doMobLoot
     if Expr(bool) == 0:
         execute function generate_path('reaper_framework/__internal__/mob_loot_gamerule_error'):
             gamerule doMobLoot true
-            
+
             tellraw @a [{"text":"\nreapermc ","color":"gray"},{"text":" WARN Gamerule 'doMobLoot' was changed to 'True'. ","color":"gold"},{"text":"Explanation","color":"gold","underlined":true,"hoverEvent":{"action":"show_text","contents":[{"text":"ReaperMC Docs: How to disable doMobLoot.","color":"gray"}]},"clickEvent":{"action":"open_url","value":"https://github.com/reapermc/reapermc/tree/main/docs/misc/mob_loot_gamerule.md"}},{"text":".","color":"gold","hoverEvent":{"action":"show_text","contents":[{"text":"","color":"gray"}]}}]
