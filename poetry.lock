@@ -10,7 +10,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "beet"
@@ -85,7 +85,7 @@ mecha = ">=0.61.0"
 
 [[package]]
 name = "bolt-expressions"
-version = "0.11.0"
+version = "0.12.1"
 description = "Provides pandas-like expressions capabilities to the bolt extension of mecha"
 category = "main"
 optional = false
@@ -125,7 +125,7 @@ optional = false
 python-versions = ">=3.6.0"
 
 [package.extras]
-unicode_backport = ["unicodedata2"]
+unicode-backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
@@ -289,9 +289,9 @@ python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
+pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
 plugins = ["setuptools"]
-requirements_deprecated_finder = ["pip-api", "pipreqs"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
 [[package]]
 name = "jaraco.classes"
@@ -379,7 +379,7 @@ mdurl = ">=0.1,<1.0"
 
 [package.extras]
 benchmarking = ["psutil", "pytest", "pytest-benchmark (>=3.2,<4.0)"]
-code_style = ["pre-commit (==2.6)"]
+code-style = ["pre-commit (==2.6)"]
 compare = ["commonmark (>=0.9.1,<0.10.0)", "markdown (>=3.3.6,<3.4.0)", "mistletoe (>=0.8.1,<0.9.0)", "mistune (>=2.0.2,<2.1.0)", "panflute (>=2.1.3,<2.2.0)"]
 linkify = ["linkify-it-py (>=1.0,<2.0)"]
 plugins = ["mdit-py-plugins"]
@@ -673,7 +673,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "requests-toolbelt"
@@ -908,8 +908,8 @@ bolt = [
     {file = "bolt-0.21.0.tar.gz", hash = "sha256:a4b7af931482233b8feacd7f3565e7d1a2cbfb76b236f8554bba80b9cf80c4ea"},
 ]
 bolt-expressions = [
-    {file = "bolt_expressions-0.11.0-py3-none-any.whl", hash = "sha256:65b6dc84bd36da82e56ceed8bc0a6e88eaa63eeebee86ccc3b30b5aaf791431b"},
-    {file = "bolt_expressions-0.11.0.tar.gz", hash = "sha256:966cb7f63b9b2e5448b8ee83ff516ba18eef8059dad7141f682bbb7be7ceab32"},
+    {file = "bolt_expressions-0.12.1-py3-none-any.whl", hash = "sha256:346801e666200e512da0ed922b2ea6b1b8dba28ab7ccc12c2634329607c519f7"},
+    {file = "bolt_expressions-0.12.1.tar.gz", hash = "sha256:1845934c161ae74d8f8613207bb714964d2f2b0bdcb935c2f5bd89dee93b9a4f"},
 ]
 certifi = [
     {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
