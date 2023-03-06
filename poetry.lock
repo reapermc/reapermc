@@ -678,19 +678,19 @@ files = [
 
 [[package]]
 name = "mecha"
-version = "0.61.0"
+version = "0.67.0"
 description = "A powerful Minecraft command library"
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "mecha-0.61.0-py3-none-any.whl", hash = "sha256:305c00d16f2caf582d3779da8be1515ebf546ace3aa3b5f3707e7bc5834b0061"},
-    {file = "mecha-0.61.0.tar.gz", hash = "sha256:479cfcfabecf98c6866db8054702cbb62b3655024e33398c20322a536e087cf1"},
+    {file = "mecha-0.67.0-py3-none-any.whl", hash = "sha256:89c99bdfd34c8731d0781327fc882d1b5dde6e61565fa39f9db09c01ebc9da55"},
+    {file = "mecha-0.67.0.tar.gz", hash = "sha256:49a95e34be23495731fb996ff87479b0addca3729e77258be1fb2d5dcc007a9b"},
 ]
 
 [package.dependencies]
-beet = ">=0.80.1"
-tokenstream = ">=1.4.2,<2.0.0"
+beet = ">=0.83.1"
+tokenstream = ">=1.5.0,<2.0.0"
 
 [[package]]
 name = "more-itertools"
@@ -1218,14 +1218,14 @@ files = [
 
 [[package]]
 name = "tokenstream"
-version = "1.4.2"
+version = "1.5.0"
 description = "A versatile token stream for handwritten parsers"
 category = "main"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = ">=3.10,<4.0"
 files = [
-    {file = "tokenstream-1.4.2-py3-none-any.whl", hash = "sha256:e4979949e3ca8ab68fe9e924005e668da5b262892c370daf043d767e8e509e4b"},
-    {file = "tokenstream-1.4.2.tar.gz", hash = "sha256:f106b0bd0ae629847485e8ddfc9ac3c479c6c2d8c9db164f9b666e9fda6608cf"},
+    {file = "tokenstream-1.5.0-py3-none-any.whl", hash = "sha256:adf5805f3e734c863a535c5cfc31fed4bd831647b1f51d1aab69e5a81eb63b8e"},
+    {file = "tokenstream-1.5.0.tar.gz", hash = "sha256:3cb57c810f2fd1e57653c8270251a3df47656ef04f07eb3d4fc442f64f9ff0c0"},
 ]
 
 [[package]]
